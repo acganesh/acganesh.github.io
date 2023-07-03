@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en-us"><head>
+<title>Efficient Prime Counting with the Meissel-Lehmer Algorithm - Adi Ganesh</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description"
+    content="Introduction # Computing $\pi(x)$, the number of primes $p \leq x$ is a classic problem in algorithmic number theory. The prime number theorem describes the asymptotic growth of this function, and states that
+$$ \lim_{x \to \infty} \left. \pi(x) \middle/ \frac{x}{\ln x} \right. = 1. $$
+The theorem was independently conjectured by Legendre and Gauss, and proved by Hadamard and de la Vallée Poussin&rsquo;s around 100 years later in 1896. ">
+<link rel="canonical" href="https://acganesh.github.io/posts/2016-12-23-prime-counting/" />
+
+
+<link rel="icon" href="https://acganesh.github.io/favicon.ico" />
+
+
+<link rel="apple-touch-icon" href="https://acganesh.github.io/touch-icon.png" />
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/modern-normalize/1.1.0/modern-normalize.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+
+
+
+
+
+
+
+
+
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="preload" as="style"
+      href="https://fonts.googleapis.com/css?family=Noto+Serif+SC|Noto+Emoji&display=swap" />
+<link rel="stylesheet"
+      href="https://fonts.googleapis.com/css?family=Noto+Serif+SC|Noto+Emoji&display=swap"
+      media="print" onload="this.media='all'" />
+<noscript>
+<link rel="stylesheet"
+      href="https://fonts.googleapis.com/css?family=Noto+Serif+SC&display=swap" />
+</noscript>
+
+
+
+
+
+
+<link rel="stylesheet" href="/css/hugo-tufte.min.css">
+
+<link rel="stylesheet" href="/css/hugo-tufte-override.css">
+
+</head>
+<body >
+
+<article id="main">
+  <section>
+<h1 class="content-title">Efficient Prime Counting with the Meissel-Lehmer Algorithm</h1></section>
+
+  
+
+  <section><h1 id="introduction">
+Introduction
+<a href="#introduction" class="heading-anchor">#</a>
+</h1>
+<p>Computing <code>$\pi(x)$</code>, the number of primes <code>$p \leq x$</code> is a classic problem in algorithmic number theory.  The prime number theorem describes the asymptotic growth of this function, and states that</p>
+<p><code>$$ \lim_{x \to \infty} \left. \pi(x) \middle/ \frac{x}{\ln x} \right. = 1. $$</code></p>
+<p>The theorem was independently conjectured by Legendre and Gauss, and proved by Hadamard and de la Vallée Poussin&rsquo;s around 100 years later in 1896.  The theorem can also be written as follows, which provides a refined numerical approximation:</p>
+<p><code>$$ \pi(x) \approx \text{Li}(x) = \int_{2}^{x} \frac{dy}{\ln y}, $$</code></p>
+<p>where <code>$\text{Li}(x)$</code> denotes the logarithmic integral.</p>
+<p>While robust numerical approximations are available, it is particularly tedious to calculate <code>$\pi(x)$</code> exactly.  I was working on <a href="https://projecteuler.net/problem=543">Project Euler&rsquo;s Problem 543</a>, and found that an efficient solution requires a fast algorithm to compute <code>$\pi(x)$</code>.  I originally just generated the primes using a sieve and counted them, which is perhaps the most straightforward way to approach the problem.  To my surprise, I found that implementing the Meissel-Lehmer algorithm resulted in a ~120x speedup in runtime.</p>
+<p>In this article, I will discuss the mathematical basis of the Meissel-Lehmer algorithm and provide an implementation in Python.</p>
+<h2 id="algorithm-overview">
+Algorithm Overview
+<a href="#algorithm-overview" class="heading-anchor">#</a>
+</h2>
+<p>In the 1870s, the German astronomer Ernst Meissel discovered a combinatorial method to compute $\pi(x)$, which was extended and simplified by Derrick H. Lehmer in 1959<label class="margin-toggle sidenote-number"></label><span class="sidenote">
+D. H. Lehmer, <a href="http://projecteuclid.org/euclid.ijm/1255455259">“On the exact number of primes less than a given limit”</a>, <em>Illinois Journal of Mathematics</em>, vol. 3, pp. 381–388, 1959.
+</span>.</p>
+<p>The Meissel-Lehmer algorithm allows us to compute <code>$\pi(x)$</code> in $O\left (\frac{x}{(\ln x)^4} \right )$ time using $O\left (\frac{x^{1/3}}{\ln x} \right )$ space.  Let $p_1, p_2, \dots$ denote the prime numbers.  The algorithm allows us to compute $\pi(x)$ as follows:</p>
+<p>$$ \pi(x) = \left \lfloor x \right \rfloor - \sum_{i=1}^{a} \left \lfloor \frac{x}{p_i} \right \rfloor + \sum_{1 \leq i \leq j \leq a} \left \lfloor \frac{x}{p_i p_j} \right \rfloor - \cdots + $$</p>
+<p>$$ \frac{(b+a-2)(b-a+1)}{2} - \sum_{a &lt; i \leq b} \pi \left ( \frac{x}{p_i} \right ) - \sum_{i=a+1}^c \sum_{j=1}^{b_i} \left ( \pi \left ( \frac{x}{p_i p_j} \right ) - (j-1) \right ),$$</p>
+<p>where</p>
+<p>$$ a = \pi(x^{1/4}); \qquad b = \pi(x^{1/2}) $$</p>
+<p>$$ b_i = \pi(\sqrt{x/p_i}); \qquad c = \pi(x^{1/3}) $$</p>
+<p>Before diving into the mathematics, I will first discuss other simpler approaches to compute $\pi(x)$, due to Eratosthenes and Legendre.</p>
+<h2 id="sieve-of-eratosthenes----a-naive-algorithm">
+Sieve of Eratosthenes &ndash; A Naive Algorithm
+<a href="#sieve-of-eratosthenes----a-naive-algorithm" class="heading-anchor">#</a>
+</h2>
+<p>The simplest way to go about computing $\pi(x)$ is to just generate the primes and count them.  A well-known and ancient algorithm for doing so is the sieve due to the Greek mathematician Eratosthenes.  The algorithm works by filtering out multiples of each prime, which must be composite.  This algorithm has a time complexity of $O (x \log \log x)$ and generally requires $O(x)$ space.</p>
+<p>Here is a basic implementation in Python:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">sieve</span>(n):
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;&#34;&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    Generate the primes less than or equal to n using the sieve of
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    Eratosthenes.
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    &#34;&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>    primes, sieve <span style="color:#f92672">=</span> [], [<span style="color:#66d9ef">True</span>] <span style="color:#f92672">*</span> (n <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> p <span style="color:#f92672">in</span> range(<span style="color:#ae81ff">2</span>, n <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>):
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> sieve[p]:
+</span></span><span style="display:flex;"><span>            primes<span style="color:#f92672">.</span>append(p)
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">for</span> i <span style="color:#f92672">in</span> range(p <span style="color:#f92672">*</span> p, n <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>, p):
+</span></span><span style="display:flex;"><span>                sieve[i] <span style="color:#f92672">=</span> <span style="color:#66d9ef">False</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> primes
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">pi</span>(x):
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;&#34;&#34;Calculates the number of primes less than or equal to x.&#34;&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> len(sieve(x))
+</span></span></code></pre></div><p>The <a href="https://github.com/kimwalisch/primesieve">primesieve</a> software package provides an optimized C++ implementation of the Eratosthenes sieve.</p>
+<h2 id="legendres-formula">
+Legendre&rsquo;s Formula
+<a href="#legendres-formula" class="heading-anchor">#</a>
+</h2>
+<p>Legendre&rsquo;s formula to compute $\pi(x)$ is as follows:</p>
+<p>$$ \pi(x) + 1 = \pi(\sqrt{x}) + \lfloor x \rfloor - \sum_{p_i \leq \sqrt{x}} \left \lfloor \frac{x}{p_i} \right \rfloor + \sum_{p_i &lt; p_j \leq \sqrt{x}} \left \lfloor \frac{x}{p_i p_j} \right \rfloor - \sum_{p_i &lt; p_j &lt; p_k \leq \sqrt{x}} \left \lfloor \frac{x}{p_i p_j p_k} \right \rfloor + \dots.$$</p>
+<p>It is an improvement over sieving, as it does not require the calculation of all of the primes $\leq x$.  Still, it is not very computationally efficient, as using it involves the calculation of approximately $\frac{6x(1-\log 2)}{\pi^2}$ terms <label class="margin-toggle sidenote-number"></label><span class="sidenote">
+Lagarias, J. C., V. S. Miller, and A. M. Odlyzko. <a href="http://www.ams.org/journals/mcom/1985-44-170/S0025-5718-1985-0777285-5/S0025-5718-1985-0777285-5.pdf">&ldquo;Computing $\pi(x)$: The Meissel-Lehmer Method.&rdquo;</a> <em>Mathematics of Computation.</em> 44.170 (1985): 537. Web.
+</span>.  It is nevertheless useful to examine, as it is similar to the Meissel-Lehmer algorithm we will discuss next.</p>
+<p>This formula is a direct consequence of the <a href="https://en.wikipedia.org/wiki/Inclusion%E2%80%93exclusion_principle">inclusion-exclusion principle</a>.  It uses the observation that the number of primes in $[1, x]$ plus 1 (the quantity on the left of the equation) is equal to the number of integers minus the number of composite numbers in the interval.</p>
+<p>Let&rsquo;s take a closer look.  Over the interval $[1, x]$, the quantity $\left \lfloor \frac{x}{p} \right \rfloor$ counts the integers divisible by $p.$  Noting that every composite number in the interval must have some prime factor $\leq \sqrt{x}$, we start by subtracting $\sum_{p_i \leq \sqrt{x}} \left \lfloor \frac{x}{p_i} \right \rfloor$ multipes of primes $\leq \sqrt{x}$ in the interval.  But this will subtract the multiples $1 \cdot p_i$, which are actually prime, so we must compensate by adding the term $\pi(\sqrt{x})$.</p>
+<p>To account for the rest of the terms, observe that some of the composite numbers are divisible by two primes $\leq \sqrt{x}$, call them $p_i$ and $p_j$.  These numbers will be double counted as multiples of both $p_i$ and $p_j$.  Hence, we must adjust the total by adding the number of integers of this type, which is $\sum \left \lfloor \frac{x}{p_i p_j} \right \rfloor$.  But adding this term will now remove the count of integers that are divisible by three different primes, which explains the next term.  Continuing this reasoning, Legendre&rsquo;s result follows.</p>
+<h2 id="meissel-lehmer-algorithm">
+Meissel-Lehmer Algorithm
+<a href="#meissel-lehmer-algorithm" class="heading-anchor">#</a>
+</h2>
+<p>We will now turn to the main subject of the article, the Meissel-Lehmer algorithm.  For convenience, we will first introduce some notation.  Let $\phi(x, a)$ denote the <em>partial sieve function</em>, defined as the number of integers $\leq x$, with no prime factor less than or equal to $p_a$.  In set notation, we can expression this as</p>
+<p>$$
+\phi(x, a) =  \left \vert{{ n \leq x: p \mid n \Rightarrow p &gt; p_a }} \right \vert.
+$$</p>
+<p>The name comes from the fact that $\phi(x, a)$ counts the numbers $\leq x$ that are not struck off when sieving with the first $a$ primes.  Note that this allows us to rewrite Legendre&rsquo;s formula as</p>
+<p>$$
+\pi(x) = \phi(x, a) + a - 1,
+$$</p>
+<p>where $a = \pi(\sqrt{x})$.</p>
+<p>Now, let $P_k(x, a)$ denote the <em>$k$th partial sieve function</em>, which is defined as the number of integers $\leq x$ with exactly $k$ prime factors, with none less than or equal to $p_a$.  For convenience, we define $P_0(x, a) = 1$.  It then follows that</p>
+<p>$$
+\phi(x, a) = P_0(a, x) + P_1(x, a) + P_2(x, a) + \dots
+$$</p>
+<p>Note that the right hand side&rsquo;s sum will contain a finite number of nonzero terms.  Observing that</p>
+<p>$$
+P_1(x, a) = \pi(x) - a,
+$$</p>
+<p>it follows that if we can compute $\phi(x, a)$, $P_2(x, a)$, $P_3(x, a)$, and so on, we can obtain the value of $\pi(x)$.  We will now consider the two subproblems of computing $P_i(x, a)$ and $\phi(x, a)$.</p>
+<h3 id="computing-p_ix-a">
+Computing $P_i(x, a)$
+<a href="#computing-p_ix-a" class="heading-anchor">#</a>
+</h3>
+<p>We will begin by considering $P_2(x, a)$, defined as the number of integers in the interval $[1, x]$ which are products of two primes $p_i, p_j &gt; p_a$.  It follows that</p>
+<p>$$
+P_2(x, a) = \underbrace{\pi \left ( \frac{x}{p_{a+1}} \right ) - a}<em>{\text{number of integers } p</em>{a+1}p_j \leq x \text{ with } a+1 \leq j} + \underbrace{\pi \left ( \frac{x}{p_{a+2}} \right ) - (a+1)}<em>{\text{number of integers } p</em>{a+2} p_j \leq x \text{ with } a+2 \leq j} + \dots
+$$</p>
+<p>$$
+= \sum_{p_a &lt; p_i \leq \sqrt{x}} \left [ \pi \left ( \frac{x}{p_i} \right ) - (i - 1) \right ].
+$$</p>
+<p>Let $b = \pi(\sqrt{x})$.  If we choose $a &lt; b$, the above sum is equivalent to</p>
+<p>$$
+P_2(x, a) = \sum_{i=a+1}^{b} \left [ \pi \left ( \frac{x}{p_i} \right ) - (i-1) \right ] = \sum_{i=a+1}^{b} \pi\left ( \frac{x}{p_i} \right ) - \frac{(b-a)(b+a-1)}{2},$$</p>
+<p>where we have applied the arithmetic series formula.  In a similar fashion, we can compute $P_3(x, a)$ as follows:</p>
+<p>$$
+P_3(x, a) = P_2 \left ( \frac{x}{p_{a+1}}, a \right ) + P_2 \left ( \frac{x}{p_{a+2}}, a \right ) + \dots = \sum_{i &gt; a} P_2 \left ( \frac{x}{p_i}, a \right ).
+$$</p>
+<p>Let $b_i = \pi \left ( \sqrt{\frac{x}{p_i}} \right )$, and let $c = \pi(x^{1/3})$.  Assuming that $a &lt; c$ (so that $P_3$ is nonzero), it follows that:</p>
+<p>$$
+P_3(x, a) = \sum_{i=a+1}^{c} \sum_{j=1}^{b_i} \left [ \pi \left ( \frac{x}{p_i p_j} \right ) - (j-1) \right ].
+$$</p>
+<p>Finally, if we choose $a = \pi(x^{1/4})$, $P_i(x, a) = 0$ for $i &gt; 3$.  Now, we need only compute $\phi(x, a)$ to obtain the Meissel-Lehmer formula in its full form.</p>
+<h3 id="computing-phix-a">
+Computing $\phi(x, a)$
+<a href="#computing-phix-a" class="heading-anchor">#</a>
+</h3>
+<p>The key to computing $\phi$ is the observation that</p>
+<p>$$
+\phi(x, a) = \phi(x, a-1) - \phi \left ( \frac{x}{p_a}, a-1 \right ),
+$$</p>
+<p>which follows from the definition of $\phi$: the integers not divisible by any of the primes $p_1, \dots, p_a$ are exactly those integers which are not divisible by any of $p_1, p_2, \dots, p_{a-1}$, excluding those that are not divisible by $p_a$.  Repeatedly applying this identity will eventually lead to $\phi(x, 1)$, which is just the number of odd numbers $\leq x$.</p>
+<p>In the implementation below, $\phi$ is computed using a memoized recursive procedure.  It turns out that one can make this computation more efficient by applying a truncation rule during the recursive chain.  The details of how to do this are somewhat involved, but the interested reader can refer to [^2] and &lt;label class=&ldquo;margin-toggle&rdquo; &ldquo;sidenote-number&rdquo;&gt;</label> <span class="sidenote">Riesel, Hans.  <a href="http://www.amazon.com/Numbers-Computer-Factorization-Progress-Mathematics/dp/0817637435"><em>Prime Numbers and Computer Methods for Factorization.</em></a> Boston: Birkhäuser, 1985.</span></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">from</span> bisect <span style="color:#f92672">import</span> bisect
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">prime_sieve</span>(n):
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;&#34;&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    Efficient prime sieve, due to Robert William Hanks.
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    Source: http://stackoverflow.com/a/2068548
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    &#34;&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>    sieve <span style="color:#f92672">=</span> [<span style="color:#66d9ef">True</span>] <span style="color:#f92672">*</span> (n<span style="color:#f92672">/</span><span style="color:#ae81ff">2</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> i <span style="color:#f92672">in</span> xrange(<span style="color:#ae81ff">3</span>,int(n<span style="color:#f92672">**</span><span style="color:#ae81ff">0.5</span>)<span style="color:#f92672">+</span><span style="color:#ae81ff">1</span>,<span style="color:#ae81ff">2</span>):
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> sieve[i<span style="color:#f92672">/</span><span style="color:#ae81ff">2</span>]:
+</span></span><span style="display:flex;"><span>            sieve[i<span style="color:#f92672">*</span>i<span style="color:#f92672">/</span><span style="color:#ae81ff">2</span>::i] <span style="color:#f92672">=</span> [<span style="color:#66d9ef">False</span>] <span style="color:#f92672">*</span> ((n<span style="color:#f92672">-</span>i<span style="color:#f92672">*</span>i<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>)<span style="color:#f92672">/</span>(<span style="color:#ae81ff">2</span><span style="color:#f92672">*</span>i)<span style="color:#f92672">+</span><span style="color:#ae81ff">1</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> [<span style="color:#ae81ff">2</span>] <span style="color:#f92672">+</span> [<span style="color:#ae81ff">2</span><span style="color:#f92672">*</span>i<span style="color:#f92672">+</span><span style="color:#ae81ff">1</span> <span style="color:#66d9ef">for</span> i <span style="color:#f92672">in</span> xrange(<span style="color:#ae81ff">1</span>,n<span style="color:#f92672">/</span><span style="color:#ae81ff">2</span>) <span style="color:#66d9ef">if</span> sieve[i]]
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#e6db74">&#34;&#34;&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">Limit controls the number of primes that are sieved
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">to cache small values of pi(x).  Without caching,
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">runtime will be exponential.
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">When computing pi(x), limit should be
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">at least sqrt(x).  A higher value of limit
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">that caches more values can sometimes improve performance.
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">&#34;&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>limit <span style="color:#f92672">=</span> <span style="color:#ae81ff">10</span><span style="color:#f92672">**</span><span style="color:#ae81ff">6</span>
+</span></span><span style="display:flex;"><span>primes <span style="color:#f92672">=</span> prime_sieve(limit)
+</span></span><span style="display:flex;"><span>print <span style="color:#e6db74">&#39;done with primes&#39;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>phi_cache <span style="color:#f92672">=</span> {}
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">phi</span>(x, a):
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;&#34;&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    Implementation of the partial sieve function, which
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    counts the number of integers &lt;= x with no prime factor less
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    than or equal to the ath prime.
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    &#34;&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># If value is cached, just return it</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> (x, a) <span style="color:#f92672">in</span> phi_cache: <span style="color:#66d9ef">return</span> phi_cache[(x, a)]
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># Base case: phi(x, a) is the number of odd integers &lt;= x</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> a <span style="color:#f92672">==</span> <span style="color:#ae81ff">1</span>: <span style="color:#66d9ef">return</span> (x <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>) <span style="color:#f92672">/</span> <span style="color:#ae81ff">2</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    result <span style="color:#f92672">=</span> phi(x, a<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>) <span style="color:#f92672">-</span> phi(x <span style="color:#f92672">/</span> primes[a<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>], a<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>)
+</span></span><span style="display:flex;"><span>    phi_cache[(x, a)] <span style="color:#f92672">=</span> result <span style="color:#75715e"># Memoize</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> result
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>pi_cache <span style="color:#f92672">=</span> {}
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">pi</span>(x):
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;&#34;&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    Computes pi(x), the number of primes &lt;= x, using
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    the Meissel-Lehmer algorithm.
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    &#34;&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># If value is cached, return it</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> x <span style="color:#f92672">in</span> pi_cache: <span style="color:#66d9ef">return</span> pi_cache[x]
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># If x &lt; limit, calculate pi(x) using a bisection</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># algorithm over the sieved primes.</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> x <span style="color:#f92672">&lt;</span> limit:
+</span></span><span style="display:flex;"><span>        result <span style="color:#f92672">=</span> bisect(primes, x)
+</span></span><span style="display:flex;"><span>        pi_cache[x] <span style="color:#f92672">=</span> result
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> result
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    a <span style="color:#f92672">=</span> pi(int(x <span style="color:#f92672">**</span> (<span style="color:#ae81ff">1.</span><span style="color:#f92672">/</span><span style="color:#ae81ff">4</span>)))
+</span></span><span style="display:flex;"><span>    b <span style="color:#f92672">=</span> pi(int(x <span style="color:#f92672">**</span> (<span style="color:#ae81ff">1.</span><span style="color:#f92672">/</span><span style="color:#ae81ff">2</span>)))
+</span></span><span style="display:flex;"><span>    c <span style="color:#f92672">=</span> pi(int(x <span style="color:#f92672">**</span> (<span style="color:#ae81ff">1.</span><span style="color:#f92672">/</span><span style="color:#ae81ff">3</span>)))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># This quantity must be integral,</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># so we can just use integer division.</span>
+</span></span><span style="display:flex;"><span>    result <span style="color:#f92672">=</span> phi(x,a) <span style="color:#f92672">+</span> (b<span style="color:#f92672">+</span>a<span style="color:#f92672">-</span><span style="color:#ae81ff">2</span>) <span style="color:#f92672">*</span> (b<span style="color:#f92672">-</span>a<span style="color:#f92672">+</span><span style="color:#ae81ff">1</span>) <span style="color:#f92672">/</span> <span style="color:#ae81ff">2</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> i <span style="color:#f92672">in</span> xrange(a<span style="color:#f92672">+</span><span style="color:#ae81ff">1</span>, b<span style="color:#f92672">+</span><span style="color:#ae81ff">1</span>):
+</span></span><span style="display:flex;"><span>        w <span style="color:#f92672">=</span> x <span style="color:#f92672">/</span> primes[i<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>]
+</span></span><span style="display:flex;"><span>        b_i <span style="color:#f92672">=</span> pi(w <span style="color:#f92672">**</span> (<span style="color:#ae81ff">1.</span><span style="color:#f92672">/</span><span style="color:#ae81ff">2</span>))
+</span></span><span style="display:flex;"><span>        result <span style="color:#f92672">=</span> result <span style="color:#f92672">-</span> pi(w)
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> i <span style="color:#f92672">&lt;=</span> c:
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">for</span> j <span style="color:#f92672">in</span> xrange(i, b_i<span style="color:#f92672">+</span><span style="color:#ae81ff">1</span>):
+</span></span><span style="display:flex;"><span>                result <span style="color:#f92672">=</span> result <span style="color:#f92672">-</span> pi(w <span style="color:#f92672">/</span> primes[j<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>]) <span style="color:#f92672">+</span> j <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>    pi_cache[x] <span style="color:#f92672">=</span> result
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> result
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Example</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># result = pi(10**8)</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#print result</span>
+</span></span></code></pre></div><h2 id="further-reading">
+Further Reading
+<a href="#further-reading" class="heading-anchor">#</a>
+</h2>
+<p>While the Meissel-Lehmer algorithm is quite fast for most practical purposes, there are algorithms that are known to be more efficient.  Based on the work on Meissel and Lehmer, in 1985 Lagarias, Miller and Odlyzko found an algorithm requiring $O( \frac{x^{2/3}}{\log x} )$ time and $O(x^{1/3} \log^2 x)$ space.  Lagarias and Odlyzko have also published a method describing how to compute $\pi(x)$ using an analytic approach.</p>
+<p>In 1996, Deléglise and Rivat<label class="margin-toggle sidenote-number"></label><span class="sidenote">Deleglise, M., and J. Rivat. <a href="http://www.ams.org/journals/mcom/1996-65-213/S0025-5718-96-00674-6/S0025-5718-96-00674-6.pdf">&ldquo;Computing $\pi(x)$: The Meissel, Lehmer, Lagarias, Miller, Odlyzko Method.&rdquo;</a> <em>Mathematics of Computation.</em> 65.213 (1996): 235-46. Web.<br>Silva, T. <a href="http://sweet.ua.pt/tos/bib/5.4.pdf">&ldquo;Computing $\pi(x)$: the combinatorial method.&rdquo;</a> <em>Revista do Detua.</em> 4.6 (2006): 759.</span> refined the Lagarias-Miller-Odlyzko method allowing one to save a factor of $\log x$ in the time complexity, at the cost of an increase by a factor of $\log x \log \log x$ in space.  In 2001, Gourdon<label class="margin-toggle sidenote-number"></label><span class="sidenote">X. Gourdon, &ldquo;Computation of $\pi(x)$: Improvements to the Meissel, Lehmer, Lagarias, Miller, Odlyzko, Deléglise and Rivat method.&rdquo;  Available from <a href="numbers.computation.free.fr/Constants/Primes/Pix/piNalgorithm.ps">numbers.computation.free.fr/Constants/Primes/Pix/piNalgorithm.ps</a></span> published refinements to the Deléglise-Rivat method that saves constant factors in time and space complexity.</p>
+<p>Kim Walisch&rsquo;s excellent <a href="https://github.com/kimwalisch/primecount"><code>primecount</code></a> software package provides highly optimized C++ implementations of many of these algorithms, with support for OpenMP parallelization.  In September of 2015, this software was used to produce a <a href="http://www.mersenneforum.org/showthread.php?t=20473">record-breaking computation of $\pi(10^{27})$</a>, using 16-core EC2 r3.8xlarge instances and a 36-core Xeon server.  Using the Deléglise-Rivat method, the computation took 23.03 CPU core years, and the peak memory usage was 235 gigabytes!</p>
+<h3 id="acknowledgments">
+Acknowledgments
+<a href="#acknowledgments" class="heading-anchor">#</a>
+</h3>
+<p>Thank you to Yuval Widgerson for providing feedback on this draft.</p>
+</section>
+  <section><footer class="page-footer">
+<hr />
+
+<div class="previous-post" style="display:inline-block;">
+  
+</div>
+
+<div class="next-post", style="display:inline-block;float:right;">
+  
+  <a class="link-reverse" href="https://acganesh.github.io/posts/2019-01-01-maximum-entropy/?ref=footer">The principle of maximum entropy »</a>
+  
+</div>
+
+<ul class="page-footer-menu">
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+  
+</ul>
+
+
+
+
+
+</footer>
+</section>
+  <section><nav class="menu">
+    <ul>
+    
+        <li><a href="/">Home</a></li>
+    
+        <li><a href="/posts/">Blog</a></li>
+    
+        <li><a href="/about/">About</a></li>
+    
+    </ul>
+</nav>
+</section>
+</article>
+
+
+
+
+
+
+
+  <script>(function(){var e,t,n,s=document.getElementsByTagName("code");for(n=0;n<s.length;){if(t=s[n],t.parentNode.tagName!=="PRE"&&t.childElementCount===0&&!t.classList.contains("nolatex")&&(e=t.textContent,/^\$[^$]/.test(e)&&/[^$]\$$/.test(e)&&(e=e.replace(/^\$/,"\\(").replace(/\$$/,"\\)"),t.textContent=e),/^\\\((.|\s)+\\\)$/.test(e)||/^\\\[(.|\s)+\\\]$/.test(e)||/^\$(.|\s)+\$$/.test(e)||/^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(e))){t.outerHTML=t.innerHTML;continue}n++}})()</script>
+
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css" crossorigin="anonymous">
+<script defer src="//cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.js" crossorigin="anonymous"></script>
+<script defer src="//cdn.jsdelivr.net/npm/katex@0.16.4/dist/contrib/auto-render.min.js" crossorigin="anonymous"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement(document.body, {
+            
+            
+            
+            
+            
+            
+            trust: (context) => ['\\htmlId', '\\href'].includes(context.command),
+            macros: {
+              "\\eqref": "\\href{###1}{(\\text{#1})}",
+              "\\ref": "\\href{###1}{\\text{#1}}",
+              "\\label": "\\htmlId{#1}{}"
+            }
+        });
+    });
+</script>
+
+
+
+</body>
+
+</html>

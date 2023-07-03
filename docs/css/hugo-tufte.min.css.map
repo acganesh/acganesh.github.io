@@ -1,7 +1,7 @@
 {
 	"version": 3,
 	"file": "hugo-tufte.min.css",
-	"sourceRoot": "/Users/acganesh/Dropbox/blog2023/llmreadinggroup.github.io/site",
+	"sourceRoot": "/Users/acganesh/Dropbox/blog2023/acganesh.github.io/site",
 	"sources": [
 		"themes/hugo-tufte/assets/scss/hugo-tufte.scss",
 		"themes/hugo-tufte/assets/scss/tufte.scss",

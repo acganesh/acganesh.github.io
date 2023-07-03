@@ -1,39 +1,56 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Posts on LLM Reading Group</title>
-    <link>https://llmreadinggroup.github.io/posts/</link>
-    <description>Recent content in Posts on LLM Reading Group</description>
+    <title>Posts on Adi Ganesh</title>
+    <link>https://acganesh.github.io/posts/</link>
+    <description>Recent content in Posts on Adi Ganesh</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 02 Jul 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://llmreadinggroup.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 13 Jul 2019 00:00:00 +0000</lastBuildDate><atom:link href="https://acganesh.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>Week 3: Parameter Efficient Finetuning: LoRA, adapters, and friends</title>
-      <link>https://llmreadinggroup.github.io/posts/week3-peft/</link>
-      <pubDate>Sun, 02 Jul 2023 00:00:00 +0000</pubDate>
+      <title>Pólya-Burnside enumeration in combinatorics</title>
+      <link>https://acganesh.github.io/posts/2019-07-13-polya-burnside/</link>
+      <pubDate>Sat, 13 Jul 2019 00:00:00 +0000</pubDate>
       
-      <guid>https://llmreadinggroup.github.io/posts/week3-peft/</guid>
-      <description> Slides # Author: Josh Author: Selwin
-TODO(add pdf here)
-Author: Aneesh Parameter Efficient Finetuning # </description>
+      <guid>https://acganesh.github.io/posts/2019-07-13-polya-burnside/</guid>
+      <description>$$ \newcommand{\mat}[1]{\begin{pmatrix}#1\end{pmatrix}} \DeclareMathOperator{\Stab}{Stab} \DeclareMathOperator{\Fix}{Fix} \DeclareMathOperator{\Orb}{Orb} $$
+Pólya-Burnside enumeration in combinatorics # A class of problems # The following problem in chemistry is historically significant, as G. Pólya originally popularized his theory through applications in chemical enumeration. How many different chemical compounds can be made by attaching $H$, $CH_3$, or $OH$ radicals to each of the carbon atoms in the benzene ring pictured below?
+Here are other problems that can be approached using Pólya-Burnside.</description>
     </item>
     
     <item>
-      <title>Week 2: Instruction Finetuning and DPO</title>
-      <link>https://llmreadinggroup.github.io/posts/week2-intruction-finetuning-dpo/</link>
-      <pubDate>Sun, 25 Jun 2023 00:00:00 +0000</pubDate>
+      <title>The modern algorithmic toolbox</title>
+      <link>https://acganesh.github.io/posts/2019-07-13-modern-algorithmic-toolbox/</link>
+      <pubDate>Sat, 13 Jul 2019 00:00:00 +0000</pubDate>
       
-      <guid>https://llmreadinggroup.github.io/posts/week2-intruction-finetuning-dpo/</guid>
-      <description> Slides # Author: Adi Instruction Finetuning and DPO # </description>
+      <guid>https://acganesh.github.io/posts/2019-07-13-modern-algorithmic-toolbox/</guid>
+      <description>$$ \newcommand{\mbf}{\mathbf} \newcommand{\RR}{\mathbb{R}} \newcommand{\CC}{\mathbb{C}} \newcommand{\la}{\langle} \newcommand{\ra}{\rangle} \DeclareMathOperator{\rank}{rank} \DeclareMathOperator{\argmax}{argmax} $$
+The modern algorithmic toolbox # (In progress)
+These notes are based on an influential course I took at Stanford, CS168: The Modern Algorithmic Toolbox, taught by Greg Valiant in Spring 2018.
+I found it to be my favorite technical class at Stanford, as I think it&amp;rsquo;s a versatile grab-bag of ideas that can be applied to many different domains.
+Modern hashing # Motivating problem.</description>
     </item>
     
     <item>
-      <title>Week 1: Transformers</title>
-      <link>https://llmreadinggroup.github.io/posts/week1-transformers/</link>
-      <pubDate>Sun, 18 Jun 2023 00:00:00 +0000</pubDate>
+      <title>The principle of maximum entropy</title>
+      <link>https://acganesh.github.io/posts/2019-01-01-maximum-entropy/</link>
+      <pubDate>Tue, 01 Jan 2019 00:00:00 +0000</pubDate>
       
-      <guid>https://llmreadinggroup.github.io/posts/week1-transformers/</guid>
-      <description>Slides # Author: Yonatan Introduction to transformers # $$ \text{{Attention}}(Q, K, V) = \text{{softmax}}\left(\frac{{QK^\intercal}}{\sqrt{d_k}}\right)V $$</description>
+      <guid>https://acganesh.github.io/posts/2019-01-01-maximum-entropy/</guid>
+      <description>The principle of maximum entropy # Introduction: what is entropy? # $$ \newcommand{\EE}{\mathbb{E}} \newcommand{\RR}{\mathbb{R}} \newcommand{\mbf}{\mathbf} \DeclareMathOperator{\argmax}{argmax} $$
+Intuitively, the notion of entropy defines a measure of &amp;ldquo;disorder&amp;rdquo; or &amp;ldquo;expected surprise&amp;rdquo; given a probability distribution. As described by Shannon in is 1948 article, the entropy can be defined as follows Shannon, Claude Elwood. &amp;ldquo;A mathematical theory of communication.&amp;rdquo; Bell system technical journal 27.3 (1948): 379-423. .
+Let $X$ be a discrete random variable on a space $\mathcal{X}$ with probability mass function $\mathbf{p}(x)$.</description>
+    </item>
+    
+    <item>
+      <title>Efficient Prime Counting with the Meissel-Lehmer Algorithm</title>
+      <link>https://acganesh.github.io/posts/2016-12-23-prime-counting/</link>
+      <pubDate>Fri, 23 Dec 2016 00:00:00 +0000</pubDate>
+      
+      <guid>https://acganesh.github.io/posts/2016-12-23-prime-counting/</guid>
+      <description>Introduction # Computing $\pi(x)$, the number of primes $p \leq x$ is a classic problem in algorithmic number theory. The prime number theorem describes the asymptotic growth of this function, and states that
+$$ \lim_{x \to \infty} \left. \pi(x) \middle/ \frac{x}{\ln x} \right. = 1. $$
+The theorem was independently conjectured by Legendre and Gauss, and proved by Hadamard and de la Vallée Poussin&amp;rsquo;s around 100 years later in 1896.</description>
     </item>
     
   </channel>
