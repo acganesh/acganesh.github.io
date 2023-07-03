@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>LLM Reading Group</title>
+    <link>https://llmreadinggroup.github.io/</link>
+    <description>Recent content on LLM Reading Group</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sun, 02 Jul 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://llmreadinggroup.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Week 3: Parameter Efficient Finetuning: LoRA, adapters, and friends</title>
+      <link>https://llmreadinggroup.github.io/posts/week3-peft/</link>
+      <pubDate>Sun, 02 Jul 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://llmreadinggroup.github.io/posts/week3-peft/</guid>
+      <description> Slides # Author: Josh Author: Selwin
+TODO(add pdf here)
+Author: Aneesh Parameter Efficient Finetuning # </description>
+    </item>
+    
+    <item>
+      <title>Week 2: Instruction Finetuning and DPO</title>
+      <link>https://llmreadinggroup.github.io/posts/week2-intruction-finetuning-dpo/</link>
+      <pubDate>Sun, 25 Jun 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://llmreadinggroup.github.io/posts/week2-intruction-finetuning-dpo/</guid>
+      <description> Slides # Author: Adi Instruction Finetuning and DPO # </description>
+    </item>
+    
+    <item>
+      <title>Week 1: Transformers</title>
+      <link>https://llmreadinggroup.github.io/posts/week1-transformers/</link>
+      <pubDate>Sun, 18 Jun 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://llmreadinggroup.github.io/posts/week1-transformers/</guid>
+      <description>Slides # Author: Yonatan Introduction to transformers # $$ \text{{Attention}}(Q, K, V) = \text{{softmax}}\left(\frac{{QK^\intercal}}{\sqrt{d_k}}\right)V $$</description>
+    </item>
+    
+  </channel>
+</rss>
