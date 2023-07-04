@@ -4,9 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="description"
-    content="The principle of maximum entropy # Introduction: what is entropy? # $$ \newcommand{\EE}{\mathbb{E}} \newcommand{\RR}{\mathbb{R}} \newcommand{\mbf}{\mathbf} \DeclareMathOperator{\argmax}{argmax} $$
-Intuitively, the notion of entropy defines a measure of &ldquo;disorder&rdquo; or &ldquo;expected surprise&rdquo; given a probability distribution. As described by Shannon in is 1948 article, the entropy can be defined as follows Shannon, Claude Elwood. &ldquo;A mathematical theory of communication.&rdquo; Bell system technical journal 27.3 (1948): 379-423. .
-Let $X$ be a discrete random variable on a space $\mathcal{X}$ with probability mass function $\mathbf{p}(x)$. ">
+    content="Introducing entropy and its applications. ">
 <link rel="canonical" href="https://acganesh.github.io/posts/2019-01-01-maximum-entropy/" />
 
 
@@ -55,95 +53,66 @@ Let $X$ be a discrete random variable on a space $\mathcal{X}$ with probability 
 
   
 
-  <section><h1 id="the-principle-of-maximum-entropy">
-The principle of maximum entropy
-<a href="#the-principle-of-maximum-entropy" class="heading-anchor">#</a>
-</h1>
-<h2 id="introduction-what-is-entropy">
+  <section><h2 id="introduction-what-is-entropy">
 Introduction: what is entropy?
 <a href="#introduction-what-is-entropy" class="heading-anchor">#</a>
 </h2>
-<p>$$
-\newcommand{\EE}{\mathbb{E}}
-\newcommand{\RR}{\mathbb{R}}
-\newcommand{\mbf}{\mathbf}
-\DeclareMathOperator{\argmax}{argmax}
-$$</p>
+<p><code>$$ \newcommand{\EE}{\mathbb{E}} \newcommand{\RR}{\mathbb{R}} \newcommand{\mbf}{\mathbf} \DeclareMathOperator{\argmax}{argmax} $$</code></p>
 <p>Intuitively, the notion of entropy defines a measure of &ldquo;disorder&rdquo; or
 &ldquo;expected surprise&rdquo; given a probability distribution. As described by
 Shannon in is 1948 article, the entropy can be defined as
 follows<label class="margin-toggle sidenote-number"></label><span class="sidenote">
 Shannon, Claude Elwood. &ldquo;A mathematical theory of communication.&rdquo; <em>Bell system technical journal</em> 27.3 (1948): 379-423.
 </span>.</p>
-<p>Let $X$ be a discrete random variable on a space $\mathcal{X}$ with
-probability mass function $\mathbf{p}(x)$. We define the discrete
+<p>Let <code>$X$</code> be a discrete random variable on a space <code>$\mathcal{X}$</code> with
+probability mass function <code>$\mathbf{p}(x)$</code>. We define the discrete
 (Shannon) entropy as follows, named after Boltzmann&rsquo;s H-theorem:
-$$\begin{aligned}
-H(X) = \mathbb{E}\left[ \log \frac{1}{\mathbf{p}(x)} \right] = \sum_{x \in \mathcal{X}} \mathbf{p}(x) \log \frac{1}{\mathbf{p}(x)}
-\end{aligned}$$</p>
+<code>$$\begin{aligned} H(X) = \mathbb{E}\left[ \log \frac{1}{\mathbf{p}(x)} \right] = \sum_{x \in \mathcal{X}} \mathbf{p}(x) \log \frac{1}{\mathbf{p}(x)} \end{aligned}$$</code></p>
 <p>The discrete entropy satisfies the following basic properties:</p>
 <ol>
-<li>$H(X) \geq 0$.</li>
-<li>$H(X) \leq \log |\mathcal{X}|$, with equality if and only if $X$ is
-distributed uniformly over $\mathcal{X}$.</li>
+<li><code>$H(X) \geq 0$</code>.</li>
+<li><code>$H(X) \leq \log |\mathcal{X}|$</code>, with equality if and only if <code>$X$</code> is
+distributed uniformly over <code>$\mathcal{X.}$</code></li>
 </ol>
 <p>Part (a) follows from the fact that
-$\log \frac{1}{\mathbf{p}(x)} \geq 0$ for any $x \in \mathcal{X}$. Hence
-the expectation is nonnegative and $H(X) \geq 0$.</p>
-<p>To show part (b), we will apply Jensen&rsquo;s inequality. First, note that $f(t) = \log (t)$ is concave.
-Applying Jensen&rsquo;s inequality, we obtain: $$\begin{aligned}
-\mathbb{E}\left[ \log \frac{1}{\mathbf{p}(x)} \right] &amp; \leq \log \mathbb{E}\left[ \frac{1}{\mathbf{p}(x)} \right] \
-&amp;= \log \sum_{x \in \mathcal{X}} \mathbf{p}(x) \cdot \frac{1}{\mathbf{p}(x)} \
-&amp;= \log |\mathcal{X}|.
-\end{aligned}$$</p>
+<code>$\log \frac{1}{\mathbf{p}(x)} \geq 0$</code> for any <code>$x \in \mathcal{X}$</code>. Hence
+the expectation is nonnegative and <code>$H(X) \geq 0$</code>.</p>
+<p>To show part (b), we will apply Jensen&rsquo;s inequality. First, note that <code>$f(t) = \log (t)$</code> is concave.
+Applying Jensen&rsquo;s inequality, we obtain:
+<code>$$\begin{aligned} \mathbb{E}\left[ \log \frac{1}{\mathbf{p}(x)} \right] &amp; \leq \log \mathbb{E}\left[ \frac{1}{\mathbf{p}(x)} \right] \\ &amp;= \log \sum_{x \in \mathcal{X}} \mathbf{p}(x) \cdot \frac{1}{\mathbf{p}(x)} \\ &amp;= \log |\mathcal{X}|. \end{aligned}$$</code></p>
 <p>A similar object to study is the so-called <em>relative entropy</em>,
-$D(\mathbf{p}|| \mathbf{q})$, which serves as a measure of distance
+<code>$D(\mathbf{p}|| \mathbf{q})$</code>, which serves as a measure of distance
 between two probability distributions. Importantly,
-$D(\mathbf{p}|| \mathbf{q}) \neq D(\mathbf{q}|| \mathbf{p})$ in general,
+<code>$D(\mathbf{p}|| \mathbf{q}) \neq D(\mathbf{q}|| \mathbf{p})$</code> in general,
 so the relative entropy is not a metric.</p>
-<p>Let $\mathbf{p}$ and $\mathbf{q}$ be probability distributions on a
-space $\mathcal{X}$. Then the relative entropy
-$D(\mathbf{p}|| \mathbf{q})$ is defined as $$\begin{aligned}
-D(\mathbf{p}|| \mathbf{q}) = \mathbb{E}<em>{x \sim \mathbf{p}(x)} \left[ \log \frac{\mathbf{p}(x)}{\mathbf{q}(x)} \right] = \sum</em>{x \in \mathcal{X}} \mathbf{p}(x) \log \frac{\mathbf{p}(x)}{\mathbf{q}(x)}.
-\end{aligned}$$
+<p>Let <code>$\mathbf{p}$</code> and <code>$\mathbf{q}$</code> be probability distributions on a
+space <code>$\mathcal{X}$</code>. Then the relative entropy
+<code>$D(\mathbf{p}|| \mathbf{q})$</code> is defined as <code>$$\begin{aligned} D(\mathbf{p}|| \mathbf{q}) = \mathbb{E}_{x \sim \mathbf{p}(x)} \left[ \log \frac{\mathbf{p}(x)}{\mathbf{q}(x)} \right] = \sum_{x \in \mathcal{X}} \mathbf{p}(x) \log \frac{\mathbf{p}(x)}{\mathbf{q}(x)}. \end{aligned}$$</code>
 <label class="margin-toggle sidenote-number"></label><span class="sidenote">
 This quantity is also known as the Kullback-Leibler divergence and has numerous applications in statistics and physics.
-</span>.</p>
-<p>We will use the following basic fact in subsequent proofs:\</p>
+</span></p>
+<p>We will use the following basic fact in subsequent proofs:</p>
 <p>The relative entropy is nonnegative. That is,
-$D(\mathbf{p}|| \mathbf{q}) \geq 0$ with equality if and only if
-$\mathbf{p}(x) = \mathbf{q}(x)$ for all $x \in \mathcal{X}$.</p>
-<p>Applying Jensen&rsquo;s inequality to the concave function $f(t) = \log(t)$,
-we obtain: $$\begin{aligned}
-D(\mathbf{p}|| \mathbf{q}) &amp;= \mathbb{E}<em>{x \sim \mathbf{p}(x)} \left[ \log \frac{\mathbf{p}(x)}{\mathbf{q}(x)} \right] \
-&amp;=  - \mathbb{E}</em>{x \sim \mathbf{p}(x)} \left[ \log \frac{\mathbf{q}(x)}{\mathbf{p}(x)} \right] \
-&amp;\geq - \log \mathbb{E}<em>{x \sim \mathbf{p}(x)} \left[ \frac{\mathbf{q}(x)}{\mathbf{p}(x)} \right] \
-&amp;= - \log \left( \sum</em>{x \in \mathcal{X}} \mathbf{q}(x) \right) \
-&amp;= \log 1 \
-&amp;= 0.
-\end{aligned}$$</p>
-<p>Since $f(t)$ is strictly concave, equality can be achieved in Jensen&rsquo;s
-inequality only when $\frac{\mathbf{q}(x)}{\mathbf{p}(x)}$ is constant.
-Since $\mathbf{p}$ and $\mathbf{q}$ are probability distributions, they
+<code>$D(\mathbf{p}|| \mathbf{q}) \geq 0$</code> with equality if and only if
+<code>$\mathbf{p}(x) = \mathbf{q}(x)$</code> for all <code>$x \in \mathcal{X}$</code>.</p>
+<p>Applying Jensen&rsquo;s inequality to the concave function <code>$f(t) = \log(t)$</code>,
+we obtain: <code>$$\begin{aligned} D(\mathbf{p}|| \mathbf{q}) &amp;= \mathbb{E}_{x \sim \mathbf{p}(x)} \left[ \log \frac{\mathbf{p}(x)}{\mathbf{q}(x)} \right] \\ &amp;=  - \mathbb{E}_{x \sim \mathbf{p}(x)} \left[ \log \frac{\mathbf{q}(x)}{\mathbf{p}(x)} \right] \\ &amp;\geq - \log \mathbb{E}_{x \sim \mathbf{p}(x)} \left[ \frac{\mathbf{q}(x)}{\mathbf{p}(x)} \right] \\ &amp;= - \log \left( \sum_{x \in \mathcal{X}} \mathbf{q}(x) \right) \\ &amp;= \log 1 \\ &amp;= 0. \end{aligned}$$</code></p>
+<p>Since <code>$f(t)$</code> is strictly concave, equality can be achieved in Jensen&rsquo;s
+inequality only when <code>$\frac{\mathbf{q}(x)}{\mathbf{p}(x)}$</code> is constant.
+Since <code>$\mathbf{p}$</code> and <code>$\mathbf{q}$</code> are probability distributions, they
 must in fact be equal.</p>
 <p>We can define a version of the entropy for continuous random variables
-$X$.\</p>
-<p>$$\begin{aligned}
-h(x) = \mathbb{E}\left[ \log \frac{1}{\mathbf{p}(X)} \right] = \int_{-\infty}^{\infty} \mathbf{p}(x) \log \frac{1}{\mathbf{p}(x)}.\end{aligned}$$</p>
+<code>$X$</code>.</p>
+<p><code>$$\begin{aligned} h(x) = \mathbb{E}\left[ \log \frac{1}{\mathbf{p}(X)} \right] = \int_{-\infty}^{\infty} \mathbf{p}(x) \log \frac{1}{\mathbf{p}(x)}.\end{aligned}$$</code></p>
 <p>While these objects look similar, in fact the discrete and continuous
 definitions of entropy are rather different. For instance, while
-$H(X) \geq 0$, in fact the differential entropy does not satisfy this
-property.\</p>
+<code>$H(X) \geq 0$</code>, in fact the differential entropy does not satisfy this
+property.</p>
 <p>The differential entropy of a Gaussian random variable
-$X \sim \mathcal{N}(0, \sigma^2)$ is $\log \sqrt{2 \pi e} \sigma$.\</p>
-<p>Recall that the density function $p(x)$ is given by
-$p(x) = \frac{1}{\sqrt{2 \pi } \sigma} \exp \left( - \frac{x^2}{2 \sigma^2} \right)$.
-Therefore $$\begin{aligned}
-h(X) &amp;= - \int_{-\infty}^{\infty} p(x) \log p(x) , dx \
-&amp;= \int_{-\infty}^{\infty} p(x) \log \sqrt{2 \pi} \sigma , dx + \int_{- \infty}^{\infty} p(x) \frac{x^2}{2 \sigma^2} , dx \
-&amp;= \log \sqrt{2 \pi} \sigma + \frac{\sigma^2}{2 \sigma^2} \
-&amp;= \log \sqrt{2 \pi e} \sigma.
-\end{aligned}$$</p>
+<code>$X \sim \mathcal{N}(0, \sigma^2)$</code> is <code>$\log \sqrt{2 \pi e} \sigma$</code>.</p>
+<p>Recall that the density function <code>$p(x)$</code> is given by
+<code>$p(x) = \frac{1}{\sqrt{2 \pi } \sigma} \exp \left( - \frac{x^2}{2 \sigma^2} \right)$</code>.
+Therefore <code>$$\begin{aligned} h(X) &amp;= - \int_{-\infty}^{\infty} p(x) \log p(x) \, dx \\ &amp;= \int_{-\infty}^{\infty} p(x) \log \sqrt{2 \pi} \sigma \, dx + \int_{- \infty}^{\infty} p(x) \frac{x^2}{2 \sigma^2} \, dx \\ &amp;= \log \sqrt{2 \pi} \sigma + \frac{\sigma^2}{2 \sigma^2} \\ &amp;= \log \sqrt{2 \pi e} \sigma. \end{aligned}$$</code></p>
 <h2 id="prior-probability-distributions">
 Prior probability distributions
 <a href="#prior-probability-distributions" class="heading-anchor">#</a>
@@ -171,70 +140,48 @@ Examples of maximum entropy
 <a href="#examples-of-maximum-entropy" class="heading-anchor">#</a>
 </h2>
 <p>We now present three simple examples of the maximum entropy principle.</p>
-<p>Suppose $\mathbf{p}$ is a discrete probability distribution on a finite
-set $\mathcal{X}$. Then $$\begin{aligned}
-H(\mathbf{p}) \leq \log |\mathcal{X}|,
-\end{aligned}$$ with equality if and only if $\mathbf{p}$ is uniform
-on $\mathcal{X}$.</p>
+<p>Suppose <code>$\mathbf{p}$</code> is a discrete probability distribution on a finite
+set <code>$\mathcal{X}$</code>. Then <code>$$\begin{aligned} H(\mathbf{p}) \leq \log |\mathcal{X}|, \end{aligned}$$</code> with equality if and only if <code>$\mathbf{p}$</code> is uniform
+on <code>$\mathcal{X}$</code>.</p>
 <p>This was proven in Section 1. Intuitively, this states that with no
 constraints on a discrete probability distribution, the maximum entropy
-prior is uniform on the event space $\mathcal{X}$.\</p>
-<p>Let $\mathbf{p}$ be a continuous probability distribution on
-$\mathbb{R}$ with variance $\sigma^2$. Then $$\begin{aligned}
-h(\mathbf{p}) \leq \log \sqrt{2 \pi e} \sigma.
-\end{aligned}$$ Equality holds if and only if $p$ is Gaussian with
-variance $\sigma^2$.\</p>
+prior is uniform on the event space <code>$\mathcal{X}$</code>.</p>
+<p>Let <code>$\mathbf{p}$</code> be a continuous probability distribution on
+<code>$\mathbb{R}$</code> with variance <code>$\sigma^2$</code>. Then <code>$$\begin{aligned} h(\mathbf{p}) \leq \log \sqrt{2 \pi e} \sigma. \end{aligned}$$</code> Equality holds if and only if <code>$p$</code> is Gaussian with
+variance <code>$\sigma^2$</code>.</p>
 <p>We have already seen that the differential entropy of a Gaussian random
-variable $G \sim \mathcal{N}(0, \sigma^2)$ is
-$h(G) = \log \sqrt{2 \pi e} \sigma$.</p>
-<p>Let $\mathbf{p}$ be a probability density on $\RR$ with variance
-$\sigma^2$ and mean $\mu$ (which exists by the definition of variance).
-Let $\mathbf{q}$ be Gaussian with mean $\mu$ and variance $\sigma^2$.</p>
-<p>Now, $$\begin{aligned}
-0 &amp; \leq D (\mathbf{q}|| \mathbf{p}) = \int_{- \infty}^{\infty} \mathbf{q}(x) \log \frac{\mathbf{q}(x)}{\mathbf{p}(x)} , dx \
-&amp; = - h(\mathbf{q}) - \int_{- \infty}^{\infty} \mathbf{q}(x) \log \mathbf{p}(x) , dx \
-&amp; = - h(\mathbf{q}) - \int_{-\infty}^{\infty} \mathbf{p}(x) \log \mathbf{p}(x) , dx \
-&amp;= -h(\mathbf{q}) + h(\mathbf{p}).
-\end{aligned}$$</p>
+variable <code>$G \sim \mathcal{N}(0, \sigma^2)$</code> is
+<code>$h(G) = \log \sqrt{2 \pi e} \sigma$</code>.</p>
+<p>Let <code>$\mathbf{p}$</code> be a probability density on <code>$\RR$</code> with variance
+<code>$\sigma^2$</code> and mean <code>$\mu$</code> (which exists by the definition of variance).
+Let <code>$\mathbf{q}$</code> be Gaussian with mean <code>$\mu$</code> and variance <code>$\sigma^2$</code>.</p>
+<p>Now, <code>$$\begin{aligned} 0 &amp; \leq D (\mathbf{q}|| \mathbf{p}) = \int_{- \infty}^{\infty} \mathbf{q}(x) \log \frac{\mathbf{q}(x)}{\mathbf{p}(x)} \, dx \\ &amp; = - h(\mathbf{q}) - \int_{- \infty}^{\infty} \mathbf{q}(x) \log \mathbf{p}(x) \, dx \\ &amp; = - h(\mathbf{q}) - \int_{-\infty}^{\infty} \mathbf{p}(x) \log \mathbf{p}(x) \, dx \\ &amp;= -h(\mathbf{q}) + h(\mathbf{p}). \end{aligned}$$</code></p>
 <p>The second to last inequality is the key step. This follows since
-$\mathbf{q}$ and $\mathbf{p}$ yield the same second moments for the
-terms encoded by $\log \mathbf{p}(x)$.</p>
-<p>Let $\mathbf{p}$ be a continuous probability density function on
-$(0, \infty)$ with mean $\mu$. Then $$\begin{aligned}
-h(p) \leq 1 + \log \mu,
-\end{aligned}$$ with equality if and only if $\mathbf{p}$ is
-exponential with mean $\mu$. That is,
-$p(x) = \frac{1}{\mu} \exp (- \frac{x}{\mu})$.</p>
-<p>This theorem has a natural interpretation in physics. Let $X$ be a random
+<code>$\mathbf{q}$</code> and <code>$\mathbf{p}$</code> yield the same second moments for the
+terms encoded by <code>$\log \mathbf{p}(x)$</code>.</p>
+<p>Let <code>$\mathbf{p}$</code> be a continuous probability density function on
+<code>$(0, \infty)$</code> with mean <code>$\mu$</code>. Then <code>$$\begin{aligned} h(p) \leq 1 + \log \mu, \end{aligned}$$</code> with equality if and only if <code>$\mathbf{p}$</code> is
+exponential with mean <code>$\mu$</code>. That is,
+<code>$p(x) = \frac{1}{\mu} \exp (- \frac{x}{\mu})$</code>.</p>
+<p>This theorem has a natural interpretation in physics. Let <code>$X$</code> be a random
 variable describing the height of molecules in the atmosphere. The
-average potential energy of the molecules is fixed (mean $\lambda$), and
+average potential energy of the molecules is fixed (mean <code>$\lambda$</code>), and
 the atmosphere tends to the distribution that has the maximum entropy.</p>
-<p>We will prove this result using Lagrange multipliers. Let $\mathbf{p}$
-be a probability distribution on $(0, \infty)$ with mean $\mu$. Define
-$$\begin{aligned}
-F(\mathbf{p}, \lambda_1, \lambda_2) &amp;= - \int_{0}^{\infty} \mathbf{p}(x) \log \mathbf{p}(x) , dx + \lambda_1 \left( \int_{0}^{\infty} \mathbf{p}(x) , dx - 1 \right) + \lambda_2 \left( \int_{0}^{\infty} x \mathbf{p}(x) , dx - \mu \right)  \
-&amp;= \int_{0}^{infty} \mathcal{L}(x, \mathbf{p}(x), \lambda_1, \lambda_2) , dx - \lambda_1 - \lambda_2 \mu,
-\end{aligned}$$ where
-$\mathcal{L}(x, \mathbf{p}, \lambda_1, \lambda_2) = - \mathbf{p}\log \mathbf{p}+ \lambda_1 \mathbf{p}+ \lambda_2 x \mathbf{p}$.
-Taking partials, $$\begin{aligned}
-\frac{\partial \mathcal{L}}{\partial \mathbf{p}} = - 1 - \log p + \lambda_1 + \lambda_2 x,
-\end{aligned}$$ and at a maximum entropy distribution we have
-$\frac{\partial \mathcal{L}}{\partial \mathbf{p}} = 0$, so that
-$$\begin{aligned}
-\mathbf{p}(x) = \exp \left( \lambda_1 - 1 + \lambda_2 x \right),
-\end{aligned}$$ for $x \geq 0$.</p>
-<p>Now, since $\int_{0}^{\infty} \mathbf{p}(x) , dx$ is finite, we must
-have $\lambda_2 &lt; 0$. This implies $$\begin{aligned}
-\int_{0}^{\infty} \mathbf{p}(x) &amp;= 1 \
-&amp;= e^{\lambda_1 - 1} \int_{0}^{\infty} e^{\lambda_2 x} , dx \
-&amp;= \frac{e^{\lambda_1 - 1}}{|\lambda_2|} \
-\end{aligned}$$ so that $e^{\lambda_1 - 1} = |\lambda_2|$.</p>
+<p>We will prove this result using Lagrange multipliers. Let <code>$\mathbf{p}$</code>
+be a probability distribution on <code>$(0, \infty)$</code> with mean <code>$\mu$</code>. Define
+<code>$$\begin{aligned} F(\mathbf{p}, \lambda_1, \lambda_2) &amp;= - \int_{0}^{\infty} \mathbf{p}(x) \log \mathbf{p}(x) \, dx + \lambda_1 \left( \int_{0}^{\infty} \mathbf{p}(x) \, dx - 1 \right) + \lambda_2 \left( \int_{0}^{\infty} x \mathbf{p}(x) \, dx - \mu \right)  \\ &amp;= \int_{0}^{infty} \mathcal{L}(x, \mathbf{p}(x), \lambda_1, \lambda_2) \, dx - \lambda_1 - \lambda_2 \mu, \end{aligned}$$</code> where
+<code>$\mathcal{L}(x, \mathbf{p}, \lambda_1, \lambda_2) = - \mathbf{p}\log \mathbf{p}+ \lambda_1 \mathbf{p}+ \lambda_2 x \mathbf{p}$</code>.
+Taking partials, <code>$$\begin{aligned} \frac{\partial \mathcal{L}}{\partial \mathbf{p}} = - 1 - \log p + \lambda_1 + \lambda_2 x, \end{aligned}$$</code> and at a maximum entropy distribution we have
+<code>$\frac{\partial \mathcal{L}}{\partial \mathbf{p}} = 0$</code>, so that
+<code>$$\begin{aligned} \mathbf{p}(x) = \exp \left( \lambda_1 - 1 + \lambda_2 x \right), \end{aligned}$$</code> for <code>$x \geq 0$</code>.</p>
+<p>Now, since <code>$\int_{0}^{\infty} \mathbf{p}(x) \, dx$</code> is finite, we must
+have <code>$\lambda_2 &lt; 0$</code>. This implies <code>$$\begin{aligned} \int_{0}^{\infty} \mathbf{p}(x) &amp;= 1 \\ &amp;= e^{\lambda_1 - 1} \int_{0}^{\infty} e^{\lambda_2 x} \, dx \\ &amp;= \frac{e^{\lambda_1 - 1}}{|\lambda_2|} \\ \end{aligned}$$</code> so that <code>$e^{\lambda_1 - 1} = |\lambda_2|$</code>.</p>
 <p>Now, since
-$\int_{0}^{\infty} x e^{\lambda_2 x} , dx = \frac{1}{\lambda_2^2}$, the
-condition $\int_{0}^{\infty} x , \mathbf{p}(x) , dx = \mu$, so that
-$\lambda_2 = - \frac{1}{\mu}$.</p>
+<code>$\int_{0}^{\infty} x e^{\lambda_2 x} \, dx = \frac{1}{\lambda_2^2}$</code>, the
+condition <code>$\int_{0}^{\infty} x \, \mathbf{p}(x) \, dx = \mu$</code>, so that
+<code>$\lambda_2 = - \frac{1}{\mu}$</code>.</p>
 <p>Putting this together, we conclude
-$\mathbf{p}(x) = \frac{1}{\mu} e^{-x / \mu}$, which is indeed the
+<code>$\mathbf{p}(x) = \frac{1}{\mu} e^{-x / \mu}$</code>, which is indeed the
 exponential distribution.</p>
 <h2 id="generalizations">
 Generalizations
@@ -242,121 +189,94 @@ Generalizations
 </h2>
 <p>Is it possible to obtain a maximum entropy solution under more general
 constraints?</p>
-<p><em>Problem statement.</em> Maximize the entropy $h(f)$ over all probability
-densities $f$ satisfying the moment constraints below, where $S$ is the
-support set. $$\begin{aligned}
-\int_{S} f(x) r_i(x) dx = \alpha_i; \text{ for } 1 \leq i \leq m. \qquad *\end{aligned}$$</p>
-<p>In particular, $f$ is a density on support set $S$ meeting moment
-constraints $\alpha_1, \alpha_2, \dots, \alpha_m$.\</p>
+<p><em>Problem statement.</em> Maximize the entropy <code>$h(f)$</code> over all probability
+densities <code>$f$</code> satisfying the moment constraints below, where <code>$S$</code> is the
+support set. <code>$$\begin{aligned} \int_{S} f(x) r_i(x) dx = \alpha_i; \text{ for } 1 \leq i \leq m. \qquad *\end{aligned}$$</code></p>
+<p>In particular, <code>$f$</code> is a density on support set <code>$S$</code> meeting moment
+constraints <code>$\alpha_1, \alpha_2, \dots, \alpha_m$</code>.</p>
 <p>Let
-$f^{<em>}(x) = f_{\lambda}(x) = \exp (\lambda_0 + \sum_{i=1}^{m} \lambda_i r_i(x))$,
-$x \in S$, where $\lambda_0, \dots, \lambda_m$ are chosen so that
-$f^{</em>}$ satisfies the constraints in (*). Then $f^{*}$ uniquely
-maximizes $h(f)$ over all probability densities $f$ that satisfy (*).</p>
+<code>$f^{*}(x) = f_{\lambda}(x) = \exp (\lambda_0 + \sum_{i=1}^{m} \lambda_i r_i(x))$</code>,
+<code>$x \in S$</code>, where <code>$\lambda_0, \dots, \lambda_m$</code> are chosen so that
+<code>$f^{*}$</code> satisfies the constraints in (*). Then <code>$f^{*}$</code> uniquely
+maximizes <code>$h(f)$</code> over all probability densities <code>$f$</code> that satisfy (*).</p>
 <p>(Sketch).</p>
-<p>We first sketch the argument for why the $\lambda_i$ can be chosen. The
-constant $\lambda_0$ and the $n$ Lagrange multipliers
-$\lambda_1, \dots, \lambda_n$ solve the constrained optimization problem
-below: $$\begin{aligned}
-\max_{\lambda_i} \left{ \sum_{i=0}^{n} \lambda_i \alpha_i - \int_{S} \exp \left( \sum_{i=0}^{n} \lambda_i f_i(x) \right) \right}.
-\end{aligned}$$</p>
+<p>We first sketch the argument for why the <code>$\lambda_i$</code> can be chosen. The
+constant <code>$\lambda_0$</code> and the <code>$n$</code> Lagrange multipliers
+<code>$\lambda_1, \dots, \lambda_n$</code> solve the constrained optimization problem
+below: <code>$$\begin{aligned} \max_{\lambda_i} \left\{ \sum_{i=0}^{n} \lambda_i \alpha_i - \int_{S} \exp \left( \sum_{i=0}^{n} \lambda_i f_i(x) \right) \right\}. \end{aligned}$$</code></p>
 <p>Under the Karush-Kuhn-Tucker (KKT) conditions, we can show that the
 optimization problem above has a unique solution, since the objective
-function is concave in the $\lambda_i$. The full argument is out of the
+function is concave in the <code>$\lambda_i$</code>. The full argument is out of the
 scope of this article, but we refer the interested reader to
 [@boyd2004convex].</p>
-<p>Now, let $g$ satisfy the constraints in (*). Then $$\begin{aligned}
-h(g) &amp;= - \int_{S} g \ln g \
-&amp;= - \int_{S} g \ln \frac{g}{f^{<em>}} f^{</em>} \
-&amp;= - \text{D} (g || f^{<em>}) - \int_{S} g \ln f^{</em>} \
-&amp;\leq - \int_{S} g \ln f^{<em>} \
-&amp;= - \int_{S} g \left( \lambda_0 + \sum_{i} \lambda_i r_i \right) \
-&amp;= - \int_{S} f^{</em>} \left( \lambda_0 + \sum_{i} \lambda_i r_i \right) \
-&amp;= - \int_{S} f^{<em>} \ln f^{</em>} \
-&amp;= h(f^{*})
-\end{aligned}$$</p>
-<p>Note that equality holds in (a) if and only if $g(x) = f^{*}(x)$ for all
-$x$, which demonstrates uniqueness.</p>
-<p>Suppose that $n$ dice are rolled and the total number of spots is
-$n \alpha$. What proportion of the dice are showing face $i$ where
-$i \in \left{ 1, 2, \dots, 6 \right}$?</p>
-<p>We will count the number of ways that $n$ dice can fall so that $n_i$
-dice show face $i$; this is just the multinomial coefficient
-$\binom{n}{n_1, n_2, \dots, n_6}$.</p>
+<p>Now, let <code>$g$</code> satisfy the constraints in (*). Then <code>$$\begin{aligned} h(g) &amp;= - \int_{S} g \ln g \\ &amp;= - \int_{S} g \ln \frac{g}{f^{*}} f^{*} \\ &amp;= - \text{D} (g || f^{*}) - \int_{S} g \ln f^{*} \\ &amp;\leq - \int_{S} g \ln f^{*} \\ &amp;= - \int_{S} g \left( \lambda_0 + \sum_{i} \lambda_i r_i \right) \\ &amp;= - \int_{S} f^{*} \left( \lambda_0 + \sum_{i} \lambda_i r_i \right) \\ &amp;= - \int_{S} f^{*} \ln f^{*} \\ &amp;= h(f^{*}) \end{aligned}$$</code></p>
+<p>Note that equality holds in (a) if and only if <code>$g(x) = f^{*}(x)$</code> for all
+<code>$x$</code>, which demonstrates uniqueness.</p>
+<p>Suppose that <code>$n$</code> dice are rolled and the total number of spots is
+<code>$n \alpha$</code>. What proportion of the dice are showing face <code>$i$</code> where
+<code>$i \in \left\{ 1, 2, \dots, 6 \right\}$</code>?</p>
+<p>We will count the number of ways that <code>$n$</code> dice can fall so that <code>$n_i$</code>
+dice show face <code>$i$</code>; this is just the multinomial coefficient
+<code>$\binom{n}{n_1, n_2, \dots, n_6}$</code>.</p>
 <p>To find the most probable state, we will maximize the multinomial
-coefficient $\binom{n}{n_1, n_2, \dots, n_6}$ under the constraint
-$\sum_{i=1}^{6} i n_i = n \alpha$.</p>
+coefficient <code>$\binom{n}{n_1, n_2, \dots, n_6}$</code> under the constraint
+<code>$\sum_{i=1}^{6} i n_i = n \alpha$</code>.</p>
 <p>A form of Stirling&rsquo;s approximation states
-$n! \approx \left ( \frac{n}{e} \right )^{n}$. In particular, this
+<code>$n! \approx \left ( \frac{n}{e} \right )^{n}$</code>. In particular, this
 implies</p>
-<p>$$\begin{aligned}
-\binom{n}{n_1, n_2, \dots, n_6} &amp; \approx \frac{\left ( \frac{n}{e} \right )^n}{\prod_{i=1}^{6} \left( \frac{n_i}{e} \right)^n} \
-&amp;= \prod_{i=1}^{6} \left( \frac{n}{n_i} \right)^{n_i} \
-&amp; = \exp \left( n H (\frac{n_1}{n}, \frac{n_2}{n}, \cdots, \frac{n_6}{n}) \right).\end{aligned}$$</p>
-<p>This shows that maximizing $\binom{n}{n_1, n_2, \dots, n_6}$ under the
+<p><code>$$\begin{aligned} \binom{n}{n_1, n_2, \dots, n_6} &amp; \approx \frac{\left ( \frac{n}{e} \right )^n}{\prod_{i=1}^{6} \left( \frac{n_i}{e} \right)^n} \\ &amp;= \prod_{i=1}^{6} \left( \frac{n}{n_i} \right)^{n_i} \\ &amp; = \exp \left( n H (\frac{n_1}{n}, \frac{n_2}{n}, \cdots, \frac{n_6}{n}) \right).\end{aligned}$$</code></p>
+<p>This shows that maximizing <code>$\binom{n}{n_1, n_2, \dots, n_6}$</code> under the
 given constraints is nearly equivalent to maximizing
-$H(p_1, \dots, p_6)$ under the constraint $\sum_{i} i p_i = \alpha$.
+<code>$H(p_1, \dots, p_6)$</code> under the constraint <code>$\sum_{i} i p_i = \alpha$</code>.
 Applying the theorem, the maximum entropy distribution is</p>
-<p>$$\begin{aligned}
-p_i^{<em>} = \frac{e^{\lambda_i}}{\sum_{i=1}^{6} e^{\lambda_i}},\end{aligned}$$
-where $\lambda$ is chosen so that $\sum_{i} i p_i^{</em>} = \alpha$.
+<p><code>$$\begin{aligned} p_i^{*} = \frac{e^{\lambda_i}}{\sum_{i=1}^{6} e^{\lambda_i}},\end{aligned}$$</code>
+where <code>$\lambda$</code> is chosen so that <code>$\sum_{i} i p_i^{*} = \alpha$</code>.
 Returning to the original question, the most probable state is
-$(np_1^{<em>}, np_2^{</em>}, \dots, n p_6^{<em>})$ and we expect
-$n_i^{</em>} = n p_i^{*}$ dice showing face $i$.</p>
+<code>$(np_1^{*}, np_2^{*}, \dots, n p_6^{*})$</code> and we expect
+<code>$n_i^{*} = n p_i^{*}$</code> dice showing face <code>$i$</code>.</p>
 <h2 id="the-wallis-experiment">
 The Wallis experiment
 <a href="#the-wallis-experiment" class="heading-anchor">#</a>
 </h2>
 <p>This experiment is due to Graham Wallis who mentioned it to E.T. Jaynes
-in 1962</label><span class="sidenote">
+in 1962<span class="sidenote">
 Jaynes, Edwin T. <em>Probability theory: The logic of science.</em> Cambridge university press, 2003.
 </span>.</p>
 <p>Suppose Alice is a researcher trying to understand some data. She is
 studying a phenomenon and wants to estimate a prior probability
-distribution among $m$ possible outcomes. She has some prior information
+distribution among <code>$m$</code> possible outcomes. She has some prior information
 about what the phenomenon looks like.</p>
 <p>To estimate the distribution, she runs the following experiment:</p>
 <ul>
-<li>Randomly distribute $N$ quanta of probability, each worth
-$\frac{1}{N}$, among the $m$ possibilities.</li>
+<li>Randomly distribute <code>$N$</code> quanta of probability, each worth
+<code>$\frac{1}{N}$</code>, among the <code>$m$</code> possibilities.</li>
 <li>Check if the probability assignment is consistent with her prior
 information. If inconsistent: reject and try again.</li>
 <li>If the assignment agrees with her prior information, her estimated
-prior distribution $\mathbf{p}$ is given by $$\begin{aligned}
-\mathbf{p}_i = \frac{n_i}{N}; \qquad i \in \left{ 1, 2, \dots, m \right}
-\end{aligned}$$ where $\mathbf{p}_i$ is the probability of the
-$i$-th outcome, and $n_i$ is the number of quanta that were assigned
-to the $i$-th proposition.</li>
+prior distribution <code>$\mathbf{p}$</code> is given by <code>$$\begin{aligned} \mathbf{p}_i = \frac{n_i}{N}; \qquad i \in \left\{ 1, 2, \dots, m \right\} \end{aligned}$$</code> where <code>$\mathbf{p}_i$</code> is the probability of the
+<code>$i$</code>-th outcome, and <code>$n_i$</code> is the number of quanta that were assigned
+to the <code>$i$</code>-th proposition.</li>
 </ul>
 <p>As we&rsquo;ll see, this experiment has deep ties to the principle of maximum
 entropy. We now ask: what is the most probable prior distribution Alice
 will arrive at?</p>
-<p>The probability of any particular probability distribution $\mathbf{p}$
-is given by a multinomial coefficient. $$\begin{aligned}
-\Pr(\mathbf{p}) = \frac{N!}{n_1! n_2 ! \cdots n_m!} m^{-N},\end{aligned}$$</p>
-<p>To find the most likely distribution $\mathbf{p}$, it suffices to
-maximize the term $A = \frac{N!}{n_1! n_2! \cdots n_m!}$, or a
-monotonically increasing function of $A$, e.g. $\frac{1}{N} \log A$.
-$$\begin{aligned}
-\argmax_{\mathbf{p}} A  &amp;= \argmax_{\mathbf{p}} \frac{1}{N} \log A \
-&amp;= \argmax_{\mathbf{p}} \frac{1}{N} \log \frac{N!}{n_1! n_2! \cdots n_m!} \
-&amp;= \argmax_{\mathbf{p}} \frac{1}{N} \log \frac{N!}{(N \mathbf{p}_1)! (N \mathbf{p}<em>2)! \cdots (N \mathbf{p}<em>m)!} \
-&amp;= \argmax</em>{\mathbf{p}} \frac{1}{N} \left( \log N! - \sum</em>{i=1}^{m} \log (N \mathbf{p}_i)! \right)\end{aligned}$$</p>
+<p>The probability of any particular probability distribution <code>$\mathbf{p}$</code>
+is given by a multinomial coefficient. <code>$$\begin{aligned} \Pr(\mathbf{p}) = \frac{N!}{n_1! n_2 ! \cdots n_m!} m^{-N},\end{aligned}$$</code></p>
+<p>To find the most likely distribution <code>$\mathbf{p}$</code>, it suffices to
+maximize the term <code>$A = \frac{N!}{n_1! n_2! \cdots n_m!}$</code>, or a
+monotonically increasing function of <code>$A$</code>, e.g. <code>$\frac{1}{N} \log A$</code>.
+<code>$$\begin{aligned} \argmax_{\mathbf{p}} A  &amp;= \argmax_{\mathbf{p}} \frac{1}{N} \log A \\ &amp;= \argmax_{\mathbf{p}} \frac{1}{N} \log \frac{N!}{n_1! n_2! \cdots n_m!} \\ &amp;= \argmax_{\mathbf{p}} \frac{1}{N} \log \frac{N!}{(N \mathbf{p}_1)! (N \mathbf{p}_2)! \cdots (N \mathbf{p}_m)!} \\ &amp;= \argmax_{\mathbf{p}} \frac{1}{N} \left( \log N! - \sum_{i=1}^{m} \log (N \mathbf{p}_i)! \right)\end{aligned}$$</code></p>
 <p>What is the limit of this quantity as the number of trials
-$N \to \infty$? Applying Stirling&rsquo;s approximation: $$\begin{aligned}
-\argmax_{\mathbf{p}} \lim_{N \to \infty} \left ( \frac{1}{N} \log A \right ) &amp;= \argmax_{\mathbf{p}} \frac{1}{N} \left( N \log N - \sum_{i=1}^{m} N p_i \log (N p_i) \right) \
-&amp;= \argmax_{\mathbf{p}} \left ( \log N - \sum_{i=1}^{m} {p_i} \log (N p_i) \right ) \
-&amp; = \argmax_{\mathbf{p}} \left ( - \sum_{i=1}^{m} p_i \log p_i \right ) \
-&amp; = \argmax_{\mathbf{p}} H(\mathbf{p}).\end{aligned}$$</p>
+<code>$N \to \infty$</code>? Applying Stirling&rsquo;s approximation: <code>$$\begin{aligned} \argmax_{\mathbf{p}} \lim_{N \to \infty} \left ( \frac{1}{N} \log A \right ) &amp;= \argmax_{\mathbf{p}} \frac{1}{N} \left( N \log N - \sum_{i=1}^{m} N p_i \log (N p_i) \right) \\ &amp;= \argmax_{\mathbf{p}} \left ( \log N - \sum_{i=1}^{m} {p_i} \log (N p_i) \right ) \\ &amp; = \argmax_{\mathbf{p}} \left ( - \sum_{i=1}^{m} p_i \log p_i \right ) \\ &amp; = \argmax_{\mathbf{p}} H(\mathbf{p}).\end{aligned}$$</code></p>
 <p>In conclusion, Alice&rsquo;s experiment will most likely converge to the
-maximum entropy distribution as $N \to \infty$.</p>
+maximum entropy distribution as <code>$N \to \infty$</code>.</p>
 </section>
   <section><footer class="page-footer">
 <hr />
 
 <div class="previous-post" style="display:inline-block;">
   
-  <a class="link-reverse" href="https://acganesh.github.io/posts/2016-12-23-prime-counting/?ref=footer">« Efficient Prime Counting with the Meissel-Lehmer...</a>
+  <a class="link-reverse" href="https://acganesh.github.io/posts/2016-12-23-prime-counting/?ref=footer">« The Meissel-Lehmer algorithm</a>
   
 </div>
 
@@ -424,19 +344,19 @@ maximum entropy distribution as $N \to \infty$.</p>
   <script>(function(){var e,t,n,s=document.getElementsByTagName("code");for(n=0;n<s.length;){if(t=s[n],t.parentNode.tagName!=="PRE"&&t.childElementCount===0&&!t.classList.contains("nolatex")&&(e=t.textContent,/^\$[^$]/.test(e)&&/[^$]\$$/.test(e)&&(e=e.replace(/^\$/,"\\(").replace(/\$$/,"\\)"),t.textContent=e),/^\\\((.|\s)+\\\)$/.test(e)||/^\\\[(.|\s)+\\\]$/.test(e)||/^\$(.|\s)+\$$/.test(e)||/^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(e))){t.outerHTML=t.innerHTML;continue}n++}})()</script>
 
 
-<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css" crossorigin="anonymous">
-<script defer src="//cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.js" crossorigin="anonymous"></script>
-<script defer src="//cdn.jsdelivr.net/npm/katex@0.16.4/dist/contrib/auto-render.min.js" crossorigin="anonymous"></script>
+
+
+
+
+
+<script type="text/javascript" async
+	  src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+
 
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         renderMathInElement(document.body, {
-            
-            
-            
-            
-            
-            
             trust: (context) => ['\\htmlId', '\\href'].includes(context.command),
             macros: {
               "\\eqref": "\\href{###1}{(\\text{#1})}",

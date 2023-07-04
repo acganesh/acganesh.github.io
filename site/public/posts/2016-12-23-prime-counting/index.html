@@ -1,12 +1,10 @@
 <!DOCTYPE html>
 <html lang="en-us"><head>
-<title>Efficient Prime Counting with the Meissel-Lehmer Algorithm - Adi Ganesh</title>
+<title>The Meissel-Lehmer algorithm - Adi Ganesh</title>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="description"
-    content="Introduction # Computing $\pi(x)$, the number of primes $p \leq x$ is a classic problem in algorithmic number theory. The prime number theorem describes the asymptotic growth of this function, and states that
-$$ \lim_{x \to \infty} \left. \pi(x) \middle/ \frac{x}{\ln x} \right. = 1. $$
-The theorem was independently conjectured by Legendre and Gauss, and proved by Hadamard and de la Vallée Poussin&rsquo;s around 100 years later in 1896. ">
+    content="Deriving an algorithm to efficiently compute `\pi(x)`. ">
 <link rel="canonical" href="https://acganesh.github.io/posts/2016-12-23-prime-counting/" />
 
 
@@ -51,7 +49,7 @@ The theorem was independently conjectured by Legendre and Gauss, and proved by H
 
 <article id="main">
   <section>
-<h1 class="content-title">Efficient Prime Counting with the Meissel-Lehmer Algorithm</h1></section>
+<h1 class="content-title">The Meissel-Lehmer algorithm</h1></section>
 
   
 
@@ -70,21 +68,21 @@ Introduction
 Algorithm Overview
 <a href="#algorithm-overview" class="heading-anchor">#</a>
 </h2>
-<p>In the 1870s, the German astronomer Ernst Meissel discovered a combinatorial method to compute $\pi(x)$, which was extended and simplified by Derrick H. Lehmer in 1959<label class="margin-toggle sidenote-number"></label><span class="sidenote">
+<p>In the 1870s, the German astronomer Ernst Meissel discovered a combinatorial method to compute <code>$\pi(x)$</code>, which was extended and simplified by Derrick H. Lehmer in 1959<label class="margin-toggle sidenote-number"></label><span class="sidenote">
 D. H. Lehmer, <a href="http://projecteuclid.org/euclid.ijm/1255455259">“On the exact number of primes less than a given limit”</a>, <em>Illinois Journal of Mathematics</em>, vol. 3, pp. 381–388, 1959.
 </span>.</p>
-<p>The Meissel-Lehmer algorithm allows us to compute <code>$\pi(x)$</code> in $O\left (\frac{x}{(\ln x)^4} \right )$ time using $O\left (\frac{x^{1/3}}{\ln x} \right )$ space.  Let $p_1, p_2, \dots$ denote the prime numbers.  The algorithm allows us to compute $\pi(x)$ as follows:</p>
-<p>$$ \pi(x) = \left \lfloor x \right \rfloor - \sum_{i=1}^{a} \left \lfloor \frac{x}{p_i} \right \rfloor + \sum_{1 \leq i \leq j \leq a} \left \lfloor \frac{x}{p_i p_j} \right \rfloor - \cdots + $$</p>
-<p>$$ \frac{(b+a-2)(b-a+1)}{2} - \sum_{a &lt; i \leq b} \pi \left ( \frac{x}{p_i} \right ) - \sum_{i=a+1}^c \sum_{j=1}^{b_i} \left ( \pi \left ( \frac{x}{p_i p_j} \right ) - (j-1) \right ),$$</p>
+<p>The Meissel-Lehmer algorithm allows us to compute <code>$\pi(x)$</code> in <code>$O\left (\frac{x}{(\ln x)^4} \right )$</code> time using <code>$O\left (\frac{x^{1/3}}{\ln x} \right )$</code> space.  Let <code>$p_1, p_2, \dots$</code> denote the prime numbers.  The algorithm allows us to compute <code>$\pi(x)$</code> as follows:</p>
+<p><code>$$ \pi(x) = \left \lfloor x \right \rfloor - \sum_{i=1}^{a} \left \lfloor \frac{x}{p_i} \right \rfloor + \sum_{1 \leq i \leq j \leq a} \left \lfloor \frac{x}{p_i p_j} \right \rfloor - \cdots + $$</code></p>
+<p><code>$$ \frac{(b+a-2)(b-a+1)}{2} - \sum_{a &lt; i \leq b} \pi \left ( \frac{x}{p_i} \right ) - \sum_{i=a+1}^c \sum_{j=1}^{b_i} \left ( \pi \left ( \frac{x}{p_i p_j} \right ) - (j-1) \right ),$$</code></p>
 <p>where</p>
-<p>$$ a = \pi(x^{1/4}); \qquad b = \pi(x^{1/2}) $$</p>
-<p>$$ b_i = \pi(\sqrt{x/p_i}); \qquad c = \pi(x^{1/3}) $$</p>
-<p>Before diving into the mathematics, I will first discuss other simpler approaches to compute $\pi(x)$, due to Eratosthenes and Legendre.</p>
+<p><code>$$ a = \pi(x^{1/4}); \qquad b = \pi(x^{1/2}) $$</code></p>
+<p><code>$$ b_i = \pi(\sqrt{x/p_i}); \qquad c = \pi(x^{1/3}) $$</code></p>
+<p>Before diving into the mathematics, I will first discuss other simpler approaches to compute <code>$\pi(x)$</code>, due to Eratosthenes and Legendre.</p>
 <h2 id="sieve-of-eratosthenes----a-naive-algorithm">
 Sieve of Eratosthenes &ndash; A Naive Algorithm
 <a href="#sieve-of-eratosthenes----a-naive-algorithm" class="heading-anchor">#</a>
 </h2>
-<p>The simplest way to go about computing $\pi(x)$ is to just generate the primes and count them.  A well-known and ancient algorithm for doing so is the sieve due to the Greek mathematician Eratosthenes.  The algorithm works by filtering out multiples of each prime, which must be composite.  This algorithm has a time complexity of $O (x \log \log x)$ and generally requires $O(x)$ space.</p>
+<p>The simplest way to go about computing <code>$\pi(x)$</code> is to just generate the primes and count them.  A well-known and ancient algorithm for doing so is the sieve due to the Greek mathematician Eratosthenes.  The algorithm works by filtering out multiples of each prime, which must be composite.  This algorithm has a time complexity of <code>$O (x \log \log x)$</code> and generally requires <code>$O(x)$</code> space.</p>
 <p>Here is a basic implementation in Python:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">sieve</span>(n):
 </span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;&#34;&#34;
@@ -108,69 +106,50 @@ Sieve of Eratosthenes &ndash; A Naive Algorithm
 Legendre&rsquo;s Formula
 <a href="#legendres-formula" class="heading-anchor">#</a>
 </h2>
-<p>Legendre&rsquo;s formula to compute $\pi(x)$ is as follows:</p>
-<p>$$ \pi(x) + 1 = \pi(\sqrt{x}) + \lfloor x \rfloor - \sum_{p_i \leq \sqrt{x}} \left \lfloor \frac{x}{p_i} \right \rfloor + \sum_{p_i &lt; p_j \leq \sqrt{x}} \left \lfloor \frac{x}{p_i p_j} \right \rfloor - \sum_{p_i &lt; p_j &lt; p_k \leq \sqrt{x}} \left \lfloor \frac{x}{p_i p_j p_k} \right \rfloor + \dots.$$</p>
-<p>It is an improvement over sieving, as it does not require the calculation of all of the primes $\leq x$.  Still, it is not very computationally efficient, as using it involves the calculation of approximately $\frac{6x(1-\log 2)}{\pi^2}$ terms <label class="margin-toggle sidenote-number"></label><span class="sidenote">
-Lagarias, J. C., V. S. Miller, and A. M. Odlyzko. <a href="http://www.ams.org/journals/mcom/1985-44-170/S0025-5718-1985-0777285-5/S0025-5718-1985-0777285-5.pdf">&ldquo;Computing $\pi(x)$: The Meissel-Lehmer Method.&rdquo;</a> <em>Mathematics of Computation.</em> 44.170 (1985): 537. Web.
+<p>Legendre&rsquo;s formula to compute <code>$\pi(x)$</code> is as follows:</p>
+<p><code>$$ \pi(x) + 1 = \pi(\sqrt{x}) + \lfloor x \rfloor - \sum_{p_i \leq \sqrt{x}} \left \lfloor \frac{x}{p_i} \right \rfloor + \sum_{p_i &lt; p_j \leq \sqrt{x}} \left \lfloor \frac{x}{p_i p_j} \right \rfloor - \sum_{p_i &lt; p_j &lt; p_k \leq \sqrt{x}} \left \lfloor \frac{x}{p_i p_j p_k} \right \rfloor + \dots.$$</code></p>
+<p>It is an improvement over sieving, as it does not require the calculation of all of the primes <code>$\leq x$</code>.  Still, it is not very computationally efficient, as using it involves the calculation of approximately <code>$\frac{6x(1-\log 2)}{\pi^2}$</code> terms <label class="margin-toggle sidenote-number"></label><span class="sidenote">
+Lagarias, J. C., V. S. Miller, and A. M. Odlyzko. <a href="http://www.ams.org/journals/mcom/1985-44-170/S0025-5718-1985-0777285-5/S0025-5718-1985-0777285-5.pdf">&ldquo;Computing <code>$\pi(x)$</code>: The Meissel-Lehmer Method.&rdquo;</a> <em>Mathematics of Computation.</em> 44.170 (1985): 537. Web.
 </span>.  It is nevertheless useful to examine, as it is similar to the Meissel-Lehmer algorithm we will discuss next.</p>
-<p>This formula is a direct consequence of the <a href="https://en.wikipedia.org/wiki/Inclusion%E2%80%93exclusion_principle">inclusion-exclusion principle</a>.  It uses the observation that the number of primes in $[1, x]$ plus 1 (the quantity on the left of the equation) is equal to the number of integers minus the number of composite numbers in the interval.</p>
-<p>Let&rsquo;s take a closer look.  Over the interval $[1, x]$, the quantity $\left \lfloor \frac{x}{p} \right \rfloor$ counts the integers divisible by $p.$  Noting that every composite number in the interval must have some prime factor $\leq \sqrt{x}$, we start by subtracting $\sum_{p_i \leq \sqrt{x}} \left \lfloor \frac{x}{p_i} \right \rfloor$ multipes of primes $\leq \sqrt{x}$ in the interval.  But this will subtract the multiples $1 \cdot p_i$, which are actually prime, so we must compensate by adding the term $\pi(\sqrt{x})$.</p>
-<p>To account for the rest of the terms, observe that some of the composite numbers are divisible by two primes $\leq \sqrt{x}$, call them $p_i$ and $p_j$.  These numbers will be double counted as multiples of both $p_i$ and $p_j$.  Hence, we must adjust the total by adding the number of integers of this type, which is $\sum \left \lfloor \frac{x}{p_i p_j} \right \rfloor$.  But adding this term will now remove the count of integers that are divisible by three different primes, which explains the next term.  Continuing this reasoning, Legendre&rsquo;s result follows.</p>
+<p>This formula is a direct consequence of the <a href="https://en.wikipedia.org/wiki/Inclusion%E2%80%93exclusion_principle">inclusion-exclusion principle</a>.  It uses the observation that the number of primes in <code>$[1, x]$</code> plus 1 (the quantity on the left of the equation) is equal to the number of integers minus the number of composite numbers in the interval.</p>
+<p>Let&rsquo;s take a closer look.  Over the interval <code>$[1, x]$</code>, the quantity <code>$\left \lfloor \frac{x}{p} \right \rfloor$</code> counts the integers divisible by <code>$p.$</code>  Noting that every composite number in the interval must have some prime factor <code>$\leq \sqrt{x}$</code>, we start by subtracting <code>$\sum_{p_i \leq \sqrt{x}} \left \lfloor \frac{x}{p_i} \right \rfloor$</code> multipes of primes <code>$\leq \sqrt{x}$</code> in the interval.  But this will subtract the multiples <code>$1 \cdot p_i$</code>, which are actually prime, so we must compensate by adding the term <code>$\pi(\sqrt{x})$</code>.</p>
+<p>To account for the rest of the terms, observe that some of the composite numbers are divisible by two primes <code>$\leq \sqrt{x}$</code>, call them <code>$p_i$</code> and <code>$p_j$</code>.  These numbers will be double counted as multiples of both <code>$p_i$</code> and <code>$p_j$</code>.  Hence, we must adjust the total by adding the number of integers of this type, which is <code>$\sum \left \lfloor \frac{x}{p_i p_j} \right \rfloor$</code>.  But adding this term will now remove the count of integers that are divisible by three different primes, which explains the next term.  Continuing this reasoning, Legendre&rsquo;s result follows.</p>
 <h2 id="meissel-lehmer-algorithm">
 Meissel-Lehmer Algorithm
 <a href="#meissel-lehmer-algorithm" class="heading-anchor">#</a>
 </h2>
-<p>We will now turn to the main subject of the article, the Meissel-Lehmer algorithm.  For convenience, we will first introduce some notation.  Let $\phi(x, a)$ denote the <em>partial sieve function</em>, defined as the number of integers $\leq x$, with no prime factor less than or equal to $p_a$.  In set notation, we can expression this as</p>
-<p>$$
-\phi(x, a) =  \left \vert{{ n \leq x: p \mid n \Rightarrow p &gt; p_a }} \right \vert.
-$$</p>
-<p>The name comes from the fact that $\phi(x, a)$ counts the numbers $\leq x$ that are not struck off when sieving with the first $a$ primes.  Note that this allows us to rewrite Legendre&rsquo;s formula as</p>
-<p>$$
-\pi(x) = \phi(x, a) + a - 1,
-$$</p>
-<p>where $a = \pi(\sqrt{x})$.</p>
-<p>Now, let $P_k(x, a)$ denote the <em>$k$th partial sieve function</em>, which is defined as the number of integers $\leq x$ with exactly $k$ prime factors, with none less than or equal to $p_a$.  For convenience, we define $P_0(x, a) = 1$.  It then follows that</p>
-<p>$$
-\phi(x, a) = P_0(a, x) + P_1(x, a) + P_2(x, a) + \dots
-$$</p>
+<p>We will now turn to the main subject of the article, the Meissel-Lehmer algorithm.  For convenience, we will first introduce some notation.  Let <code>$\phi(x, a)$</code> denote the <em>partial sieve function</em>, defined as the number of integers <code>$\leq x$</code>, with no prime factor less than or equal to <code>$p_a$</code>.  In set notation, we can expression this as</p>
+<p><code>$$  \phi(x, a) =  \left \vert{\{ n \leq x: p \mid n \Rightarrow p &gt; p_a \}} \right \vert. $$</code></p>
+<p>The name comes from the fact that <code>$\phi(x, a)$</code> counts the numbers <code>$\leq x$</code> that are not struck off when sieving with the first <code>$a$</code> primes.  Note that this allows us to rewrite Legendre&rsquo;s formula as</p>
+<p><code>$$  \pi(x) = \phi(x, a) + a - 1, $$</code></p>
+<p>where <code>$a = \pi(\sqrt{x})$</code>.</p>
+<p>Now, let <code>$P_k(x, a)$</code> denote the <em><code>$k$</code>th partial sieve function</em>, which is defined as the number of integers <code>$\leq x$</code> with exactly <code>$k$</code> prime factors, with none less than or equal to <code>$p_a$</code>.  For convenience, we define <code>$P_0(x, a) = 1$</code>.  It then follows that</p>
+<p><code>$$ \phi(x, a) = P_0(a, x) + P_1(x, a) + P_2(x, a) + \dots $$</code></p>
 <p>Note that the right hand side&rsquo;s sum will contain a finite number of nonzero terms.  Observing that</p>
-<p>$$
-P_1(x, a) = \pi(x) - a,
-$$</p>
-<p>it follows that if we can compute $\phi(x, a)$, $P_2(x, a)$, $P_3(x, a)$, and so on, we can obtain the value of $\pi(x)$.  We will now consider the two subproblems of computing $P_i(x, a)$ and $\phi(x, a)$.</p>
+<p><code>$$ P_1(x, a) = \pi(x) - a, $$</code></p>
+<p>it follows that if we can compute <code>$\phi(x, a)$</code>, <code>$P_2(x, a)$</code>, <code>$P_3(x, a)$</code>, and so on, we can obtain the value of <code>$\pi(x)$</code>.  We will now consider the two subproblems of computing <code>$P_i(x, a)$</code> and <code>$\phi(x, a)$</code>.</p>
 <h3 id="computing-p_ix-a">
-Computing $P_i(x, a)$
+Computing <code>$P_i(x, a)$</code>
 <a href="#computing-p_ix-a" class="heading-anchor">#</a>
 </h3>
-<p>We will begin by considering $P_2(x, a)$, defined as the number of integers in the interval $[1, x]$ which are products of two primes $p_i, p_j &gt; p_a$.  It follows that</p>
-<p>$$
-P_2(x, a) = \underbrace{\pi \left ( \frac{x}{p_{a+1}} \right ) - a}<em>{\text{number of integers } p</em>{a+1}p_j \leq x \text{ with } a+1 \leq j} + \underbrace{\pi \left ( \frac{x}{p_{a+2}} \right ) - (a+1)}<em>{\text{number of integers } p</em>{a+2} p_j \leq x \text{ with } a+2 \leq j} + \dots
-$$</p>
-<p>$$
-= \sum_{p_a &lt; p_i \leq \sqrt{x}} \left [ \pi \left ( \frac{x}{p_i} \right ) - (i - 1) \right ].
-$$</p>
-<p>Let $b = \pi(\sqrt{x})$.  If we choose $a &lt; b$, the above sum is equivalent to</p>
-<p>$$
-P_2(x, a) = \sum_{i=a+1}^{b} \left [ \pi \left ( \frac{x}{p_i} \right ) - (i-1) \right ] = \sum_{i=a+1}^{b} \pi\left ( \frac{x}{p_i} \right ) - \frac{(b-a)(b+a-1)}{2},$$</p>
-<p>where we have applied the arithmetic series formula.  In a similar fashion, we can compute $P_3(x, a)$ as follows:</p>
-<p>$$
-P_3(x, a) = P_2 \left ( \frac{x}{p_{a+1}}, a \right ) + P_2 \left ( \frac{x}{p_{a+2}}, a \right ) + \dots = \sum_{i &gt; a} P_2 \left ( \frac{x}{p_i}, a \right ).
-$$</p>
-<p>Let $b_i = \pi \left ( \sqrt{\frac{x}{p_i}} \right )$, and let $c = \pi(x^{1/3})$.  Assuming that $a &lt; c$ (so that $P_3$ is nonzero), it follows that:</p>
-<p>$$
-P_3(x, a) = \sum_{i=a+1}^{c} \sum_{j=1}^{b_i} \left [ \pi \left ( \frac{x}{p_i p_j} \right ) - (j-1) \right ].
-$$</p>
-<p>Finally, if we choose $a = \pi(x^{1/4})$, $P_i(x, a) = 0$ for $i &gt; 3$.  Now, we need only compute $\phi(x, a)$ to obtain the Meissel-Lehmer formula in its full form.</p>
+<p>We will begin by considering <code>$P_2(x, a)$</code>, defined as the number of integers in the interval <code>$[1, x]$</code> which are products of two primes <code>$p_i, p_j &gt; p_a$</code>.  It follows that</p>
+<p><code>$$ P_2(x, a) = \underbrace{\pi \left ( \frac{x}{p_{a+1}} \right ) - a}_{\text{number of integers } p_{a+1}p_j \leq x \text{ with } a+1 \leq j} + \underbrace{\pi \left ( \frac{x}{p_{a+2}} \right ) - (a+1)}_{\text{number of integers } p_{a+2} p_j \leq x \text{ with } a+2 \leq j} + \dots $$</code></p>
+<p><code>$$ = \sum_{p_a &lt; p_i \leq \sqrt{x}} \left [ \pi \left ( \frac{x}{p_i} \right ) - (i - 1) \right ]. $$</code></p>
+<p>Let <code>$b = \pi(\sqrt{x})$</code>.  If we choose <code>$a &lt; b$</code>, the above sum is equivalent to</p>
+<p><code>$$ P_2(x, a) = \sum_{i=a+1}^{b} \left [ \pi \left ( \frac{x}{p_i} \right ) - (i-1) \right ] = \sum_{i=a+1}^{b} \pi\left ( \frac{x}{p_i} \right ) - \frac{(b-a)(b+a-1)}{2},$$</code></p>
+<p>where we have applied the arithmetic series formula.  In a similar fashion, we can compute <code>$P_3(x, a)$</code> as follows:</p>
+<p><code>$$ P_3(x, a) = P_2 \left ( \frac{x}{p_{a+1}}, a \right ) + P_2 \left ( \frac{x}{p_{a+2}}, a \right ) + \dots = \sum_{i &gt; a} P_2 \left ( \frac{x}{p_i}, a \right ). $$</code></p>
+<p>Let <code>$b_i = \pi \left ( \sqrt{\frac{x}{p_i}} \right )$</code>, and let <code>$c = \pi(x^{1/3})$</code>.  Assuming that <code>$a &lt; c$</code> (so that <code>$P_3$</code> is nonzero), it follows that:</p>
+<p><code>$$ P_3(x, a) = \sum_{i=a+1}^{c} \sum_{j=1}^{b_i} \left [ \pi \left ( \frac{x}{p_i p_j} \right ) - (j-1) \right ]. $$</code></p>
+<p>Finally, if we choose <code>$a = \pi(x^{1/4})$</code>, <code>$P_i(x, a) = 0$</code> for <code>$i &gt; 3$</code>.  Now, we need only compute <code>$\phi(x, a)$</code> to obtain the Meissel-Lehmer formula in its full form.</p>
 <h3 id="computing-phix-a">
-Computing $\phi(x, a)$
+Computing <code>$\phi(x, a)$</code>
 <a href="#computing-phix-a" class="heading-anchor">#</a>
 </h3>
-<p>The key to computing $\phi$ is the observation that</p>
-<p>$$
-\phi(x, a) = \phi(x, a-1) - \phi \left ( \frac{x}{p_a}, a-1 \right ),
-$$</p>
-<p>which follows from the definition of $\phi$: the integers not divisible by any of the primes $p_1, \dots, p_a$ are exactly those integers which are not divisible by any of $p_1, p_2, \dots, p_{a-1}$, excluding those that are not divisible by $p_a$.  Repeatedly applying this identity will eventually lead to $\phi(x, 1)$, which is just the number of odd numbers $\leq x$.</p>
-<p>In the implementation below, $\phi$ is computed using a memoized recursive procedure.  It turns out that one can make this computation more efficient by applying a truncation rule during the recursive chain.  The details of how to do this are somewhat involved, but the interested reader can refer to [^2] and &lt;label class=&ldquo;margin-toggle&rdquo; &ldquo;sidenote-number&rdquo;&gt;</label> <span class="sidenote">Riesel, Hans.  <a href="http://www.amazon.com/Numbers-Computer-Factorization-Progress-Mathematics/dp/0817637435"><em>Prime Numbers and Computer Methods for Factorization.</em></a> Boston: Birkhäuser, 1985.</span></p>
+<p>The key to computing <code>$\phi$</code> is the observation that</p>
+<p><code>$$ \phi(x, a) = \phi(x, a-1) - \phi \left ( \frac{x}{p_a}, a-1 \right ), $$</code></p>
+<p>which follows from the definition of <code>$\phi$</code>: the integers not divisible by any of the primes <code>$p_1, \dots, p_a$</code> are exactly those integers which are not divisible by any of <code>$p_1, p_2, \dots, p_{a-1}$</code>, excluding those that are not divisible by <code>$p_a$</code>.  Repeatedly applying this identity will eventually lead to <code>$\phi(x, 1)$</code>, which is just the number of odd numbers <code>$\leq x$</code>.</p>
+<p>In the implementation below, <code>$\phi$</code> is computed using a memoized recursive procedure.  It turns out that one can make this computation more efficient by applying a truncation rule during the recursive chain.  The details of how to do this are somewhat involved, but the interested reader can refer to [^2] and &lt;label class=&ldquo;margin-toggle&rdquo; &ldquo;sidenote-number&rdquo;&gt;</label> <span class="sidenote">Riesel, Hans.  <a href="http://www.amazon.com/Numbers-Computer-Factorization-Progress-Mathematics/dp/0817637435"><em>Prime Numbers and Computer Methods for Factorization.</em></a> Boston: Birkhäuser, 1985.</span></p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">from</span> bisect <span style="color:#f92672">import</span> bisect
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">prime_sieve</span>(n):
@@ -256,14 +235,14 @@ $$</p>
 Further Reading
 <a href="#further-reading" class="heading-anchor">#</a>
 </h2>
-<p>While the Meissel-Lehmer algorithm is quite fast for most practical purposes, there are algorithms that are known to be more efficient.  Based on the work on Meissel and Lehmer, in 1985 Lagarias, Miller and Odlyzko found an algorithm requiring $O( \frac{x^{2/3}}{\log x} )$ time and $O(x^{1/3} \log^2 x)$ space.  Lagarias and Odlyzko have also published a method describing how to compute $\pi(x)$ using an analytic approach.</p>
-<p>In 1996, Deléglise and Rivat<label class="margin-toggle sidenote-number"></label><span class="sidenote">Deleglise, M., and J. Rivat. <a href="http://www.ams.org/journals/mcom/1996-65-213/S0025-5718-96-00674-6/S0025-5718-96-00674-6.pdf">&ldquo;Computing $\pi(x)$: The Meissel, Lehmer, Lagarias, Miller, Odlyzko Method.&rdquo;</a> <em>Mathematics of Computation.</em> 65.213 (1996): 235-46. Web.<br>Silva, T. <a href="http://sweet.ua.pt/tos/bib/5.4.pdf">&ldquo;Computing $\pi(x)$: the combinatorial method.&rdquo;</a> <em>Revista do Detua.</em> 4.6 (2006): 759.</span> refined the Lagarias-Miller-Odlyzko method allowing one to save a factor of $\log x$ in the time complexity, at the cost of an increase by a factor of $\log x \log \log x$ in space.  In 2001, Gourdon<label class="margin-toggle sidenote-number"></label><span class="sidenote">X. Gourdon, &ldquo;Computation of $\pi(x)$: Improvements to the Meissel, Lehmer, Lagarias, Miller, Odlyzko, Deléglise and Rivat method.&rdquo;  Available from <a href="numbers.computation.free.fr/Constants/Primes/Pix/piNalgorithm.ps">numbers.computation.free.fr/Constants/Primes/Pix/piNalgorithm.ps</a></span> published refinements to the Deléglise-Rivat method that saves constant factors in time and space complexity.</p>
-<p>Kim Walisch&rsquo;s excellent <a href="https://github.com/kimwalisch/primecount"><code>primecount</code></a> software package provides highly optimized C++ implementations of many of these algorithms, with support for OpenMP parallelization.  In September of 2015, this software was used to produce a <a href="http://www.mersenneforum.org/showthread.php?t=20473">record-breaking computation of $\pi(10^{27})$</a>, using 16-core EC2 r3.8xlarge instances and a 36-core Xeon server.  Using the Deléglise-Rivat method, the computation took 23.03 CPU core years, and the peak memory usage was 235 gigabytes!</p>
+<p>While the Meissel-Lehmer algorithm is quite fast for most practical purposes, there are algorithms that are known to be more efficient.  Based on the work on Meissel and Lehmer, in 1985 Lagarias, Miller and Odlyzko found an algorithm requiring <code>$O( \frac{x^{2/3}}{\log x} )$</code> time and <code>$O(x^{1/3} \log^2 x)$</code> space.  Lagarias and Odlyzko have also published a method describing how to compute <code>$\pi(x)$</code> using an analytic approach.</p>
+<p>In 1996, Deléglise and Rivat<label class="margin-toggle sidenote-number"></label><span class="sidenote">Deleglise, M., and J. Rivat. <a href="http://www.ams.org/journals/mcom/1996-65-213/S0025-5718-96-00674-6/S0025-5718-96-00674-6.pdf">&ldquo;Computing <code>$\pi(x)$</code>: The Meissel, Lehmer, Lagarias, Miller, Odlyzko Method.&rdquo;</a> <em>Mathematics of Computation.</em> 65.213 (1996): 235-46. Web.<br>Silva, T. <a href="http://sweet.ua.pt/tos/bib/5.4.pdf">&ldquo;Computing <code>$\pi(x)$</code>: the combinatorial method.&rdquo;</a> <em>Revista do Detua.</em> 4.6 (2006): 759.</span> refined the Lagarias-Miller-Odlyzko method allowing one to save a factor of <code>$\log x$</code> in the time complexity, at the cost of an increase by a factor of <code>$\log x \log \log x$</code> in space.  In 2001, Gourdon<label class="margin-toggle sidenote-number"></label><span class="sidenote">X. Gourdon, &ldquo;Computation of <code>$\pi(x)$</code>: Improvements to the Meissel, Lehmer, Lagarias, Miller, Odlyzko, Deléglise and Rivat method.&rdquo;  Available from <a href="numbers.computation.free.fr/Constants/Primes/Pix/piNalgorithm.ps">numbers.computation.free.fr/Constants/Primes/Pix/piNalgorithm.ps</a></span> published refinements to the Deléglise-Rivat method that saves constant factors in time and space complexity.</p>
+<p>Kim Walisch&rsquo;s excellent <a href="https://github.com/kimwalisch/primecount"><code>primecount</code></a> software package provides highly optimized C++ implementations of many of these algorithms, with support for OpenMP parallelization.  In September of 2015, this software was used to produce a <a href="http://www.mersenneforum.org/showthread.php?t=20473">record-breaking computation of <code>$\pi(10^{27})$</code></a>, using 16-core EC2 r3.8xlarge instances and a 36-core Xeon server.  Using the Deléglise-Rivat method, the computation took 23.03 CPU core years, and the peak memory usage was 235 gigabytes!</p>
 <h3 id="acknowledgments">
 Acknowledgments
 <a href="#acknowledgments" class="heading-anchor">#</a>
 </h3>
-<p>Thank you to Yuval Widgerson for providing feedback on this draft.</p>
+<p>Thank you to Yuval Widgerson for providing feedback on this article.</p>
 </section>
   <section><footer class="page-footer">
 <hr />
@@ -336,19 +315,19 @@ Acknowledgments
   <script>(function(){var e,t,n,s=document.getElementsByTagName("code");for(n=0;n<s.length;){if(t=s[n],t.parentNode.tagName!=="PRE"&&t.childElementCount===0&&!t.classList.contains("nolatex")&&(e=t.textContent,/^\$[^$]/.test(e)&&/[^$]\$$/.test(e)&&(e=e.replace(/^\$/,"\\(").replace(/\$$/,"\\)"),t.textContent=e),/^\\\((.|\s)+\\\)$/.test(e)||/^\\\[(.|\s)+\\\]$/.test(e)||/^\$(.|\s)+\$$/.test(e)||/^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(e))){t.outerHTML=t.innerHTML;continue}n++}})()</script>
 
 
-<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css" crossorigin="anonymous">
-<script defer src="//cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.js" crossorigin="anonymous"></script>
-<script defer src="//cdn.jsdelivr.net/npm/katex@0.16.4/dist/contrib/auto-render.min.js" crossorigin="anonymous"></script>
+
+
+
+
+
+<script type="text/javascript" async
+	  src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+
 
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         renderMathInElement(document.body, {
-            
-            
-            
-            
-            
-            
             trust: (context) => ['\\htmlId', '\\href'].includes(context.command),
             macros: {
               "\\eqref": "\\href{###1}{(\\text{#1})}",

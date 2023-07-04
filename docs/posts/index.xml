@@ -25,8 +25,7 @@ Here are other problems that can be approached using Pólya-Burnside.</descripti
       
       <guid>https://acganesh.github.io/posts/2019-07-13-modern-algorithmic-toolbox/</guid>
       <description>$$ \newcommand{\mbf}{\mathbf} \newcommand{\RR}{\mathbb{R}} \newcommand{\CC}{\mathbb{C}} \newcommand{\la}{\langle} \newcommand{\ra}{\rangle} \DeclareMathOperator{\rank}{rank} \DeclareMathOperator{\argmax}{argmax} $$
-The modern algorithmic toolbox # (In progress)
-These notes are based on an influential course I took at Stanford, CS168: The Modern Algorithmic Toolbox, taught by Greg Valiant in Spring 2018.
+The modern algorithmic toolbox # These notes are based on an influential course I took at Stanford, CS168: The Modern Algorithmic Toolbox, taught by Greg Valiant in Spring 2018.
 I found it to be my favorite technical class at Stanford, as I think it&amp;rsquo;s a versatile grab-bag of ideas that can be applied to many different domains.
 Modern hashing # Motivating problem.</description>
     </item>
@@ -37,13 +36,13 @@ Modern hashing # Motivating problem.</description>
       <pubDate>Tue, 01 Jan 2019 00:00:00 +0000</pubDate>
       
       <guid>https://acganesh.github.io/posts/2019-01-01-maximum-entropy/</guid>
-      <description>The principle of maximum entropy # Introduction: what is entropy? # $$ \newcommand{\EE}{\mathbb{E}} \newcommand{\RR}{\mathbb{R}} \newcommand{\mbf}{\mathbf} \DeclareMathOperator{\argmax}{argmax} $$
+      <description>Introduction: what is entropy? # $$ \newcommand{\EE}{\mathbb{E}} \newcommand{\RR}{\mathbb{R}} \newcommand{\mbf}{\mathbf} \DeclareMathOperator{\argmax}{argmax} $$
 Intuitively, the notion of entropy defines a measure of &amp;ldquo;disorder&amp;rdquo; or &amp;ldquo;expected surprise&amp;rdquo; given a probability distribution. As described by Shannon in is 1948 article, the entropy can be defined as follows Shannon, Claude Elwood. &amp;ldquo;A mathematical theory of communication.&amp;rdquo; Bell system technical journal 27.3 (1948): 379-423. .
 Let $X$ be a discrete random variable on a space $\mathcal{X}$ with probability mass function $\mathbf{p}(x)$.</description>
     </item>
     
     <item>
-      <title>Efficient Prime Counting with the Meissel-Lehmer Algorithm</title>
+      <title>The Meissel-Lehmer algorithm</title>
       <link>https://acganesh.github.io/posts/2016-12-23-prime-counting/</link>
       <pubDate>Fri, 23 Dec 2016 00:00:00 +0000</pubDate>
       

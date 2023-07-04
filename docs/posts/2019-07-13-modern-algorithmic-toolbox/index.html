@@ -4,11 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="description"
-    content="$$ \newcommand{\mbf}{\mathbf} \newcommand{\RR}{\mathbb{R}} \newcommand{\CC}{\mathbb{C}} \newcommand{\la}{\langle} \newcommand{\ra}{\rangle} \DeclareMathOperator{\rank}{rank} \DeclareMathOperator{\argmax}{argmax} $$
-The modern algorithmic toolbox # (In progress)
-These notes are based on an influential course I took at Stanford, CS168: The Modern Algorithmic Toolbox, taught by Greg Valiant in Spring 2018.
-I found it to be my favorite technical class at Stanford, as I think it&rsquo;s a versatile grab-bag of ideas that can be applied to many different domains.
-Modern hashing # Motivating problem. ">
+    content="One of my favorite technical classes at Stanford. ">
 <link rel="canonical" href="https://acganesh.github.io/posts/2019-07-13-modern-algorithmic-toolbox/" />
 
 
@@ -62,28 +58,25 @@ Modern hashing # Motivating problem. ">
 The modern algorithmic toolbox
 <a href="#the-modern-algorithmic-toolbox" class="heading-anchor">#</a>
 </h1>
-<p>(In progress)</p>
 <p>These notes are based on an influential course I took at Stanford, <a href="https://web.stanford.edu/class/cs168/index.html">CS168: The Modern Algorithmic Toolbox</a>, taught by <a href="https://theory.stanford.edu/~valiant/">Greg Valiant</a> in Spring 2018.</p>
 <p>I found it to be my favorite technical class at Stanford, as I think it&rsquo;s a versatile grab-bag of ideas that can be applied to many different domains.</p>
 <h2 id="modern-hashing">
 Modern hashing
 <a href="#modern-hashing" class="heading-anchor">#</a>
 </h2>
-<p><em>Motivating problem.</em> Suppose you are a student at Stanford on a shared network, and that you send a request to <code>amazon.com</code>.  The network has a shared cache that is spread over $n = 100$ machines.  Where should you look for a cached copy of the Web page?</p>
-<p>This doesn&rsquo;t seem too hard.  A first pass might be to apply a standard hash function $h(x)$ (e.g., Rivest&rsquo;s <a href="https://en.wikipedia.org/wiki/MD5">MD5</a>), and compute
-$$
-h(x) \pmod{n}.
-$$</p>
-<p>But this system breaks down if the number $N$ of caches is not static, but changes all the time.  $N$ might increase if the network administrator purchases additional infrastructure, or it might decrease if a cache disconnects from the network.  Unfortunately, $h(x) \pmod{n}$ and $h(x) \pmod{n+1}$ will in general be very different.</p>
+<p><em>Motivating problem.</em> Suppose you are a student at Stanford on a shared network, and that you send a request to <code>amazon.com</code>.  The network has a shared cache that is spread over <code>$n = 100$</code> machines.  Where should you look for a cached copy of the Web page?</p>
+<p>This doesn&rsquo;t seem too hard.  A first pass might be to apply a standard hash function <code>$h(x)$</code> (e.g., Rivest&rsquo;s <a href="https://en.wikipedia.org/wiki/MD5">MD5</a>), and compute
+<code>$$ h(x) \pmod{n}. $$</code></p>
+<p>But this system breaks down if the number <code>$N$</code> of caches is not static, but changes all the time.  <code>$N$</code> might increase if the network administrator purchases additional infrastructure, or it might decrease if a cache disconnects from the network.  Unfortunately, <code>$h(x) \pmod{n}$</code> and <code>$h(x) \pmod{n+1}$</code> will in general be very different.</p>
 <p>The standard solution to this problem is known as <em>consistent hashing</em>.</p>
 <ul>
 <li>Visualize a large array indexed by all possible hash values.</li>
-<li>In addition to hashing the names of all objects (URLs) $x$, also hash the names of all the cache servers $s$.</li>
-<li>Given an object $x$ that hashes to the bucket $h(x)$, we scan buckets to the right of $h(x)$ until we find a bucket $h(s)$.</li>
-<li>Designate $s$ as the cache responsible for the object $x$.</li>
+<li>In addition to hashing the names of all objects (URLs) <code>$x$</code>, also hash the names of all the cache servers <code>$s$</code>.</li>
+<li>Given an object <code>$x$</code> that hashes to the bucket <code>$h(x)$</code>, we scan buckets to the right of <code>$h(x)$</code> until we find a bucket <code>$h(s)$</code>.</li>
+<li>Designate <code>$s$</code> as the cache responsible for the object <code>$x$</code>.</li>
 </ul>
-<p>Importantly, assuming that our hash function is well-behaved, the expected load on each of the $n$ cache servers is exactly $\frac{1}{n}$ of the number of the objects.</p>
-<p>To implement the <code>Lookup</code> and <code>Insert</code> operations for this setup, we use a balanced binary search tree (e.g. a red-black tree), since the <code>Successor</code> operation is fast.  Finding the cache responsible for storing a given object $x$ will then take $O(\log n)$ time.</p>
+<p>Importantly, assuming that our hash function is well-behaved, the expected load on each of the <code>$n$</code> cache servers is exactly <code>$\frac{1}{n}$</code> of the number of the objects.</p>
+<p>To implement the <code>Lookup</code> and <code>Insert</code> operations for this setup, we use a balanced binary search tree (e.g. a red-black tree), since the <code>Successor</code> operation is fast.  Finding the cache responsible for storing a given object <code>$x$</code> will then take <code>$O(\log n)$</code> time.</p>
 <p>This implementation was first described in Karger et al. 1997.  While consistent hashing is widely in use today, this paper was initially rejected because a reviewer felt that there were no practical applications for this technique<label class="margin-toggle sidenote-number"></label><span class="sidenote">
 D. Karger, E. Lehman, T. Leighton, M. Levine, D. Lewin, and R. Panigrahy. Consistent
 hashing and random trees: Distributed caching protocols for relieving hot spots on the
@@ -97,42 +90,28 @@ Data and distance
 <p>Suppose you have a large dataset and want to identify similar items quickly.  This is an important problem in many domains, such as clustering (find subregions of a dataset that are &ldquo;similar&rdquo; by some metric), and classification (if two datapoints are similar, they may have the same label).</p>
 <p>We start by defining a few different notions of similarity.</p>
 <p><em>Jaccard similarity.</em> A simple approach is to use the Jaccard similarity between two sets, which is defined as</p>
-<p>$$
-J(S, T) = \frac{|S \cap T|}{|S \cup T|}
-$$</p>
+<p><code>$$ J(S, T) = \frac{|S \cap T|}{|S \cup T|} $$</code></p>
 <p>This metric is useful for sparse data.  For instance, we might represent documents in terms of multisets of words they contain; in this setting the Jaccard similarity is often a good measure.</p>
-<p><em>$\ell_p$ distance.</em>  Given datapoints in $\mathbb{R}^d$, the Euclidean $(\ell_2)$ distance metric is defined as</p>
-<p>$$
-||x - y||<em>{2} = \sqrt{\sum</em>{i=1}^{d} (x(i) - y(i))^2}.
-$$</p>
-<p>More generally, we can define the $\ell_p$ distance as</p>
-<p>$$
-||x - y||<em>{p} = \left ( \sum</em>{i=1}^{d} | x(i) - y(i) |^{p} \right )^{1/p}.
-$$</p>
-<p>If $p = 1$ we obtain the &ldquo;Manhattan&rdquo; distance, and for large $p$, $||x - y||<em>p$ grows more dependent on the coordinate with maximal difference.  The $l</em>{\infty}$ distance is defined as $\max_i | x(i) - y(i) |$.</p>
-<p><em>Johnson-Lindenstrauss transform.</em> Suppose now, that we want to reduce the dimensionality of a large dataset, where we want to approximately preserve the distances between object pairs (for example, the $\ell_2$ distance between points in $\RR^k$).</p>
-<p>Suppose that our $n$ points of interest are $\mbf{x}_1, \dots, \mbf{x}<em>k \in \mathbb{R}^k$, where $k$ might be large.  Suppose we choose a random vector $\mbf{r} \in \RR^k$, and define a real-valued function $f</em>{\mbf{r}} : \mathbb{R}^k \to \mathbb{R}$ by taking an inner product for the datapoint with the random vector:</p>
-<p>$$
-f_{\mbf{r}} (\mbf{x}) = \langle \mbf{x}, \mbf{r} \rangle = \sum_{j=1}^{k} x_j r_j.
-$$</p>
-<p>If we want to use this idea to approximately preserve Euclidean distances between points, the key question is how we pick the $r_j$&rsquo;s.</p>
-<p>One idea is to pick $d$ vectors $\mbf{r}_1, \dots, \mbf{r}_d$, where each component of each vector is drawn i.i.d. from a standard Gaussian.</p>
-<p>Then in expectation, the random variable $(f_\mbf{r}(\mbf{x}) - f_{\mbf{r}}(\mbf{y}))^2$ is an unbiased estimate of the $\ell_2$ distance between $\mbf{x}$ and $\mbf{y}$.</p>
-<p>The Johnson-Lindenstrauss transform (JL transform) for domain and range dimensions $k$ and $d$, is defined using a matrix $\mbf{A} \in \mathbb{R}^{d \times k}$ where we define a mapping</p>
-<p>$$
-\mbf{x} \mapsto \frac{1}{\sqrt{d}} \mbf{A x}.
-$$</p>
-<p>For a fixed pair of vectors $\mbf{x, y} \in \mathbb{R}^k$, we have
-\begin{align*}
-||f_{\mbf{A}}(\mbf{x}) - f_{\mbf{A}}(\mbf{y})||<em>2^2 &amp;= || \frac{1}{\sqrt{d}} \mbf{Ax} - \frac{1}{\sqrt{d}} \mbf{Ay} ||</em>{2}^{2} \
-&amp;= \frac{1}{d} || \mbf{A(x-y)}||<em>2^2 \
-&amp;= \frac{1}{d} \sum</em>{i=1}^{d} (a_i^T(\mbf{x} - \mbf{y}))^2,
-\end{align*}</p>
-<p>where $a_i^T$ denotes the $i$-th row of $\mbf{A}$.  Since each row $a_i^T$ is a $k$-vector with entries chosen i.i.d. from a standard Gaussian, each term
+<p><em><code>$\ell_p$</code> distance.</em>  Given datapoints in <code>$\mathbb{R}^d$</code>, the Euclidean <code>$(\ell_2)$</code> distance metric is defined as</p>
+<p><code>$$ ||x - y||_{2} = \sqrt{\sum_{i=1}^{d} (x(i) - y(i))^2}. $$</code></p>
+<p>More generally, we can define the <code>$\ell_p$</code> distance as</p>
+<p><code>$$ ||x - y||_{p} = \left ( \sum_{i=1}^{d} | x(i) - y(i) |^{p} \right )^{1/p}. $$</code></p>
+<p>If <code>$p = 1$</code> we obtain the &ldquo;Manhattan&rdquo; distance, and for large <code>$p$</code>, <code>$||x - y||_p$</code> grows more dependent on the coordinate with maximal difference.  The <code>$l_{\infty}$</code> distance is defined as <code>$\max_i | x(i) - y(i) |$</code>.</p>
+<p><em>Johnson-Lindenstrauss transform.</em> Suppose now, that we want to reduce the dimensionality of a large dataset, where we want to approximately preserve the distances between object pairs (for example, the <code>$\ell_2$</code> distance between points in <code>$\RR^k$</code>).</p>
+<p>Suppose that our <code>$n$</code> points of interest are <code>$\mbf{x}_1, \dots, \mbf{x}_k \in \mathbb{R}^k$</code>, where <code>$k$</code> might be large.  Suppose we choose a random vector <code>$\mbf{r} \in \RR^k$</code>, and define a real-valued function <code>$f_{\mbf{r}} : \mathbb{R}^k \to \mathbb{R}$</code> by taking an inner product for the datapoint with the random vector:</p>
+<p><code>$$ f_{\mbf{r}} (\mbf{x}) = \langle \mbf{x}, \mbf{r} \rangle = \sum_{j=1}^{k} x_j r_j. $$</code></p>
+<p>If we want to use this idea to approximately preserve Euclidean distances between points, the key question is how we pick the <code>$r_j$</code>&rsquo;s.</p>
+<p>One idea is to pick <code>$d$</code> vectors <code>$\mbf{r}_1, \dots, \mbf{r}_d$</code>, where each component of each vector is drawn i.i.d. from a standard Gaussian.</p>
+<p>Then in expectation, the random variable <code>$(f_\mbf{r}(\mbf{x}) - f_{\mbf{r}}(\mbf{y}))^2$</code> is an unbiased estimate of the <code>$\ell_2$</code> distance between <code>$\mbf{x}$</code> and <code>$\mbf{y}$</code>.</p>
+<p>The Johnson-Lindenstrauss transform (JL transform) for domain and range dimensions <code>$k$</code> and <code>$d$</code>, is defined using a matrix <code>$\mbf{A} \in \mathbb{R}^{d \times k}$</code> where we define a mapping</p>
+<p><code>$$ \mbf{x} \mapsto \frac{1}{\sqrt{d}} \mbf{A x}. $$</code></p>
+<p>For a fixed pair of vectors <code>$\mbf{x, y} \in \mathbb{R}^k$</code>, we have
+<code>$$ \begin{align*} ||f_{\mbf{A}}(\mbf{x}) - f_{\mbf{A}}(\mbf{y})||_2^2 &amp;= || \frac{1}{\sqrt{d}} \mbf{Ax} - \frac{1}{\sqrt{d}} \mbf{Ay} ||_{2}^{2} \\ &amp;= \frac{1}{d} || \mbf{A(x-y)}||_2^2 \\ &amp;= \frac{1}{d} \sum_{i=1}^{d} (a_i^T(\mbf{x} - \mbf{y}))^2, \end{align*} $$</code></p>
+<p>where <code>$a_i^T$</code> denotes the <code>$i$</code>-th row of <code>$\mbf{A}$</code>.  Since each row <code>$a_i^T$</code> is a <code>$k$</code>-vector with entries chosen i.i.d. from a standard Gaussian, each term
 $$
 (a_i^T (\mbf{x} - \mbf{y}))^2 = \left( \sum_{j=1}^{k} a_{ij} (x_j - y_j) \right)^2
 $$
-is an unbiased estimator of $||\mbf{x} - \mbf{y}||_2^2$.</p>
+is an unbiased estimator of <code>$||\mbf{x} - \mbf{y}||_2^2$</code>.</p>
 <p>Interestingly, the Johnson-Lindenstrauss lemma was well-known to mathematicians<label class="margin-toggle sidenote-number"></label><span class="sidenote">
 Johnson, William B.; Lindenstrauss, Joram (1984). &ldquo;Extensions of Lipschitz mappings into a Hilbert space&rdquo;. In Beals, Richard; Beck, Anatole; Bellow, Alexandra; et al. (eds.). <em>Conference in modern analysis and probability (New Haven, Conn., 1982)</em>. Contemporary Mathematics. 26. Providence, RI: American Mathematical Society. pp. 189–206.
 </span>and was only much later applied to problems in statistical learning<label class="margin-toggle sidenote-number"></label><span class="sidenote">
@@ -142,97 +121,97 @@ Ailon, Nir; Chazelle, Bernard (2006). &ldquo;Approximate nearest neighbors and t
 Generalization and regularization
 <a href="#generalization-and-regularization" class="heading-anchor">#</a>
 </h2>
-<p>There are many forms of regularization, e.g. $L_2, L_1$, dropout.  An important theorem is the following:</p>
-<p>If the number of data points $n$ satisfies $n &gt; \frac{1}{\epsilon} \left ( \log h + \log \frac{1}{\delta} \right )$.</p>
+<p>There are many forms of regularization, e.g. <code>$L_2, L_1$</code>, dropout.  An important theorem is the following:</p>
+<p>If the number of data points <code>$n$</code> satisfies <code>$n &gt; \frac{1}{\epsilon} \left ( \log h + \log \frac{1}{\delta} \right )$</code>.</p>
 <p><em>Theorem (Uniform Convergence)</em>.  Assume that
 $$
 n \geq \frac{c}{\varepsilon^2} \left( d + \ln \frac{1}{\delta} \right),
 $$</p>
-<p>where $c$ is a sufficiently large constant.  Then with probability at least $1 - \delta$ over the samples $\mbf{x}_1, \dots, \mbf{x}_n \sim D$, for every linear classifier $\hat{f}$, we have
+<p>where <code>$c$</code> is a sufficiently large constant.  Then with probability at least <code>$1 - \delta$</code> over the samples <code>$\mbf{x}_1, \dots, \mbf{x}_n \sim D$</code>, for every linear classifier <code>$\hat{f}$</code>, we have
 \begin{align*}
 \text{generalization error of } \hat{f} \in \text{training error of } \hat{f} \pm \varepsilon.
 \end{align*}</p>
-<p>This implies a useful rule of thumb.  To ensure generalization, make sure that the training set size $n$ is at least linear in the number $d$ of free parameters in the function that you&rsquo;re trying to learn.</p>
-<p><em>Proposition.</em> Given $n$ independent Gaussian vectors $x_1, \dots, x_n \in \mathbb{R}^d$, and consider labels $y_i = \la a, x_i \ra$ for some vector $a$ with $||a||_0 = s$.  Then the minimizer of the $\ell_1$ regularized objective function will be the vector $a$, with high probability, provided that $n &gt; c \cdot s \log d$, for some absolute constant $c$.<label class="margin-toggle sidenote-number"></label><span class="sidenote">
+<p>This implies a useful rule of thumb.  To ensure generalization, make sure that the training set size <code>$n$</code> is at least linear in the number <code>$d$</code> of free parameters in the function that you&rsquo;re trying to learn.</p>
+<p><em>Proposition.</em> Given <code>$n$</code> independent Gaussian vectors <code>$x_1, \dots, x_n \in \mathbb{R}^d$</code>, and consider labels <code>$y_i = \la a, x_i \ra$</code> for some vector <code>$a$</code> with <code>$||a||_0 = s$</code>.  Then the minimizer of the <code>$\ell_1$</code> regularized objective function will be the vector <code>$a$</code>, with high probability, provided that <code>$n &gt; c \cdot s \log d$</code>, for some absolute constant <code>$c$</code>.<label class="margin-toggle sidenote-number"></label><span class="sidenote">
 E. Candes, M. Wakin. An introduction to compressive sampling. <em>IEEE Signal Processing Magazine.</em> 25.2 (2008): 21-30.
 </span></p>
-<p>Intuitively, this means that the $\ell_1$ norm is a computationally tractable proxy for the $\ell_0$ norm.</p>
+<p>Intuitively, this means that the <code>$\ell_1$</code> norm is a computationally tractable proxy for the <code>$\ell_0$</code> norm.</p>
 <h2 id="linear-algebraic-techniques">
 Linear-algebraic techniques
 <a href="#linear-algebraic-techniques" class="heading-anchor">#</a>
 </h2>
-<p>Principal component analysis projects the dataset onto the eigenvectors of the covariance matrix.  In other words, the principal components are the $k$ orthonormal vectors $\mbf{v}<em>1, \dots, \mbf{v}<em>k$ that maximize the objective function
+<p>Principal component analysis projects the dataset onto the eigenvectors of the covariance matrix.  In other words, the principal components are the <code>$k$</code> orthonormal vectors <code>$\mbf{v}_1, \dots, \mbf{v}_k$</code> that maximize the objective function
 $$
-\frac{1}{n} \sum</em>{i=1}^{n} \sum</em>{j=1}^{k} \la \mbf{x}_i, \mbf{v}_j \ra^2.
+\frac{1}{n} \sum_{i=1}^{n} \sum_{j=1}^{k} \la \mbf{x}_i, \mbf{v}_j \ra^2.
 $$</p>
-<p>A singular value decomposition (SVD) of an $m \times n$ matrix $\mbf{A}$ expresses the matrix as the product of three &ldquo;simple&rdquo; matrices:</p>
+<p>A singular value decomposition (SVD) of an <code>$m \times n$</code> matrix <code>$\mbf{A}$</code> expresses the matrix as the product of three &ldquo;simple&rdquo; matrices:</p>
 <p>$$
 \mbf{A} = \mbf{U S V^{T}},
 $$</p>
 <p>where:</p>
 <ul>
-<li>$\mbf{U}$ is an $m \times m$ orthogonal matrix.</li>
-<li>$\mbf{V}$ is an $n \times n$ orthogonal matrix.</li>
-<li>$\mbf{S}$ is an $m \times n$ diagonal matrix with nonnegative entries, and with the diagonal entries sorted from high to low.</li>
+<li><code>$\mbf{U}$</code> is an <code>$m \times m$</code> orthogonal matrix.</li>
+<li><code>$\mbf{V}$</code> is an <code>$n \times n$</code> orthogonal matrix.</li>
+<li><code>$\mbf{S}$</code> is an <code>$m \times n$</code> diagonal matrix with nonnegative entries, and with the diagonal entries sorted from high to low.</li>
 </ul>
-<p>In other terms, the factorization $\mbf{A} = \mbf{U S V^T}$ is equivalent to the expression</p>
+<p>In other terms, the factorization <code>$\mbf{A} = \mbf{U S V^T}$</code> is equivalent to the expression</p>
 <p>$$
 \mbf{A} = \sum_{i=1}^{\min{ m, n }} s_i \cdot \mbf{u}_i \mbf{v}_i^T,
 $$
-where $s_i$ is the $i$th singular value and $\mbf{u}_i, \mbf{v}_i$ are the corresponding left and right singular vectors.  Importantly, every matrix $\mbf{A}$ has an SVD.  Intuitively, this means that every matrix $\mbf{A}$, no matter how strange, is only:</p>
+where <code>$s_i$</code> is the <code>$i$</code>th singular value and <code>$\mbf{u}_i, \mbf{v}_i$</code> are the corresponding left and right singular vectors.  Importantly, every matrix <code>$\mbf{A}$</code> has an SVD.  Intuitively, this means that every matrix <code>$\mbf{A}$</code>, no matter how strange, is only:</p>
 <ul>
-<li>Performing a rotation in the domain (multiplication by $\mbf{V}^T$)</li>
-<li>Followed by scaling plus adding or deleting dimensions (multiplication by $\mbf{S}$)</li>
-<li>Followed by a rotation in the range (multiplication by $\mbf{U}$).</li>
+<li>Performing a rotation in the domain (multiplication by <code>$\mbf{V}^T$</code>)</li>
+<li>Followed by scaling plus adding or deleting dimensions (multiplication by <code>$\mbf{S}$</code>)</li>
+<li>Followed by a rotation in the range (multiplication by <code>$\mbf{U}$</code>).</li>
 </ul>
 <h2 id="tensors-and-low-rank-tensor-recovery">
 Tensors and low-rank tensor recovery
 <a href="#tensors-and-low-rank-tensor-recovery" class="heading-anchor">#</a>
 </h2>
-<p><em>Definition.</em> A $n_1 \times n_2 \times \dots \times n_k$ $k$-tensor is a set of $n_1 \cdot n_2 \cdots n_k$ numbers, which one interprets as being arranged in a $k$-dimensional hypercube.  Given such a $k$-tensor, $A$, we can refer to a specific element via $A_{i_1, i_2, \dots, i_k}$.</p>
-<p>We can define the rank of a tensor analogously to the rank of a matrix.  Recall that a matrix $M$ has rank $r$ if it can be written as $M = UV^T$, where $U$ has $r$ columns and $V$ has $r$ columns.  Let $u_1, \dots, u_r$ and $v_1, \dots, v_r$ denote these columns, note that
+<p><em>Definition.</em> A <code>$n_1 \times n_2 \times \dots \times n_k$</code> <code>$k$</code>-tensor is a set of <code>$n_1 \cdot n_2 \cdots n_k$</code> numbers, which one interprets as being arranged in a <code>$k$</code>-dimensional hypercube.  Given such a <code>$k$</code>-tensor, <code>$A$</code>, we can refer to a specific element via <code>$A_{i_1, i_2, \dots, i_k}$</code>.</p>
+<p>We can define the rank of a tensor analogously to the rank of a matrix.  Recall that a matrix <code>$M$</code> has rank <code>$r$</code> if it can be written as <code>$M = UV^T$</code>, where <code>$U$</code> has <code>$r$</code> columns and <code>$V$</code> has <code>$r$</code> columns.  Let <code>$u_1, \dots, u_r$</code> and <code>$v_1, \dots, v_r$</code> denote these columns, note that
 $$
 M = \sum_{i=1}^{r} u_i v_i^T.
 $$
-That is, $M$ is the sum of $r$ rank one matrices, where the $i$th matrix is the <em>outer product</em> $u_i v_i^T$.  We can define an outer product for tensors:</p>
-<p><em>Definition.</em> Given vectors $u, v, w$ or lengths $n, m,$ and $l$, respectively, their <em>tensor product</em> (or <em>outer product</em>) is the $n \times m \times l$ rank one 3-tensor dented $A = u \otimes v \otimes w$ with entries $A_{i, j, k} = u_i v_j w_k$.</p>
+That is, <code>$M$</code> is the sum of <code>$r$</code> rank one matrices, where the <code>$i$</code>th matrix is the <em>outer product</em> <code>$u_i v_i^T$</code>.  We can define an outer product for tensors:</p>
+<p><em>Definition.</em> Given vectors <code>$u, v, w$</code> or lengths <code>$n, m,$</code> and <code>$l$</code>, respectively, their <em>tensor product</em> (or <em>outer product</em>) is the <code>$n \times m \times l$</code> rank one 3-tensor dented <code>$A = u \otimes v \otimes w$</code> with entries <code>$A_{i, j, k} = u_i v_j w_k$</code>.</p>
 <p>We can extend this definition to higher dimensions:</p>
-<p><em>Definition.</em> Given vectors $v_1, \dots, v_k$ of lengths $n_1, n_2, \dots, n_k$, the <em>tensor product</em> denoted $v_1 \otimes v_2 \dots \otimes v_k$ is the $n_1 \times n_2 \times \dots \times n_k$ $k$-tensor $A$ with entry $A_{i_1, i_2, \dots, i_k} = v_1(i_1) \cdot v_2(i_2) \cdots v_k(i_k)$.</p>
+<p><em>Definition.</em> Given vectors <code>$v_1, \dots, v_k$</code> of lengths <code>$n_1, n_2, \dots, n_k$</code>, the <em>tensor product</em> denoted <code>$v_1 \otimes v_2 \dots \otimes v_k$</code> is the <code>$n_1 \times n_2 \times \dots \times n_k$</code> <code>$k$</code>-tensor <code>$A$</code> with entry <code>$A_{i_1, i_2, \dots, i_k} = v_1(i_1) \cdot v_2(i_2) \cdots v_k(i_k)$</code>.</p>
 <p>This allows us to define the rank of a tensor, which we state for 3-tensors.</p>
-<p><em>Definition.</em> A 3-tensor $A$ has rank $r$ if there exists 3 sets of $r$ vectors, $u_1, \dots, u_r$, $v_1, \dots, v_r$ and $w_1, \dots, w_r$ such that</p>
+<p><em>Definition.</em> A 3-tensor <code>$A$</code> has rank <code>$r$</code> if there exists 3 sets of <code>$r$</code> vectors, <code>$u_1, \dots, u_r$</code>, <code>$v_1, \dots, v_r$</code> and <code>$w_1, \dots, w_r$</code> such that</p>
 <p>$$
 A = \sum_{i=1}^{r} u_i \otimes v_i \otimes w_i.
 $$</p>
-<p>Interestingly, most ideas from linear algebra for matrices do not apply to $k$-tensors for $k \geq 3$.  Here are some important differences between tensors and matrices.</p>
+<p>Interestingly, most ideas from linear algebra for matrices do not apply to <code>$k$</code>-tensors for <code>$k \geq 3$</code>.  Here are some important differences between tensors and matrices.</p>
 <ul>
 <li>Computing the rank of matrices is easy (e.g. use the singular-value decomposition).  Computing the rank of 3-tensors is NP-hard.</li>
-<li>The rank $1$ approximation of a matrix $M$ is the same as the best rank 1 approximation of the matrix $M_2$ defined as the best rank 2 approximation of $M$.  This means that the best rank-$k$ approximation can be found by iteratively finding the best rank-1 approximation, and then subtracting it off.</li>
+<li>The rank <code>$1$</code> approximation of a matrix <code>$M$</code> is the same as the best rank 1 approximation of the matrix <code>$M_2$</code> defined as the best rank 2 approximation of <code>$M$</code>.  This means that the best rank-<code>$k$</code> approximation can be found by iteratively finding the best rank-1 approximation, and then subtracting it off.</li>
 </ul>
-<p>For $k$-tensors with $k \geq 3$, this is not always true.  If $u \times v \times w$ is the best rank 1 approximation of 3-tensor $A$, then it is possible that $\rank(A - u \times v \times w) &gt; \rank (A)$.</p>
+<p>For <code>$k$</code>-tensors with <code>$k \geq 3$</code>, this is not always true.  If <code>$u \times v \times w$</code> is the best rank 1 approximation of 3-tensor <code>$A$</code>, then it is possible that <code>$\rank(A - u \times v \times w) &gt; \rank (A)$</code>.</p>
 <ul>
-<li>For real-valued matrices, we have that the rank over $\RR$ and the rank over $\CC$ is the same, that is $\rank_{\mathbb{R}} (M) = \rank_{\mathbb{C}} (M)$.  For real-valued $k$-tensors, it is possible that the rank over complex vectors is smaller than the rank over real vectors.</li>
+<li>For real-valued matrices, we have that the rank over <code>$\RR$</code> and the rank over <code>$\CC$</code> is the same, that is <code>$\rank_{\mathbb{R}} (M) = \rank_{\mathbb{C}} (M)$</code>.  For real-valued <code>$k$</code>-tensors, it is possible that the rank over complex vectors is smaller than the rank over real vectors.</li>
 </ul>
 <p>Surprisingly, low-rank decompositions for tensors are essentially unique (which is not true for matrices):</p>
-<p><em>Theorem.</em> Given a 3-tensor $A$ of rank $k$, suppose there exists three sets of linearly independent vectors, $(u_1, \dots, u_k), (v_1, \dots, v_k), (w_1, \dots, w_k)$ such that</p>
+<p><em>Theorem.</em> Given a 3-tensor <code>$A$</code> of rank <code>$k$</code>, suppose there exists three sets of linearly independent vectors, <code>$(u_1, \dots, u_k), (v_1, \dots, v_k), (w_1, \dots, w_k)$</code> such that</p>
 <p>$$
 A = \sum_{i=1}^{k} u_i \times v_i \times w_i.
 $$</p>
-<p>Then this rank $k$ decomposition is unique (up to scalar multiplication of the vectors), and these factors can be efficiently recovered, using Jenrich&rsquo;s algorithm.</p>
+<p>Then this rank <code>$k$</code> decomposition is unique (up to scalar multiplication of the vectors), and these factors can be efficiently recovered, using Jenrich&rsquo;s algorithm.</p>
 <h2 id="spectral-graph-theory">
 Spectral graph theory
 <a href="#spectral-graph-theory" class="heading-anchor">#</a>
 </h2>
-<p>Given a graph $G = (V, E)$ with $|V| = n$ vertices, we can define the Laplacian matrix as an $n \times n$ matrix $L_G =D - A$, where $D$ is the degree matrix and $A$ is the adjacency matrix.  The eigenvalues of $L_G$ inform the structure of the graph.  We can show the following important result:<label class="margin-toggle sidenote-number"></label><span class="sidenote">
+<p>Given a graph <code>$G = (V, E)$</code> with <code>$|V| = n$</code> vertices, we can define the Laplacian matrix as an <code>$n \times n$</code> matrix <code>$L_G =D - A$</code>, where <code>$D$</code> is the degree matrix and $A$ is the adjacency matrix.  The eigenvalues of $L_G$ inform the structure of the graph.  We can show the following important result:<label class="margin-toggle sidenote-number"></label><span class="sidenote">
 For more on machine learning on graphs, see Masthew Das Sarma&rsquo;s <a href="https://thegradient.pub/structure-learning/">article in <em>The Gradient</em></a>.
 </span></p>
-<p><strong>Theorem.</strong> The number of zero eigenvalues of the Laplacian $L_G$ equals the number of connected components of the graph $G$.</p>
-<p>Small eigenvalues correspond to unit vectors $v$ that try to minimize the quantity $v^T L v = \frac{1}{2} \sum_{(i, j) \in E} (v(i) - v(j)$. A natural way to visualize a graph is to embed a graph onto the eigenvectors corresponding to small eigenvalues.</p>
-<p><strong>Definition.</strong> The <em>isoperimetric ratio</em> of a set $S$, denoted $\theta(S)$, is defined as</p>
+<p><strong>Theorem.</strong> The number of zero eigenvalues of the Laplacian <code>$L_G$</code> equals the number of connected components of the graph <code>$G$</code>.</p>
+<p>Small eigenvalues correspond to unit vectors <code>$v$</code> that try to minimize the quantity <code>$v^T L v = \frac{1}{2} \sum_{(i, j) \in E} (v(i) - v(j)$</code>. A natural way to visualize a graph is to embed a graph onto the eigenvectors corresponding to small eigenvalues.</p>
+<p><strong>Definition.</strong> The <em>isoperimetric ratio</em> of a set <code>$S$</code>, denoted $\theta(S)$, is defined as</p>
 <p>$$
 \theta(S) = \frac{|\delta(S)|}{\min(|S|, |V \setminus S|)}.
 $$</p>
 <p>The following theorem shows the importance of the second eigenvalue of a graph&rsquo;s Laplacian.</p>
-<p><strong>Theorem.</strong> Given any graph $G = (V, E)$ and any set $S \subset V$, the isoperimetric number of the graph satisfies</p>
+<p><strong>Theorem.</strong> Given any graph <code>$G = (V, E)$</code> and any set <code>$S \subset V$</code>, the isoperimetric number of the graph satisfies</p>
 <p>$$
 \theta_G \geq \lambda_2 \left ( 1 - \frac{|S|}{|V|} \right ).
 $$</p>
@@ -243,27 +222,27 @@ Sampling and estimation
 <p>We discuss <em>reservoir sampling,</em> originally due to Vitter in 1985.<label class="margin-toggle sidenote-number"></label><span class="sidenote">
 Vitter, Jeffrey S. &ldquo;Random sampling with a reservoir.&rdquo; <em>ACM Transactions on Mathematical Software (TOMS)</em> 11.1 (1985): 37-57.
 </span></p>
-<p>Given a number $k$, and a datastream $x_1, x_2, \dots, $ of length greater than $k$:</p>
+<p>Given a number <code>$k$</code>, and a datastream <code>$x_1, x_2, \dots, $</code> of length greater than <code>$k$</code>:</p>
 <ul>
-<li>Put the first $k$ elements of the stream into a &ldquo;reservoir&rdquo; $R = (x_1, \dots, x_k)$.</li>
-<li>For $i \geq k+1$:
+<li>Put the first <code>$k$</code> elements of the stream into a &ldquo;reservoir&rdquo; <code>$R = (x_1, \dots, x_k)$</code>.</li>
+<li>For <code>$i \geq k+1$</code>:
 <ul>
-<li>With probability $\frac{k}{i}$ replace a random entry of $R$ with $x_i$.</li>
+<li>With probability <code>$\frac{k}{i}$</code> replace a random entry of <code>$R$</code> with <code>$x_i$</code>.</li>
 </ul>
 </li>
-<li>At the end of the stream, return the resource $R$.</li>
+<li>At the end of the stream, return the resource <code>$R$</code>.</li>
 </ul>
-<p>Importantly, the reservoir $R$ consists of a uniformly random subset of $k$ of the entries of $x_1, x_2, \dots, x_t$.</p>
+<p>Importantly, the reservoir <code>$R$</code> consists of a uniformly random subset of <code>$k$</code> of the entries of <code>$x_1, x_2, \dots, x_t$</code>.</p>
 <h2 id="the-fourier-perspective">
 The Fourier perspective
 <a href="#the-fourier-perspective" class="heading-anchor">#</a>
 </h2>
-<p>Recall that the Fourier transform of a function $f$ is defined as follows:</p>
+<p>Recall that the Fourier transform of a function <code>$f$</code> is defined as follows:</p>
 <p>$$
 \hat{f}(s) = \int_{-\infty}^{\infty} e^{- 2 \pi i s t} f(t) , dt.
 $$</p>
 <p>This allows us to transition between the time domain and the frequency domain.  This means we can decompose arbitrary functions as sums of sines and cosines, which allows us to examine periodicity in a waveform.</p>
-<p>Let $\mathcal{F}$ denote the Fourier transform operator. The <em>convolution theorem</em> states that</p>
+<p>Let <code>$\mathcal{F}$</code> denote the Fourier transform operator. The <em>convolution theorem</em> states that</p>
 <p>$$
 \mathcal{F} { f * g } = \mathcal{F} { f } \cdot \mathcal{F} { g }.
 $$</p>
@@ -277,7 +256,7 @@ E. J. Candes, J. Romberg, and T. Tao. Robust uncertainty principles: exact signa
 reconstruction from highly incomplete frequency information. <em>IEEE Transactions on
 Information Theory</em>, 52(2):489–509, 2006.
 </span></p>
-<p><strong>Theorem.</strong> Fix a signal length $n$ and a sparsity level $k$.  Let $\mbf{A}$ be an $m \times n$ matrix with $m = \Theta (k \log \frac{n}{k} )$ rows, with each of its $mn$ entries chosen independently from the standard Gaussian distribution.  With high probability over the choice of $\mbf{A}$, every $k$-sparse signal $\mbf{z}$ can be efficiently recovered from $\mbf{b} = \mbf{Az}$.</p>
+<p><strong>Theorem.</strong> Fix a signal length <code>$n$</code> and a sparsity level <code>$k$</code>.  Let <code>$\mbf{A}$</code> be an <code>$m \times n$</code> matrix with <code>$m = \Theta (k \log \frac{n}{k} )$</code> rows, with each of its <code>$mn$</code> entries chosen independently from the standard Gaussian distribution.  With high probability over the choice of <code>$\mbf{A}$</code>, every <code>$k$</code>-sparse signal <code>$\mbf{z}$</code> can be efficiently recovered from <code>$\mbf{b} = \mbf{Az}$</code>.</p>
 <p>Intuitively, this means that given noisy readings of a true signal, we can often perfectly (or near-perfectly) recover the original signal using optimization.</p>
 <h2 id="privacy-preserving-computation">
 Privacy-preserving computation
@@ -286,18 +265,14 @@ Privacy-preserving computation
 <p>It&rsquo;s possible to define randomized algorithms that are privacy preserving.  The key concept is that of <em>differential privacy</em>.  Intuitively, an algorithm is differentially private if an observer seeing its output cannot tell whether a particular individual&rsquo;s information was used in the computation.<label class="margin-toggle sidenote-number"></label><span class="sidenote">
 Dwork, Cynthia, et al. &ldquo;Calibrating noise to sensitivity in private data analysis.&rdquo; <em>Theory of cryptography conference.</em> Springer, Berlin, Heidelberg, 2006.
 </span></p>
-<p>Let $\mathcal{A}: \mathcal{D}^n \to \mathcal{Y}$ be a randomized algorithm.  Let $D_1, D_2 \in \mathcal{D}^n$ be two databases that differ in at most one entry (these are called neighboring databases).</p>
-<p><strong>Definition.</strong> Let $\epsilon &gt; 0$.  We say that $\mathcal{A}$ is $\epsilon$-differential private if for all neighboring databases $D_1, D_2$, and for all subsets $Y \subset \mathcal{Y}$, we have</p>
-<p>$$
-\frac{\text{Pr}[A(D_1) \in Y]}{\text{Pr}[A(D_2) \in Y]} \leq \exp(\epsilon),
-$$
-where the probability is taken over the coin tosses of $\mathcal{A}$.</p>
+<p>Let <code>$\mathcal{A}: \mathcal{D}^n \to \mathcal{Y}$</code> be a randomized algorithm.  Let <code>$D_1, D_2 \in \mathcal{D}^n$</code> be two databases that differ in at most one entry (these are called neighboring databases).</p>
+<p><strong>Definition.</strong> Let <code>$\epsilon &gt; 0$</code>.  We say that <code>$\mathcal{A}$</code> is <code>$\epsilon$</code>-differential private if for all neighboring databases <code>$D_1, D_2$</code>, and for all subsets <code>$Y \subset \mathcal{Y}$</code>, we have</p>
+<p><code>$$ \frac{\text{Pr}[A(D_1) \in Y]}{\text{Pr}[A(D_2) \in Y]} \leq \exp(\epsilon), $$</code>
+where the probability is taken over the coin tosses of <code>$\mathcal{A}$</code>.</p>
 <p>(sidenote: by convention, if the numerator and denominator are both 0, we say that the ratio is 1).</p>
-<p>Intuitively, we can think of this definition as a game between two parties, Alice and Bob. (sidenote: add simplification: $A$ is permutation invariant, and the space $D$ is finite).  Alice picks an arbitrary $D \in \mathcal{D}^n$.  Let $D_{-n} = (d_1, \dots, d_{n-1})$, and let $D_{n, m} = (d_1, \dots, d_{n-1}, d_n = m)$, where $d_n = m$ means $d_n$ takes on the $m$-th value of $\mathcal{D}$.  Then Alice gives Bob the tuble $D_{-n}, y = \mathcal{A}(D)$.  Bob must then guess correctly the value of $d_n$.  If Alice draws $d_n$ uniformly at random, Bob&rsquo;s best guess for $d_n$ is</p>
-<p>$$
-\argmax_{j \in [m]} \text{Pr} [\mathcal{A} (D_{n, j}) = y ].
-$$</p>
-<p>The key point is that if $\mathcal{A}$ is $\epsilon$-differentially private, then Bob won&rsquo;t be able to win much better than random guessing.</p>
+<p>Intuitively, we can think of this definition as a game between two parties, Alice and Bob. (sidenote: add simplification: <code>$A$</code> is permutation invariant, and the space <code>$D$</code> is finite).  Alice picks an arbitrary <code>$D \in \mathcal{D}^n$</code>.  Let <code>$D_{-n} = (d_1, \dots, d_{n-1})$</code>, and let <code>$D_{n, m} = (d_1, \dots, d_{n-1}, d_n = m)$</code>, where <code>$d_n = m$</code> means <code>$d_n$</code> takes on the <code>$m$</code>-th value of <code>$\mathcal{D}$</code>.  Then Alice gives Bob the tuble <code>$D_{-n}, y = \mathcal{A}(D)$</code>.  Bob must then guess correctly the value of $d_n$.  If Alice draws $d_n$ uniformly at random, Bob&rsquo;s best guess for $d_n$ is</p>
+<p><code>$$ \argmax_{j \in [m]} \text{Pr} [\mathcal{A} (D_{n, j}) = y ]. $$</code></p>
+<p>The key point is that if <code>$\mathcal{A}$</code> is <code>$\epsilon$</code>-differentially private, then Bob won&rsquo;t be able to win much better than random guessing.</p>
 </section>
   <section><footer class="page-footer">
 <hr />
@@ -372,19 +347,19 @@ $$</p>
   <script>(function(){var e,t,n,s=document.getElementsByTagName("code");for(n=0;n<s.length;){if(t=s[n],t.parentNode.tagName!=="PRE"&&t.childElementCount===0&&!t.classList.contains("nolatex")&&(e=t.textContent,/^\$[^$]/.test(e)&&/[^$]\$$/.test(e)&&(e=e.replace(/^\$/,"\\(").replace(/\$$/,"\\)"),t.textContent=e),/^\\\((.|\s)+\\\)$/.test(e)||/^\\\[(.|\s)+\\\]$/.test(e)||/^\$(.|\s)+\$$/.test(e)||/^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(e))){t.outerHTML=t.innerHTML;continue}n++}})()</script>
 
 
-<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css" crossorigin="anonymous">
-<script defer src="//cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.js" crossorigin="anonymous"></script>
-<script defer src="//cdn.jsdelivr.net/npm/katex@0.16.4/dist/contrib/auto-render.min.js" crossorigin="anonymous"></script>
+
+
+
+
+
+<script type="text/javascript" async
+	  src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+
 
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         renderMathInElement(document.body, {
-            
-            
-            
-            
-            
-            
             trust: (context) => ['\\htmlId', '\\href'].includes(context.command),
             macros: {
               "\\eqref": "\\href{###1}{(\\text{#1})}",
