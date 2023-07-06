@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en-us"><head>
+<title>GPT in words and code - Adi Ganesh</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description"
+    content="Notes on transformers / LLMs from the ground up. ">
+<link rel="canonical" href="https://acganesh.github.io/posts/transformers/" />
+
+
+<link rel="icon" href="https://acganesh.github.io/favicon.ico" />
+
+
+<link rel="apple-touch-icon" href="https://acganesh.github.io/touch-icon.png" />
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/modern-normalize/1.1.0/modern-normalize.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+
+
+
+
+
+
+
+
+
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="preload" as="style"
+      href="https://fonts.googleapis.com/css?family=Noto+Serif+SC|Noto+Emoji&display=swap" />
+<link rel="stylesheet"
+      href="https://fonts.googleapis.com/css?family=Noto+Serif+SC|Noto+Emoji&display=swap"
+      media="print" onload="this.media='all'" />
+<noscript>
+<link rel="stylesheet"
+      href="https://fonts.googleapis.com/css?family=Noto+Serif+SC&display=swap" />
+</noscript>
+
+
+
+
+
+
+<link rel="stylesheet" href="/css/hugo-tufte.min.css">
+
+<link rel="stylesheet" href="/css/hugo-tufte-override.css">
+
+</head>
+<body >
+
+<article id="main">
+  <section>
+<h1 class="content-title">GPT in words and code</h1></section>
+
+  
+
+  <section><p>I find that the best way to understand how machine learning papers work is to write the code for a model forward pass.  If you can load the weights from a pre-trained model and get the same outputs from a single model inference, you can be pretty confident that you&rsquo;ve re-implemented all of the details from a model.  The advantages of doing this are:</p>
+<ul>
+<li>Does not require any training, which can be time-consuming and expensive.</li>
+<li>Can test model outputs layer-by-layer to validate the correctness of different components.</li>
+<li>Get a satisfying payoff at the end with a working model.</li>
+</ul>
+<p>This is the strategy adopted in Jay Mody&rsquo;s <a href="https://github.com/jaymody/picoGPT">picoGPT</a> and Andrej Karpathy&rsquo;s <a href="https://github.com/karpathy/nanoGPT">nanoGPT</a>.</p>
+<p>For a good exercise to replicate GPT-inference, I would recommend reimplementing the <code>gpt2</code> function in the picoGPT repo above, located <a href="https://github.com/jaymody/picoGPT/blob/main/gpt2.py#L90C20-L90C20">here</a>.  picoGPT makes this especially easy because the weight loading code is already written and you can just write the forward pass in NumPy. A link to my implementation can be found <a href="https://github.com/acganesh/picoGPT">here</a>.</p>
+<h2 id="model-architecture">
+Model architecture
+<a href="#model-architecture" class="heading-anchor">#</a>
+</h2>
+<p>Here I will break down the GPT architecture into its components.  Here I will focus on GPT-3, since the architecture has been <a href="https://arxiv.org/pdf/2005.14165.pdf">described in the 2020 paper</a>.</p>
+<p>Given <code>$n_{\text{ctx}} = 2048$</code> tokens, GPT-3 will output a probability distribution over its vocabulary size of 50257 tokens.  Decoding the next token can be done by grabbing the <code>argmax</code> over this distribution.</p>
+<p>GPT-3 has the following architectural parameters:</p>
+<ul>
+<li><code>$n_{\text{params}} = 175B$</code></li>
+<li><code>$n_{\text{layers}} = 96$</code></li>
+<li><code>$d_{\text{model}} = 12288$</code></li>
+<li><code>$n_{\text{heads}} = 96$</code></li>
+<li><code>$d_{\text{head}} = 128$</code></li>
+</ul>
+<h3 id="1-byte-pair-embedding-tokenizer">
+1) Byte-Pair Embedding Tokenizer
+<a href="#1-byte-pair-embedding-tokenizer" class="heading-anchor">#</a>
+</h3>
+<p><code>$n_{ctx} = 2048$</code> tokens of text <code>$\to$</code> one-hot tensor of shape <code>$n_{ctx} \times  n_{vocab} = 2048 \times 50257$</code>.</p>
+<p>The first step is to convert words to numbers using a tokenizer.  GPT uses <a href="https://huggingface.co/docs/transformers/tokenizer_summary#bytepair-encoding-bpe">byte-pair encoding</a> (BPE).  In BPE, the most common words are mapped to single tokens while less common words will be broken down into chunks and mapped to multiple tokens.</p>
+<p>OpenAI&rsquo;s <a href="https://platform.openai.com/tokenizer">Tokenizer</a> tool shows how different sentences will be broken into tokens under BPE.  In this example, most words get mapped to a single token, except for &ldquo;Sylvester,&rdquo; which gets chunked into three tokens: <code>Sy</code>, <code>lves</code>, and <code>ter</code>.</p>
+<p>TODO: Fix image.
+<img src="./img/transformers-tokenizer.png" alt="Tokenizer"></p>
+<h3 id="2a-word-embeddings">
+2A) Word Embeddings
+<a href="#2a-word-embeddings" class="heading-anchor">#</a>
+</h3>
+<p><code>$n_{ctx} \times n_{vocab} \to n_{ctx} \times d_{\text{model}}$</code></p>
+<p>Now we convert the sparse one-hot tokens tensor into a dense embedding matrix.  This is done by a linear layer.</p>
+<h3 id="2b-positional-encodings">
+2B) Positional Encodings
+<a href="#2b-positional-encodings" class="heading-anchor">#</a>
+</h3>
+<p><code>$n_{\text{ctx}} \times 1 \to n_{\text{ctx}} \times d_{\text{model}}$</code></p>
+<p>Transformers are invariant to the order of inputs, so we need to tell the model which position each word is in.  In GPT-3, this is done with (EQUATION).</p>
+<h3 id="2c-sum">
+2C) Sum
+<a href="#2c-sum" class="heading-anchor">#</a>
+</h3>
+<p>At this step, we sum up the Word Embeddings and Positional Embedding to aggregate them into a single embedding of shape n_ctx x d_model.</p>
+<h3 id="3-multi-head-attention">
+3) Multi-Head Attention
+<a href="#3-multi-head-attention" class="heading-anchor">#</a>
+</h3>
+<p>To explain how multi-head attention works in GPT-3, we will start with single-head attention.</p>
+<p>We define the <em>attention</em> operation as follows:
+<code>$$ \text{Attention}(\mathbf{Q}, \mathbf{K}, \mathbf{V}) = \text{softmax} \left ( \frac{\mathbf{QK^T}}{\sqrt{d_k}} \right ) \mathbf{V}. $$</code></p>
+<p>In code, this looks like this:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">softmax</span>(x):
+</span></span><span style="display:flex;"><span>    exp_x <span style="color:#f92672">=</span> np<span style="color:#f92672">.</span>exp(x <span style="color:#f92672">-</span> np<span style="color:#f92672">.</span>max(x, axis<span style="color:#f92672">=-</span><span style="color:#ae81ff">1</span>, keepdims<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>))
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> exp_x <span style="color:#f92672">/</span> np<span style="color:#f92672">.</span>sum(exp_x, axis<span style="color:#f92672">=-</span><span style="color:#ae81ff">1</span>, keepdims<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">attention</span>(q, k, v, mask):  <span style="color:#75715e"># [n_q, d_k], [n_k, d_k], [n_k, d_v], [n_q, n_k] -&gt; [n_q, d_v]</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> softmax(q <span style="color:#f92672">@</span> k<span style="color:#f92672">.</span>T <span style="color:#f92672">/</span> np<span style="color:#f92672">.</span>sqrt(q<span style="color:#f92672">.</span>shape[<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>]) <span style="color:#f92672">+</span> mask) <span style="color:#f92672">@</span> v
+</span></span></code></pre></div><p>GPT-3 uses multi-head attention, which means we do the following:</p>
+<h3 id="4-ffn">
+4) FFN
+<a href="#4-ffn" class="heading-anchor">#</a>
+</h3>
+<p>This is just a linear layer.</p>
+<h3 id="5-add-and-norm">
+5) Add and Norm
+<a href="#5-add-and-norm" class="heading-anchor">#</a>
+</h3>
+<p>We use a residual connection and then run layer norm.</p>
+<h3 id="5-decode">
+5) Decode
+<a href="#5-decode" class="heading-anchor">#</a>
+</h3>
+<p>At the end, we have a big word embedding matrix.  We decode by multiplying by the transpose of <code>$W_E$</code>.</p>
+<h3 id="demo">
+Demo:
+<a href="#demo" class="heading-anchor">#</a>
+</h3>
+</section>
+  <section><footer class="page-footer">
+<hr />
+
+<div class="previous-post" style="display:inline-block;">
+  
+  <a class="link-reverse" href="https://acganesh.github.io/posts/2019-07-13-polya-burnside/?ref=footer">« Pólya-Burnside enumeration in combinatorics</a>
+  
+</div>
+
+<div class="next-post", style="display:inline-block;float:right;">
+  
+</div>
+
+<ul class="page-footer-menu">
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+  
+</ul>
+
+
+
+
+
+</footer>
+</section>
+  <section><nav class="menu">
+    <ul>
+    
+        <li><a href="/">Home</a></li>
+    
+        <li><a href="/posts/">Blog</a></li>
+    
+        <li><a href="/about/">About</a></li>
+    
+    </ul>
+</nav>
+</section>
+</article>
+
+
+
+
+
+
+
+  <script>(function(){var e,t,n,s=document.getElementsByTagName("code");for(n=0;n<s.length;){if(t=s[n],t.parentNode.tagName!=="PRE"&&t.childElementCount===0&&!t.classList.contains("nolatex")&&(e=t.textContent,/^\$[^$]/.test(e)&&/[^$]\$$/.test(e)&&(e=e.replace(/^\$/,"\\(").replace(/\$$/,"\\)"),t.textContent=e),/^\\\((.|\s)+\\\)$/.test(e)||/^\\\[(.|\s)+\\\]$/.test(e)||/^\$(.|\s)+\$$/.test(e)||/^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(e))){t.outerHTML=t.innerHTML;continue}n++}})()</script>
+
+
+
+
+
+
+
+<script type="text/javascript" async
+	  src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement(document.body, {
+            trust: (context) => ['\\htmlId', '\\href'].includes(context.command),
+            macros: {
+              "\\eqref": "\\href{###1}{(\\text{#1})}",
+              "\\ref": "\\href{###1}{\\text{#1}}",
+              "\\label": "\\htmlId{#1}{}"
+            }
+        });
+    });
+</script>
+
+
+
+</body>
+
+</html>
