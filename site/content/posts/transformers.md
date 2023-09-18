@@ -172,4 +172,4 @@ x = x @ wte.T
 
 ### Demo
 
-And that's it!  For a demo, check out my repo! https://github.com/acganesh/tinyGPT/
+And that's it!  For a demo, check out my repo. https://github.com/acganesh/tinyGPT/
