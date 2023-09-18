@@ -1,9 +1,8 @@
 ---
 layout: post
 title: GPT in words and code
-date: 2023-07-04
+date: 2023-08-20
 math: true
-draft: true
 description: Notes on transformers / LLMs from the ground up.
 ---
 
@@ -11,7 +10,7 @@ I find that the best way to understand how machine learning papers work is to wr
 
 - Does not require any training, which can be time-consuming and expensive.
 - Can test model outputs layer-by-layer to validate the correctness of different components.
-- Get a satisfying payoff at the end with a working model.
+- Get a satisfying payoff at the end with a working model, and develop an understanding of the model that is more detailed than what is found in the paper.
 
 This is the strategy adopted in Jay Mody's [picoGPT](https://github.com/jaymody/picoGPT) and Andrej Karpathy's [nanoGPT](https://github.com/karpathy/nanoGPT).
 
@@ -19,20 +18,24 @@ For a good exercise to replicate GPT-inference, I would recommend reimplementing
 
 ## Model architecture 
 
-Here I will break down the GPT architecture into its components.  Here I will focus on GPT-3, since the architecture has been [described in the 2020 paper](https://arxiv.org/pdf/2005.14165.pdf).
+Here I will break down the GPT architecture into its components.  Here I will focus on GPT-2, since the weights are publicly available.  GPT-3 has a very similar architecture but is massively scaled up.
 
-Given `$n_{\text{ctx}} = 2048$` tokens, GPT-3 will output a probability distribution over its vocabulary size of 50257 tokens.  Decoding the next token can be done by grabbing the `argmax` over this distribution.
+GPT2 can be implemented in the following pseudocode:
+```
+def gpt(input_string):
+  input_tokens = tokenize(input_string)
+  x = wte[input_tokens] + wpe[range(len(input_tokens))]
+  for transformer_block in transformer_blocks:
+    x = transformer_block(x) 
+  x = layer_norm(x)
+  return x @ wte.T
+```
 
-GPT-3 has the following architectural parameters:
-- `$n_{\text{params}} = 175B$`
-- `$n_{\text{layers}} = 96$`
-- `$d_{\text{model}} = 12288$`
-- `$n_{\text{heads}} = 96$`
-- `$d_{\text{head}} = 128$`
+In the following sections we will break down each piece.
 
 ### 1) Byte-Pair Embedding Tokenizer
 
-`$n_{ctx} = 2048$` tokens of text `$\to$` one-hot tensor of shape `$n_{ctx} \times  n_{vocab} = 2048 \times 50257$`.
+`$\text{String} -> \text{List[Integer]}$`
 
 The first step is to convert words to numbers using a tokenizer.  GPT uses [byte-pair encoding](https://huggingface.co/docs/transformers/tokenizer_summary#bytepair-encoding-bpe) (BPE).  In BPE, the most common words are mapped to single tokens while less common words will be broken down into chunks and mapped to multiple tokens.
 
@@ -41,55 +44,132 @@ OpenAI's [Tokenizer](https://platform.openai.com/tokenizer) tool shows how diffe
 TODO: Fix image.
 ![Tokenizer](./img/transformers-tokenizer.png)
 
-### 2A) Word Embeddings
+### 2.1) Word Embeddings
 
-`$n_{ctx} \times n_{vocab} \to n_{ctx} \times d_{\text{model}}$`
+We start by embedding each token which is done with a lookup
+```
+wte[input_tokens].
+```
 
-Now we convert the sparse one-hot tokens tensor into a dense embedding matrix.  This is done by a linear layer.
+This gives us a tensor of shape `$n_{tokens} \times n_{embed}$`.  For GPT-2, `$n_{embed} = 1600$`.
 
-### 2B) Positional Encodings 
 
-`$n_{\text{ctx}} \times 1 \to n_{\text{ctx}} \times d_{\text{model}}$`
+### 2.2) Positional Encodings 
 
-Transformers are invariant to the order of inputs, so we need to tell the model which position each word is in.  In GPT-3, this is done with (EQUATION).
+Transformers are invariant to the order of inputs, so we need to tell the model which position each word is in.  We grab positional embeddings with a similar lookup:
+```
+wpe[range(len(inputs))]
+```
 
-### 2C) Sum
+This gives us another tensor of shape `$n_{tokens} \times n_{embed}$`.
 
-At this step, we sum up the Word Embeddings and Positional Embedding to aggregate them into a single embedding of shape n_ctx x d_model.
 
-### 3) Multi-Head Attention
+### 2.3) Sum
 
-To explain how multi-head attention works in GPT-3, we will start with single-head attention.
+Now we simply sum of the two tensors from before to get a single tensor of shape `$n_{tokens} \times n_{embed}$`.
 
-We define the *attention* operation as follows: 
+```
+x = wte[inputs] + wpe[range(len(inputs))]
+```
+
+### 3) Transformer Block
+
+The transformer block can be expressed as the following operation:
+```
+def transformer_block(x):
+  x = x + MultiHeadAttention(LayerNorm(x))
+  x = x = FFN(LayerNorm(x))
+  return x
+```
+
+### 3.1) Attention
+
+We will start by discussing single-head attention.  We define the *attention* operation as follows: 
 `$$
 \text{Attention}(\mathbf{Q}, \mathbf{K}, \mathbf{V}) = \text{softmax} \left ( \frac{\mathbf{QK^T}}{\sqrt{d_k}} \right ) \mathbf{V}.
 $$`
 
-In code, this looks like this:
-```python
-def softmax(x):
-    exp_x = np.exp(x - np.max(x, axis=-1, keepdims=True))
-    return exp_x / np.sum(exp_x, axis=-1, keepdims=True)
+Here, `$\mathbf{Q}, \mathbf{K}, \mathbf{V}$` are obtained from a linear layer on the input tensor.
 
-def attention(q, k, v, mask):  # [n_q, d_k], [n_k, d_k], [n_k, d_v], [n_q, n_k] -> [n_q, d_v]
+In code, this looks like this:
+```
+causal_mask = (1 - np.tri(x.shape[0], dtype=x.dtype)) * -1e10
+
+def attention(q, k, v, mask):
+    # [n_q, d_k], [n_k, d_k], [n_k, d_v], [n_q, n_k] -> [n_q, d_v]
     return softmax(q @ k.T / np.sqrt(q.shape[-1]) + mask) @ v
 ```
 
-GPT-3 uses multi-head attention, which means we do the following:
+Here, the causal mask prevents a tokens from attending to future tokens - in the context of language modeling, this is necessary since we will see each word stream in one by one.
+
+Intuitively, `$\mathbf{Q} \mathbf{K}^T$` will result in an "importance" matrix that returns the importance of each token to each other token.  We then divide this by `$\sqrt{d_k}$` and then pass this through a softmax.  Finally, we multiply this by the `$\mathbf{V}$` matrix, which represents the importance of each token.
+
+### 3.2) MultiHeadAttention
+
+MultiHeadAttention is a simple extension of single-head attention.  Here, we will just redo the above operation several times with a different learnd `$\mathbf{Q}, \mathbf{K}$ and `$\mathbf{V}$` matrices.  We will then concatenate the result of each attention head together, which is then multiplied by a linear projection.
+
+In code, this looks like this:
+
+```
+def multi_head_attention(x, c_attn, c_proj, n_head):
+    x = linear(x,
+               w=c_attn['w'],
+               b=c_attn['b'])
+
+    qkv = np.split(x, 3, axis=-1)
+
+    qkv_heads = []
+    for elt in qkv:
+        qkv_head_split = np.split(elt, n_head, axis=-1)
+        qkv_heads.append(qkv_head_split)
+
+    causal_mask = (1 - np.tri(x.shape[0], dtype=x.dtype)) * -1e10
+
+    out_heads = []
+    for q, k, v in zip(*qkv_heads):
+        x = attention(q, k, v, causal_mask)
+        out_heads.append(x)
+    
+    x = np.hstack(out_heads)
+
+    x = linear(x,
+               w=c_proj['w'],
+               b=c_proj['b'])
+
+    return x
+```
+
 
 ### 4) FFN
 
-This is just a linear layer.
+The rest of the transformer block is quite simple.  The FFN block looks like this:
 
-### 5) Add and Norm
+```
+def ffn(x):
+  x = linear(x) # project up
+  x = gelu(x)
+  x = linear(x) # project down
+```
 
-We use a residual connection and then run layer norm.
+The GELU is an activation function defined in [this paper](https://arxiv.org/abs/1606.08415), defined as `$x \Phi(x)$`, where `$\Phi(x)$` is the standard Gaussian CDF function.
 
-### 5) Decode
+We will call the FFN block in the transformer block with a skip connection as follows:
 
-At the end, we have a big word embedding matrix.  We decode by multiplying by the transpose of `$W_E$`.
+```
+x = x + ffn(x)
+```
+### 5) LayerNorm and Decode
 
+Before decoding words, we will run a last iteration of LayerNorm as follows:
+```
+x = x + layer_norm(x)
+```
 
-### Demo:
+At the end, we have a big word embedding matrix.  We decode by multiplying by the transpose of `$W_E$` to get back to tokens:
+```
+x = x @ wte.T
+```
 
+### Demo
+
+And that's it!  For a demo, check out my repo! https://github.com/acganesh/tinyGPT/
