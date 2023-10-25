@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en-us"><head>
+<title>Pólya-Burnside enumeration in combinatorics - Adi Ganesh</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description"
+    content="A nice technique to count objects under symmetries. ">
+<link rel="canonical" href="https://acganesh.github.io/posts/2018-12-15-polya-burnside/" />
+
+
+<link rel="icon" href="https://acganesh.github.io/favicon.ico" />
+
+
+<link rel="apple-touch-icon" href="https://acganesh.github.io/touch-icon.png" />
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/modern-normalize/1.1.0/modern-normalize.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+
+
+
+
+
+
+
+
+
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="preload" as="style"
+      href="https://fonts.googleapis.com/css?family=Noto+Serif+SC|Noto+Emoji&display=swap" />
+<link rel="stylesheet"
+      href="https://fonts.googleapis.com/css?family=Noto+Serif+SC|Noto+Emoji&display=swap"
+      media="print" onload="this.media='all'" />
+<noscript>
+<link rel="stylesheet"
+      href="https://fonts.googleapis.com/css?family=Noto+Serif+SC&display=swap" />
+</noscript>
+
+
+
+
+
+
+<link rel="stylesheet" href="/css/hugo-tufte.min.css">
+
+<link rel="stylesheet" href="/css/hugo-tufte-override.css">
+
+</head>
+<body >
+
+<article id="main">
+  <section>
+<h1 class="content-title">Pólya-Burnside enumeration in combinatorics</h1></section>
+
+  
+
+  <section><p><code>$$ \newcommand{\mat}[1]{\begin{pmatrix}#1\end{pmatrix}} \DeclareMathOperator{\Stab}{Stab} \DeclareMathOperator{\Fix}{Fix} \DeclareMathOperator{\Orb}{Orb} $$</code></p>
+<h1 id="pólya-burnside-enumeration-in-combinatorics">
+Pólya-Burnside enumeration in combinatorics
+<a href="#p%c3%b3lya-burnside-enumeration-in-combinatorics" class="heading-anchor">#</a>
+</h1>
+<h2 id="a-class-of-problems">
+A class of problems
+<a href="#a-class-of-problems" class="heading-anchor">#</a>
+</h2>
+<p>The following problem in chemistry is historically significant, as G. Pólya originally popularized his theory through applications in chemical enumeration.  How many different chemical compounds can be made by attaching <code>$H$</code>, <code>$CH_3$</code>, or <code>$OH$</code> radicals to each of the carbon atoms in the benzene ring pictured below?</p>
+<p>Here are other problems that can be approached using Pólya-Burnside.</p>
+<ul>
+<li>In how many ways can an <code>$n \times n$</code> tablecloth be colored with <code>$k$</code> colors?</li>
+<li>How many different necklaces can be made with <code>$n$</code> beads and <code>$k$</code> colors?</li>
+<li>How many ways can the faces of a polyhedrons be colored using at most <code>$n$</code> colors?</li>
+<li>Find the number of simple graphs with <code>$n$</code> vertices, up to isomorphism.</li>
+</ul>
+<p>These problems share a common theme of enumerating the number of objects with some equivalence under <em>symmetry.</em></p>
+<h2 id="an-example-coloring-a-flag">
+An example: coloring a flag
+<a href="#an-example-coloring-a-flag" class="heading-anchor">#</a>
+</h2>
+<p><em>Problem.</em> How many ways are there to color a flag with <code>$n$</code> stripes lined side by side with <code>$k$</code> colors?</p>
+<p>(IMAGE)</p>
+<p>Do not count as different flags with colors &ldquo;flipped.&rdquo;  The following two flags would be considered the same.</p>
+<h3 id="solving-it-with-standard-methods">
+Solving it with standard methods.
+<a href="#solving-it-with-standard-methods" class="heading-anchor">#</a>
+</h3>
+<p>Let&rsquo;s take the simple case when <code>$n = 4$</code> and <code>$k = 2$</code>.</p>
+<p>Assume we count the number of patterns normally, without accounting for reflection.  Then <code>$N = 2^4$</code>.  Let <code>$N_r$</code> denote the number of distinct colorings under reflection.  <code>$N_r \neq \frac{2^4}{2}$</code>, as one might think!  We need to separately handle symmetric patterns and asymmetric patterns.</p>
+<p>An asymmetric pattern like (&hellip;) yields a new pattern that we don&rsquo;t want to double count, (&hellip;), when it is reflected.  To count these, we must divide by 2.</p>
+<p>A symmetric pattern like (&hellip;) when reflected does not create a new pattern.  We don&rsquo;t need to divide by 2 here.</p>
+<p>Let <code>$A$</code> denote the number of asymmetric patterns not accounting for reflection, and <code>$S$</code> be the number of symmetric patterns.  First, note that <code>$A + S = 2^4$</code>.</p>
+<p>Now, the number of patterns accounting for reflection, <code>$N_r$</code> is given by</p>
+<p>$$
+N_r = \frac{A}{2} + S = \frac{2^4 - S}{2} + S.
+$$</p>
+<p>Now, <code>$S = 2^2$</code>, since picking the first two squares uniquely defines the last two.  Thus <code>$N_r = \frac{2^4 - 2^2}{2} + 2^2 = 10$</code>.</p>
+<p><em>Exercise.</em> Show that in the general case, <code>$N_r = \frac{k^n + k^{\lfloor (n+1)/2 \rfloor}}{2}$</code>.</p>
+<h1 id="applying-pólyas-theory">
+Applying Pólya&rsquo;s theory
+<a href="#applying-p%c3%b3lyas-theory" class="heading-anchor">#</a>
+</h1>
+<p>We will first apply &rsquo;s method without explaining how it works.  We first discuss <em>cycle notation.</em></p>
+<p>Any permutation can be expressed as the product of cycles.  For instance,</p>
+<p><code>$$ \mat{1 &amp; 2 &amp; 3 &amp; 4 &amp; 5 \\ 5 &amp; 1 &amp; 4 &amp; 3 &amp; 2} = \mat{1 &amp; 5 &amp; 2}\mat{3 &amp; 4}. $$</code></p>
+<p>Denote the flag patterning as a 4-letter string of colors <em>abcd.</em></p>
+<p>There are two symmetries:</p>
+<ul>
+<li>The identity permutation that maps <code>$abcd \to abcd$</code>, specifically <code>$(a)(b)(c)(d)$</code>.</li>
+<li>The reflection permutation that maps <code>$abcd \to dcba$</code>, that is <code>$\mat{a &amp; b &amp; c &amp; d \\ d &amp; c &amp; b &amp; a}$</code>, or the cycle product <code>$\mat{a &amp; d}\mat{b &amp; c}$</code>.</li>
+</ul>
+<p>We say that a cycle of length <code>$n$</code> is an <code>$n$</code>-cycle.  The first symmetry is a product of four 1-cycles, and the second is the product of two 2-cycles</p>
+<h2 id="cycle-index-polynomial">
+Cycle index polynomial
+<a href="#cycle-index-polynomial" class="heading-anchor">#</a>
+</h2>
+<p>We can compute the cycle index polynomial as follows:</p>
+<p><code>$$ P = \frac{1 \cdot f_1^4 + 1 \cdot f_2^2}{2}. $$</code></p>
+<p>We make the substitution <code>$f_n = x^n + y^n$</code>, and use two terms since we are considering two colors.  Then <code>$P$</code> becomes</p>
+<p><code>$$ P(x, y) = \frac{(x+y)^4 + (x^2 + y^2)^2}{2}. $$</code></p>
+<p>To find the answer from before, we add the coefficients of this polynomial.  This is equivalent to taking <code>$P(1, 1)$</code>, which gives <code>$\frac{2^4 + 2^2}{2} = 10$</code>, as from before.  Importantly, not only is the sumal equal, but the constituents of the sum are similar as well: this is a hint at some sort of combinatorial equivalence between the two processes.</p>
+<h2 id="p-is-a-generating-function-for-colorings">
+<code>$P$</code> is a generating function for colorings
+<a href="#p-is-a-generating-function-for-colorings" class="heading-anchor">#</a>
+</h2>
+<p>Remarkably, <code>$P$</code> is a generating function for each coloring.  Expanding, we obtain</p>
+<p><code>$$ P = x^4 + 2x^3 y + 4x^2 y^2 + 2x y^3 + y^4. $$</code></p>
+<p>Here, the coefficient of <code>$x^j y^k$</code> gives the number of patterns with <code>$j$</code> squares of color 1 and <code>$k$</code> squares of color 2.</p>
+<p>(table)</p>
+<h2 id="counting-necklaces-pumac-2009">
+Counting necklaces: PuMAC 2009
+<a href="#counting-necklaces-pumac-2009" class="heading-anchor">#</a>
+</h2>
+<p><em>2009 PUMaC Combinatorics A10.</em>  Taotao wants to buy a bracelet.  The bracelets have 7 different beads on them arranged in a circle.  Two bracelets are the same if one can be rotated or flipped to get the other.  If she can choose the colors and placements of the beads, and the beads come in orange, white, and black, how many possible bracelets can she buy?</p>
+<p><em>Solution.</em> Imagine the 7 beads at the vertices of a regular hexagon.  See Figure 1.</p>
+<p>We will analyze the symmetries of the 7-gon.  We have 7 reflections through a vertex and a midpoint of the opposite side, and 7 rotations of <code>$n (\frac{360}{7})^{\circ}$</code>, with <code>$n \in \{ 1, 2, \dots, 7 \}$</code>.</p>
+<p><em>Permutation cycle structure: reflections.</em></p>
+<p>All the 7 reflections have the same cycle structure, by symmetry.  This corresponds to the permutation structure <code>$(1)(7 2)(6 3)(5 4)$</code>; see Figure 2.</p>
+<p>In the cycle index polynomial, this corresponds to <code>$7 f_1 f_2^3$</code>, since we have one 1-cycle and three 2-cycle, and 7 such reflection, since we can take a reflection through any vertex.</p>
+<p><em>Permutation cycle structure: rotations.</em></p>
+<p>All the 6 nonidentity rotations are 7-cycles, since 7 in a prime number.  This contributes <code>$ 6 \cdot f_7$</code> to the cycle index polynomial.</p>
+<p>By contrast, consider the case where <code>$n = 6$</code> is composite.  Int his case, a rotation of <code>$(\frac{360}{3})^{\circ}$</code> yields <code>$(1 3 5)(2 4 6)$</code>, which would correspond to <code>$f_3^2$</code> in the cycle index polynomial.</p>
+<p><em>The identity.</em> The identity is trivially a product of seven 1-cycles, so it contributes <code>$1 \cdot f_1^7$</code> to the polynomial.</p>
+<h2 id="cycle-index-polynomials">
+Cycle index polynomials
+<a href="#cycle-index-polynomials" class="heading-anchor">#</a>
+</h2>
+<p>The cycle index polynomial is thus
+<code>$$ \frac{7 \cdot f_1 f_2^3 + 6 \cdot f_7 + 1 \cdot f_1^7}{14}. $$</code></p>
+<p>Substituting <code>$f_n = x^n + y^n + z^n$</code> (since we have three colors), the polynomial is
+<code>$$ f(x, y, z) = \frac{7 (x+y+z)(x^2 + y^2 + z^2)^3 + 6 (x^7 + y^7 + z^7) + (x+y+z)^7}{14}. $$</code></p>
+<p>The sum of the coefficients gives us the desired count.  Plugging in 1, we find that
+<code>$$ f(1, 1, 1) = \frac{7 \cdot 3^4 + 6 \cdot 3 + 3^7}{14} = 198. $$</code></p>
+<h2 id="calculating-the-number-of-necklackes-of-a-subtype">
+Calculating the number of necklackes of a subtype
+<a href="#calculating-the-number-of-necklackes-of-a-subtype" class="heading-anchor">#</a>
+</h2>
+<p>Let&rsquo;s say we wanted to find the number of necklaces with 2 red beads, 2 orange beads, and 3 yellow beads: this is the coefficient of <code>$x^2 y^2 z^3$</code>.</p>
+<p>Recalling that
+<code>$$ f(x, y, z) = \frac{7 (x+y+z)(x^2 + y^2 + z^2)^3 + 6 (x^7 + y^7 + z^7) + (x+y+z)^7}{14}, $$</code></p>
+<p>we can obtain the required coefficient without expanding this out.  From the first term, <code>$7 \cdot (x+y+z)(x^2+y^2+z^2)^3$</code>, we note that we must take a factor of <code>$z$</code> from <code>$(x+y+z)$</code>, and then factors of <code>$x^2, y^2, z^2$</code> from the <code>$(x^2 + y^2+z^2)$</code> terms, in any possible ordering.</p>
+<p>There are <code>$3! = 6$</code> to pick the ordering of <code>$x^2, y^2, z^2$</code>, so the number of terms from here <code>$7 \cdot 3! = 42$</code>.</p>
+<p>In the middle term, <code>$6(x^7 + y^7 + z^7)$</code>, we will not obtain any terms of the required form.</p>
+<p>In the last term, <code>$(x + y + z)^7$</code>, we can just apply the multinomial theorem to find that the coefficient is <code>$\binom{72}{2, 3} = \frac{7!}{2! 2! 3!} = 210$</code>.</p>
+<p>Thus the coefficient we want is
+<code>$$ \frac{7 \cdot 3! + \binom{7}{2,2,3}}{14} = 18, $$</code></p>
+<p>implying that there are 18 necklaces with 2 red beads, 2 orange beads, and 3 yellow beads.</p>
+<p>Now, notably, if we expand the generating function, we obtain a symmetric polynomial.  This is because the mapping of the colors to the variables $x,y,z$ doesn&rsquo;t matter.</p>
+<h2 id="computational-utility">
+Computational utility
+<a href="#computational-utility" class="heading-anchor">#</a>
+</h2>
+<p>Just like we did in problem 1, it is certainly possible to use casework to solve this counting problem.  But we see the efficiency of this when we increase the number of beads or colors even modestly.</p>
+<p>Suppose we have a necklace with 17 beads and 4 colors.  Then the cycle index polynomial is</p>
+<p><code>$$ P = \frac{f_1^{17} + 16 f_{17} + 17 f_1 f_2^8}{34}. $$</code></p>
+<p>Substituting, we obtain
+<code>$$ P = \frac{(w+x+y+z)^{17} + 16 (w^{17} + x^{17} + y^{17} + z^{17}) + 17(w+x+y+z)(w^2 + x^2 + y^2 + z^2)^8}{34}, $$</code></p>
+<p>so that
+<code>$$ P(1,1,1,1) = 5054421344. $$</code></p>
+<p>Similarly, we can use the multinomial theorem as before to find specific coefficients.  The key point here is that the number of cases to consider increase quickly, but there are only 3 different permutation structures that exist, making &rsquo;s theory easy to apply.</p>
+<h2 id="introduction-to-group-theory">
+Introduction to group theory
+<a href="#introduction-to-group-theory" class="heading-anchor">#</a>
+</h2>
+<p>To explain why this process works, we will briefly introduce group theory.  There are several applications of this area of mathematics, a few of which are listed below:</p>
+<ul>
+<li>Matrix groups to study the symmetries of 3-D solids, various problems in physics, and crystallographic groups.</li>
+<li>Extension fields for geometric constructions, including showing that duplicating the cube, trisecting an angle, and squaring a circle is impossible.</li>
+</ul>
+<p>(In fact, we can show that if <code>$n$</code> is a positive integer such that the regular <code>$n$</code>-gon is constructible with rule and compass, then <code>$n = 2^k \prod_{i=1}^{k} p_i$</code>, where <code>$k \geq 0$</code> and the <code>$p_i$</code> are distinct Fermat primes, that is, primes of the form <code>$2^{2^m} +1$</code>.</p>
+<ul>
+<li>Combinatorial enumeration via group action on sets and Burnside&rsquo;s lemma (the subject of this post).</li>
+</ul>
+<h3 id="the-definition-of-a-group">
+The definition of a group
+<a href="#the-definition-of-a-group" class="heading-anchor">#</a>
+</h3>
+<p>We note that a group <code>$(G, *)$</code> contains a set <code>$G$</code> of elements and a binary operation <code>$*$</code>.  Importantly,</p>
+<ul>
+<li><code>$*$</code> is closed on <code>$G$</code>.  That is, if <code>$g, h \in G$</code>, then <code>$g * h \in G$</code>.</li>
+<li><code>$*$</code> is associative.  If <code>$a, b, c \in G$</code>, then <code>$a * (b * c) = (a * b) * c$</code>.</li>
+<li>There exists a unique identity element <code>$e \in G$</code> such that for all <code>$g \in G$</code>, we have <code>$g * e = e*g = g$</code>.</li>
+<li>For all <code>$g \in G$</code>, there exists an inverse, denoted <code>$g^{-1}$</code> such that <code>$g * g^{-1} = g^{-1} * g = e$</code>.</li>
+</ul>
+<p>There are many examples of groups, including:</p>
+<ul>
+<li><code>$(\mathbb{C}, +), (\mathbb{R}, +), (\mathbb{Q}, +), (\mathbb{Z}, +)$</code>.</li>
+<li>The set of symmetries of a rectangle, the Klein 4-group.</li>
+<li>The group of all permutations on three elements, <code>$S_3$</code>.</li>
+<li>The example most relevant to this post: the <em>dihedral group,</em> <code>$D_n$</code>, the group of all symmetries (rotational and reflectional) of a regular <code>$n$</code>-sided polygon, with <code>$2n$</code> elements.</li>
+</ul>
+<p>There are two main cases to consider.  If <code>$n$</code> is odd, reflections are through a vertex and a midpoint of the opposite side.  When <code>$n$</code> is even, reflections are through midpoints of opposite sides.</p>
+<h2 id="group-action-and-burnsides-lemma">
+Group action and Burnside&rsquo;s lemma
+<a href="#group-action-and-burnsides-lemma" class="heading-anchor">#</a>
+</h2>
+<h3 id="group-action-on-sets">
+Group action on sets
+<a href="#group-action-on-sets" class="heading-anchor">#</a>
+</h3>
+<p>A group <code>$(G, *)$</code> acts on the set <code>$X$</code> if there is a function that takes pairs of elements in <code>$G$</code> and elements in <code>$X$</code>, <code>$(g, x)$</code> to new elements in <code>$X$</code>.  In our case, <code>$X$</code> will be the set of objects <em>without accounting for symmetry.</em></p>
+<p>More formally, we say that a group <code>$G(, *)$</code> acts on a set <code>$X$</code> if there is a function <code>$f: G \times X \to X$</code> such that when we denote <code>$f(g, x)$</code> as <code>$g(x)$</code>, we have</p>
+<ul>
+<li><code>$(g_1 g_2)(x) = g_1(g_2(x))$</code> for all <code>$g_1, g_2 \in G, x\in X$</code>.</li>
+<li><code>$e(x) = x$</code> if <code>$e$</code> is the identify of the group and <code>$x \in X$</code>.</li>
+</ul>
+<h2 id="the-orbit-and-stabilizer">
+The orbit and stabilizer
+<a href="#the-orbit-and-stabilizer" class="heading-anchor">#</a>
+</h2>
+<p>If <code>$G$</code> acts on a set <code>$X$</code> and <code>$x \in X$</code>, then the stabilizer of <code>$x$</code> is defined as the set</p>
+<p><code>$$ \Stab x = \{ g \in G | g(x) = x \}, $$</code></p>
+<p>that is, the set of elements in the group that take the element <code>$x$</code> to itself.</p>
+<p>Similarly, let <code>$\Fix g$</code> denote the elements of <code>$X$</code> fixed by <code>$g$</code>, that is the set <code>$\{ x \in X | g(x) = x \}$</code>.</p>
+<p>The set of all outputs of an element <code>$x \in X$</code> under group action is called the orbit, defined as the set</p>
+<p><code>$$ \Orb x = \{ g(x) | g \in G \}. $$</code></p>
+<h2 id="the-orbit-stabilizer-theorem">
+The orbit-stabilizer theorem
+<a href="#the-orbit-stabilizer-theorem" class="heading-anchor">#</a>
+</h2>
+<p>If a finite group <code>$G$</code> acts on a set <code>$X$</code>, for each <code>$x \in X$</code>, we have
+<code>$$ |G| = |\Stab x | | \Orb x|, $$</code>
+where <code>$|G|$</code> denotes the number of elements in the group.</p>
+<p><em>Intuition.</em> We don&rsquo;t formally prove this result, but provide some intuition with the example of a cube&rsquo;s symmetries.  First, recall that there are 24 rotational symmetries of a cube.  There are 8 places one vertex can go, and 3 places you can put one of its neighbors, yielding <code>$8 \cdot 3 = 24$</code> symmetries.  Now,</p>
+<ul>
+<li>Fix one face.  You can move the cube 4 ways (you can only rotate it).  These are the stabilizers.</li>
+<li>There are 6 faces you can pick.  This is the orbit of the face.</li>
+</ul>
+<p>Thus, <code>$4 \cdot 6 = 24$</code>, the order of the group of cube symmetries, as expected.</p>
+<h2 id="burnsides-lemma">
+Burnside&rsquo;s Lemma
+<a href="#burnsides-lemma" class="heading-anchor">#</a>
+</h2>
+<p>If <code>$G$</code> is a finite group that acts on the elements of a finite set <code>$X$</code>, and <code>$N$</code> is the number of orbits of <code>$X$</code> under <code>$G$</code>, then</p>
+<p><code>$$ N = \frac{1}{|G|} \sum_{g \in G} | \Fix g |. $$</code></p>
+<p>The orbit of an element <code>$x \in X$</code> refers to all possible colorings you can obtain by some rotation or reflection on some coloring.  If we count the <em>number of orbits,</em> <code>$N$</code>, we are counting the number of oclorings that are distinct under rotation or reflection, which solves our problem.</p>
+<p><em>Proof.</em> Consider the quantity <code>$\sum_{g \in G} | \Fix g |$</code>.  But this is also
+<code>$$ |S| = \sum_{g \in G} | \Fix g | = \sum_{x \in X} | \Stab x|. $$</code></p>
+<p>Let <code>$x_1, x_2, \dots, x_N$</code> be representive elements from each orbit of <code>$X$</code> under <code>$G$</code>.  If an element <code>$x$</code> is in the same orbit as <code>$x_i$</code>, then <code>$\Orb x = \Orb x_i$</code>, and by the orbit-stabilizer theorem, we have <code>$|\Stab x| = |\Stab x_i|$</code>.  Thus, we have</p>
+<p><code>$$ \sum_{g \in G} |\Fix g| = \sum_{i=1}^{N} \sum_{x \in \Orb x_i} |\Stab x| = \sum_{i = 1}^{N} |\Orb x_i| |\Stab x_i|, $$</code>
+which implies
+<code>$$ \sum_{g \in G} |\Fix g| = \sum_{i=1}^{N} |\Orb x_i| |\Stab x_i|. $$</code>
+By the orbit-stabilizer theorem, each of the summands equals <code>$|G|$</code>.  And therefore,
+<code>$$ \sum_{g \in G} |\Fix g| = \sum_{i=1}^{N} |\Orb x_i| |\Stab x_i| = N \cdot |G|. $$</code></p>
+<p>Burnside lemmas follows from dividing out by <code>$|G|$</code>.</p>
+<h2 id="intuition-why-does-pólya-burnside-enumeration-work">
+Intuition: why does Pólya-Burnside enumeration work?
+<a href="#intuition-why-does-p%c3%b3lya-burnside-enumeration-work" class="heading-anchor">#</a>
+</h2>
+<p>The key idea is that plugging in 1 into the generating function yields Burnside&rsquo;s Lemma.</p>
+<p>Recall the generating functions from the previous examples.</p>
+<p><em>Problem 1.</em> (Number of different flag colorings).
+<code>$$ f(x, y) = \frac{(x+y)^4 + (x^2+y^2)^2}{2}, $$</code>
+where:</p>
+<ul>
+<li><code>$2^4$</code>: number of elements fixed by the identity</li>
+<li><code>$2^2$</code>: number of elements fixed by reflection across middle.</li>
+<li><code>$2$</code>: order of dihedral group <code>$D_2$</code>.</li>
+</ul>
+<p><em>Problem 2.</em> Number of different bracelets:</p>
+<p><code>$$ g(x, y, z) = \frac{7 (x+y+z)(x^2 + y^2 + z^2)^3 + 6 (x^7 + y^7 + z^7) + (x+y+z)^7}{14}, $$</code>
+where:</p>
+<ul>
+<li><code>$7 \cdot 3^4$</code>: number of elements fixed by reflections</li>
+<li><code>$6 \cdot 3$</code>: number of elements fixed by the six nonidentity rotations</li>
+<li><code>$3^7$</code>: number of elements fixed by the identity.</li>
+<li><code>$14$</code>: order of <code>$D_7$</code>.</li>
+</ul>
+<p>The key point is that summing the coefficients gives you <code>$N = \frac{1}{|G|} \sum_{g \in G} |\Fix g|$</code>.</p>
+<p>That is,
+<code>$$ f(1, 1) = \frac{2^4 + 2^2}{2}; \qquad g(1, 1) = \frac{7 \cdot 3^4 + 6 \cdot 3 + 3^7}{14}. $$</code></p>
+<h2 id="intuition-why-the-generating-function-substitution-works">
+Intuition: why the generating function substitution works
+<a href="#intuition-why-the-generating-function-substitution-works" class="heading-anchor">#</a>
+</h2>
+<p>Recall that an object that can be colored with <code>$k$</code> colors has a symmetry as follows: a permutation with <code>$p_1$</code> cycles of length 1, <code>$p_2$</code> cycles of length 2, <code>$\dots$</code>, <code>$p_n$</code> cycles of length <code>$n$</code> contributes</p>
+<p><code>$$ f_1^{p_1} f_2^{p_2} \dots f_n^{p_n}, $$</code>
+to the cycle index polynomial.  As before, if we have <code>$k$</code> colors, we substitute <code>$f_i = (c_1^i + c_2^i + \dots + c_k^i)$</code>.</p>
+<p>The key idea is that to count fixed elements, <code>$|\Fix g|$</code>, all entities in the respective cycles must be the same color.</p>
+<p>In the generating function <code>$c_1^i c_2^j c_3^k$</code> represents <code>$i, j, k$</code> instances of <code>$c_1, c_2, c_3$</code> respectively.  To be the same, we can substitute <code>$c_n^{p_n}$</code> for any color, since it doesn&rsquo;t matter what color we pick; thus, we substitute <code>$f_i = c_1^i + c_2^i + \dots + c_k^i$</code>.</p>
+<h2 id="additional-problems">
+Additional problems
+<a href="#additional-problems" class="heading-anchor">#</a>
+</h2>
+<p>These additional problems were obtained from the Art of Problem Solving forum.</p>
+<p>With the exception of #1, these are an assortment of problems in which it may not be immediately clear that Burnside&rsquo;s lemma can be applied.</p>
+<ol>
+<li>Two of the squares of a <code>$7 \times 7$</code> checkerboard are painted yellow, and the rest are painted green.  Two color schemes are equivalent if one can be obtained from the other by applying a rotation in the plane of the board.  How many inequivalent color schemes are possible? (AIME 1996, #7).</li>
+<li>Find the number of second-degree polynomials <code>$f(x)$</code> with integer coefficients and integer zeros for which <code>$f(0) = 2010$</code>. (AIME 2010, #10).</li>
+<li>Two quadrilaterals are consider the same if one can be obtained from the other by a rotation and a translation.  How many different convex cyclic quadrilaterals are there with integer sides and perimeter equal to 32?  (AMC 12A 2010, #25).</li>
+<li>How many subsets <code>$\{ x, y, z, t, \} \subset \mathbb{N}$</code> are there that satisfy the following conditions?
+<code>$$ 12 \leq x &lt; y &lt; z &lt; t, $$</code>
+<code>$$ x+y+z+t = 2011. $$</code></li>
+<li>Prove that, for all positive integers <code>$n$</code> and <code>$k$</code>, we have
+<code>$$ n | \sum_{i=0}^{n-1} k^{\gcd(i, n)}, $$</code>
+where <code>$a|b$</code> means that <code>$a$</code> divides <code>$b$</code>.</li>
+</ol>
+</section>
+  <section><footer class="page-footer">
+<hr />
+
+<div class="previous-post" style="display:inline-block;">
+  
+  <a class="link-reverse" href="https://acganesh.github.io/posts/2016-12-23-prime-counting/?ref=footer">« The Meissel-Lehmer algorithm</a>
+  
+</div>
+
+<div class="next-post", style="display:inline-block;float:right;">
+  
+  <a class="link-reverse" href="https://acganesh.github.io/posts/2019-01-01-maximum-entropy/?ref=footer">The principle of maximum entropy »</a>
+  
+</div>
+
+<ul class="page-footer-menu">
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+  
+</ul>
+
+
+
+
+
+</footer>
+</section>
+  <section><nav class="menu">
+    <ul>
+    
+        <li><a href="/">Home</a></li>
+    
+        <li><a href="/posts/">Blog</a></li>
+    
+        <li><a href="/about/">About</a></li>
+    
+    </ul>
+</nav>
+</section>
+</article>
+
+
+
+
+
+
+
+  <script>(function(){var e,t,n,s=document.getElementsByTagName("code");for(n=0;n<s.length;){if(t=s[n],t.parentNode.tagName!=="PRE"&&t.childElementCount===0&&!t.classList.contains("nolatex")&&(e=t.textContent,/^\$[^$]/.test(e)&&/[^$]\$$/.test(e)&&(e=e.replace(/^\$/,"\\(").replace(/\$$/,"\\)"),t.textContent=e),/^\\\((.|\s)+\\\)$/.test(e)||/^\\\[(.|\s)+\\\]$/.test(e)||/^\$(.|\s)+\$$/.test(e)||/^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(e))){t.outerHTML=t.innerHTML;continue}n++}})()</script>
+
+
+
+
+
+
+
+<script type="text/javascript" async
+	  src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement(document.body, {
+            trust: (context) => ['\\htmlId', '\\href'].includes(context.command),
+            macros: {
+              "\\eqref": "\\href{###1}{(\\text{#1})}",
+              "\\ref": "\\href{###1}{\\text{#1}}",
+              "\\label": "\\htmlId{#1}{}"
+            }
+        });
+    });
+</script>
+
+
+
+</body>
+
+</html>

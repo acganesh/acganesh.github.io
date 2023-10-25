@@ -18,17 +18,6 @@ Does not require any training, which can be time-consuming and expensive.</descr
     </item>
     
     <item>
-      <title>Pólya-Burnside enumeration in combinatorics</title>
-      <link>https://acganesh.github.io/posts/2019-07-13-polya-burnside/</link>
-      <pubDate>Sat, 13 Jul 2019 00:00:00 +0000</pubDate>
-      
-      <guid>https://acganesh.github.io/posts/2019-07-13-polya-burnside/</guid>
-      <description>$$ \newcommand{\mat}[1]{\begin{pmatrix}#1\end{pmatrix}} \DeclareMathOperator{\Stab}{Stab} \DeclareMathOperator{\Fix}{Fix} \DeclareMathOperator{\Orb}{Orb} $$
-Pólya-Burnside enumeration in combinatorics # A class of problems # The following problem in chemistry is historically significant, as G. Pólya originally popularized his theory through applications in chemical enumeration. How many different chemical compounds can be made by attaching $H$, $CH_3$, or $OH$ radicals to each of the carbon atoms in the benzene ring pictured below?
-Here are other problems that can be approached using Pólya-Burnside.</description>
-    </item>
-    
-    <item>
       <title>The modern algorithmic toolbox</title>
       <link>https://acganesh.github.io/posts/2019-07-13-modern-algorithmic-toolbox/</link>
       <pubDate>Sat, 13 Jul 2019 00:00:00 +0000</pubDate>
@@ -49,6 +38,17 @@ Modern hashing # Motivating problem.</description>
       <description>Introduction: what is entropy? # $$ \newcommand{\EE}{\mathbb{E}} \newcommand{\RR}{\mathbb{R}} \newcommand{\mbf}{\mathbf} \DeclareMathOperator{\argmax}{argmax} $$
 Intuitively, the notion of entropy defines a measure of &amp;ldquo;disorder&amp;rdquo; or &amp;ldquo;expected surprise&amp;rdquo; given a probability distribution. As described by Shannon in is 1948 article, the entropy can be defined as follows Shannon, Claude Elwood. &amp;ldquo;A mathematical theory of communication.&amp;rdquo; Bell system technical journal 27.3 (1948): 379-423. .
 Let $X$ be a discrete random variable on a space $\mathcal{X}$ with probability mass function $\mathbf{p}(x)$.</description>
+    </item>
+    
+    <item>
+      <title>Pólya-Burnside enumeration in combinatorics</title>
+      <link>https://acganesh.github.io/posts/2018-12-15-polya-burnside/</link>
+      <pubDate>Sat, 15 Dec 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://acganesh.github.io/posts/2018-12-15-polya-burnside/</guid>
+      <description>$$ \newcommand{\mat}[1]{\begin{pmatrix}#1\end{pmatrix}} \DeclareMathOperator{\Stab}{Stab} \DeclareMathOperator{\Fix}{Fix} \DeclareMathOperator{\Orb}{Orb} $$
+Pólya-Burnside enumeration in combinatorics # A class of problems # The following problem in chemistry is historically significant, as G. Pólya originally popularized his theory through applications in chemical enumeration. How many different chemical compounds can be made by attaching $H$, $CH_3$, or $OH$ radicals to each of the carbon atoms in the benzene ring pictured below?
+Here are other problems that can be approached using Pólya-Burnside.</description>
     </item>
     
     <item>
