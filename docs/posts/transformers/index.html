@@ -82,8 +82,7 @@ Model architecture
 <p><code>$\text{String} -&gt; \text{List[Integer]}$</code></p>
 <p>The first step is to convert words to numbers using a tokenizer.  GPT uses <a href="https://huggingface.co/docs/transformers/tokenizer_summary#bytepair-encoding-bpe">byte-pair encoding</a> (BPE).  In BPE, the most common words are mapped to single tokens while less common words will be broken down into chunks and mapped to multiple tokens.</p>
 <p>OpenAI&rsquo;s <a href="https://platform.openai.com/tokenizer">Tokenizer</a> tool shows how different sentences will be broken into tokens under BPE.  In this example, most words get mapped to a single token, except for &ldquo;Sylvester,&rdquo; which gets chunked into three tokens: <code>Sy</code>, <code>lves</code>, and <code>ter</code>.</p>
-<p>TODO: Fix image.
-<img src="./img/transformers-tokenizer.png" alt="Tokenizer"></p>
+<p><img src="/img/transformers-tokenizer.png" alt="Tokenizer"></p>
 <h3 id="21-word-embeddings">
 2.1) Word Embeddings
 <a href="#21-word-embeddings" class="heading-anchor">#</a>
@@ -132,7 +131,7 @@ def attention(q, k, v, mask):
 3.2) MultiHeadAttention
 <a href="#32-multiheadattention" class="heading-anchor">#</a>
 </h3>
-<p>MultiHeadAttention is a simple extension of single-head attention.  Here, we will just redo the above operation several times with a different learnd <code>$\mathbf{Q}, \mathbf{K}$ and </code>$\mathbf{V}$` matrices.  We will then concatenate the result of each attention head together, which is then multiplied by a linear projection.</p>
+<p>MultiHeadAttention is a simple extension of single-head attention.  Here, we will just redo the above operation several times with a different learned <code>$\mathbf{Q}, \mathbf{K}$</code> and <code>$\mathbf{V}$</code> matrices.  We will then concatenate the result of each attention head together, which is then multiplied by a linear projection.</p>
 <p>In code, this looks like this:</p>
 <pre tabindex="0"><code>def multi_head_attention(x, c_attn, c_proj, n_head):
     x = linear(x,
@@ -196,6 +195,8 @@ Demo
 </div>
 
 <div class="next-post", style="display:inline-block;float:right;">
+  
+  <a class="link-reverse" href="https://acganesh.github.io/posts/2023-11-04-latex/?ref=footer">My local LaTeX workflow »</a>
   
 </div>
 

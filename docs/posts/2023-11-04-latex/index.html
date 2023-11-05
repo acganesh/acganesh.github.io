@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en-us"><head>
+<title>My local LaTeX workflow - Adi Ganesh</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description"
+    content="Live-compilation, macros, and more. ">
+<link rel="canonical" href="https://acganesh.github.io/posts/2023-11-04-latex/" />
+
+
+<link rel="icon" href="https://acganesh.github.io/favicon.ico" />
+
+
+<link rel="apple-touch-icon" href="https://acganesh.github.io/touch-icon.png" />
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/modern-normalize/1.1.0/modern-normalize.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+
+
+
+
+
+
+
+
+
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="preload" as="style"
+      href="https://fonts.googleapis.com/css?family=Noto+Serif+SC|Noto+Emoji&display=swap" />
+<link rel="stylesheet"
+      href="https://fonts.googleapis.com/css?family=Noto+Serif+SC|Noto+Emoji&display=swap"
+      media="print" onload="this.media='all'" />
+<noscript>
+<link rel="stylesheet"
+      href="https://fonts.googleapis.com/css?family=Noto+Serif+SC&display=swap" />
+</noscript>
+
+
+
+
+
+
+<link rel="stylesheet" href="/css/hugo-tufte.min.css">
+
+<link rel="stylesheet" href="/css/hugo-tufte-override.css">
+
+</head>
+<body >
+
+<article id="main">
+  <section>
+<h1 class="content-title">My local LaTeX workflow</h1></section>
+
+  
+
+  <section><p>In this post, I&rsquo;ll document the workflow that I use to compose LaTeX documents locally on Mac OS.  Back in college I used this workflow to <a href="https://amathew.wordpress.com/2010/07/07/my-adventure-in-live-texing-and-some-notes/">live-TeX</a> lecture notes.</p>
+<p>Here&rsquo;s an example that shows it all together:</p>
+<img src="/img/latex-example-final.gif" width="100%" height="100%"/>
+<h1 id="personal-stylesheet">
+Personal stylesheet
+<a href="#personal-stylesheet" class="heading-anchor">#</a>
+</h1>
+<p>One of the most basic but powerful features of LaTeX is being able to define your own macros in a stylesheet.  I recommend defining your own, which you can then import with <code>\usepackage{stylesheetname}</code>.</p>
+<p>The contents of mine are pretty simple &ndash; I&rsquo;ve attached it <a href="https://github.com/acganesh/compendium/blob/master/adi.sty">here</a>.</p>
+<h1 id="latexmk-auto-compilation">
+latexmk: Auto-compilation
+<a href="#latexmk-auto-compilation" class="heading-anchor">#</a>
+</h1>
+<p>Overleaf has this nice feature where it will recompile the document regularly as you edit.  There is a convenient Perl script that replicates this locally, called <a href="https://mg.readthedocs.io/latexmk.html"><code>latexmk</code></a>.  With the following command:</p>
+<pre tabindex="0"><code>latexmk -pvc
+</code></pre><p>the script will continuously check input files for changes and recompile the document if needed.</p>
+<h1 id="vim-latex-macros-for-latex-commands">
+vim-latex: Macros for LaTeX commands
+<a href="#vim-latex-macros-for-latex-commands" class="heading-anchor">#</a>
+</h1>
+<p>I&rsquo;m a longtime user of vim.  One of my favorite packages is <a href="https://vim-latex.sourceforge.net/">vim-latex</a>, which provides a handy set of macros.</p>
+<p>You can find the full reference card <a href="https://michaelgoerz.net/refcards/vimlatexqrc.pdf">here</a>, but I&rsquo;ll highlight a few features that I find especially nice.</p>
+<p>The package provides one-character macros for symbols.  For example, typing `6 will type out \partial.</p>
+<p>There&rsquo;s also a handy feature for commands like \frac that require arguments.  Typing `/ will type out \frac{&lt;++&gt;}{&lt;++&gt;}{&lt;++&gt;}.  Each of the &lt;++&gt; are placeholders that can be &ldquo;jumped&rdquo; to with the command Ctrl-J.  This is probably a lot more clear in the GIF above :)</p>
+<h1 id="skim-auto-reloading-pdf-viewer">
+Skim: Auto-reloading PDF viewer
+<a href="#skim-auto-reloading-pdf-viewer" class="heading-anchor">#</a>
+</h1>
+<p>On Mac OS, <a href="https://skim-app.sourceforge.io/">Skim</a> is a PDF reader which a key feature: it reloads when the PDF changes contents.  I find this nicer than Preview, which requires me to click on the window to get it to reload.</p>
+<p>When I used to use a similar workflow on Linux, I used <a href="https://github.com/pwmt/zathura">zathura</a>, a lightweight document viewer with vim-like keybindings.</p>
+<h1 id="tmux">
+tmux
+<a href="#tmux" class="heading-anchor">#</a>
+</h1>
+<p>I typically open a <a href="https://github.com/tmux/tmux/wiki">tmux</a> session with latexmk in one pane, and my vim editor in a different pane.</p>
+<h1 id="inkscape-figures">
+inkscape-figures
+<a href="#inkscape-figures" class="heading-anchor">#</a>
+</h1>
+<p>While it&rsquo;s possible to use TikZ to <a href="https://tex.stackexchange.com/questions/158668/nice-scientific-pictures-show-off">generate beautiful images</a>, I personally like creating vector graphics in inkscape, and then using the inkscape figures package to import them into my doc. For more information on this package, check out the <a href="https://github.com/gillescastel/inkscape-figures">docs</a>.</p>
+<p>I hope you found this post helpful!</p>
+</section>
+  <section><footer class="page-footer">
+<hr />
+
+<div class="previous-post" style="display:inline-block;">
+  
+  <a class="link-reverse" href="https://acganesh.github.io/posts/transformers/?ref=footer">« GPT in words and code</a>
+  
+</div>
+
+<div class="next-post", style="display:inline-block;float:right;">
+  
+</div>
+
+<ul class="page-footer-menu">
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+  
+</ul>
+
+
+
+
+
+</footer>
+</section>
+  <section><nav class="menu">
+    <ul>
+    
+        <li><a href="/">Home</a></li>
+    
+        <li><a href="/posts/">Blog</a></li>
+    
+        <li><a href="/about/">About</a></li>
+    
+    </ul>
+</nav>
+</section>
+</article>
+
+
+
+
+
+
+
+  <script>(function(){var e,t,n,s=document.getElementsByTagName("code");for(n=0;n<s.length;){if(t=s[n],t.parentNode.tagName!=="PRE"&&t.childElementCount===0&&!t.classList.contains("nolatex")&&(e=t.textContent,/^\$[^$]/.test(e)&&/[^$]\$$/.test(e)&&(e=e.replace(/^\$/,"\\(").replace(/\$$/,"\\)"),t.textContent=e),/^\\\((.|\s)+\\\)$/.test(e)||/^\\\[(.|\s)+\\\]$/.test(e)||/^\$(.|\s)+\$$/.test(e)||/^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(e))){t.outerHTML=t.innerHTML;continue}n++}})()</script>
+
+
+
+
+
+
+
+<script type="text/javascript" async
+	  src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement(document.body, {
+            trust: (context) => ['\\htmlId', '\\href'].includes(context.command),
+            macros: {
+              "\\eqref": "\\href{###1}{(\\text{#1})}",
+              "\\ref": "\\href{###1}{\\text{#1}}",
+              "\\label": "\\htmlId{#1}{}"
+            }
+        });
+    });
+</script>
+
+
+
+</body>
+
+</html>
