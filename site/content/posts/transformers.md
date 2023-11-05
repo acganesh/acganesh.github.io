@@ -41,8 +41,7 @@ The first step is to convert words to numbers using a tokenizer.  GPT uses [byte
 
 OpenAI's [Tokenizer](https://platform.openai.com/tokenizer) tool shows how different sentences will be broken into tokens under BPE.  In this example, most words get mapped to a single token, except for "Sylvester," which gets chunked into three tokens: `Sy`, `lves`, and `ter`.
 
-TODO: Fix image.
-![Tokenizer](./img/transformers-tokenizer.png)
+![Tokenizer](/img/transformers-tokenizer.png)
 
 ### 2.1) Word Embeddings
 
@@ -106,7 +105,7 @@ Intuitively, `$\mathbf{Q} \mathbf{K}^T$` will result in an "importance" matrix t
 
 ### 3.2) MultiHeadAttention
 
-MultiHeadAttention is a simple extension of single-head attention.  Here, we will just redo the above operation several times with a different learnd `$\mathbf{Q}, \mathbf{K}$ and `$\mathbf{V}$` matrices.  We will then concatenate the result of each attention head together, which is then multiplied by a linear projection.
+MultiHeadAttention is a simple extension of single-head attention.  Here, we will just redo the above operation several times with a different learned `$\mathbf{Q}, \mathbf{K}$` and `$\mathbf{V}$` matrices.  We will then concatenate the result of each attention head together, which is then multiplied by a linear projection.
 
 In code, this looks like this:
 
