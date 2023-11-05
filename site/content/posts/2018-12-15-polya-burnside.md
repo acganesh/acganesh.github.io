@@ -3,7 +3,7 @@ layout: post
 title: Pólya-Burnside enumeration in combinatorics
 date: 2018-12-15
 math: true
-description: A nice technique to count objects under symmetries.
+description: Using group theory for combinatorics.
 ---
 
 

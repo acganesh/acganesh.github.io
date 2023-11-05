@@ -3,7 +3,7 @@ layout: post
 title: The principle of maximum entropy
 date: 2019-01-01
 math: true
-description: Introducing entropy and its applications.
+description: Introducing entropy and its applications in statistics / ML.
 ---
 
 ## Introduction: what is entropy?
