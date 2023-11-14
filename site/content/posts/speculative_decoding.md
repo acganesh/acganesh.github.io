@@ -6,7 +6,7 @@ math: true
 description: When two language models are faster than one.
 ---
 
-Speculative decoding is a neat trick that provides significant speedups to LLM inference.  This post was originally inspired by this Karpathy [tweet](https://twitter.com/karpathy/status/1697318534555336961) -- I will aim to discuss how the algorithm works in more detail and prove its correctness.
+Speculative decoding is a neat trick that provides significant speedups to LLM inference.  This post was originally inspired by this Karpathy [tweet](https://twitter.com/karpathy/status/1697318534555336961) -- I will discuss how the algorithm works in more detail and prove its correctness.
 
 The idea is based on the following facts:
 - LLM inference for batch size `$k$` takes approximately the same time as inference for batch size `$1$`, for surprisingly large values of `$k$`.  In particular, for low batch sizes, LLMs are bound by memory-bandwidth.
@@ -18,14 +18,19 @@ The main algorithm does the following:
 - Run the cheap model's predictions through the main model with batch size `$K$` to obtain logits. 
 - Skip forward through all tokens that agree with the draft model.  Once we hit a disagreement with the target model, throw the remaining draft tokens away and repeat.
 
-Here's an example of what this looks like in practice:
+Here's an example of what this looks like in practice: 
 
-![Speculative decoding example](/img/spec-example.png)
+![Speculative decoding example](/img/spec-example.png) {{< marginnote >}}Image from [Leviathan et al. 2023](https://arxiv.org/abs/2211.17192).{{< /marginnote >}}
+ 
+## Inference Speed Ups
 
+![Speculative decoding latency](/img/speculative-latency.png)
+
+[Chen et al. 2023](https://arxiv.org/abs/2302.01318) tried this technique on Chinchilla 70B.  They find an approximate speedup of 2x, which is a massive improvement.  Interestingly, the speedup differs by domain, which makes sense, because different domains may have different frequencies of "easy tokens."  The speedup on HumanEval (code generation) is greater than the speedup on XSum (text summarization), which suggests that code tends to have more easy tokens than text.
 
 # Precursor: LLMs are bound by memory-bandwidth at inference time
 
-Below is the hierarchy of memory on a system with a CPU and A100 GPU.  {{< marginnote >}}Source: The [FlashAttention paper](https://arxiv.org/pdf/2205.14135.pdf).{{< /marginnote >}}
+Below is the hierarchy of memory on a system with a CPU and A100 GPU.  {{< marginnote >}}Image from the [FlashAttention paper](https://arxiv.org/pdf/2205.14135.pdf), Dao et al. 2022.{{< /marginnote >}}
 
 <img src="/img/a100-hierarchy.png" alt="A100 hierarchy" style="width:50%;">
 
@@ -36,7 +41,7 @@ The key mental model for GPUs is that we need to move data from high-bandwidth m
 - Memory bandwidth: 1935 GB/s
 - Compute: 312 TFLOPS with FP16
 
-This [post](https://finbarr.ca/how-is-llama-cpp-possible/#fn:3) does analysis that breaks down the latency incurred by memory-bandwith and by compute.  Let `$P$` be the number of parameters in a language model.  Let `$n_{\text{bytes}}$` denote the number of bytes in each number (16 for FP16, 8 for INT8, etc.).  Let `$B$` be the batch size.  It turns out we can express the latency incurred by compute and memory bandwidth as follows:
+This [post](https://finbarr.ca/how-is-llama-cpp-possible/#fn:3) does analysis that breaks down the latency incurred by memory-bandwith and by compute.  Let `$P$` be the number of parameters in a language model.  Let `$n_{\text{bytes}}$` denote the number of bytes in each parameter (16 for FP16, 8 for INT8, etc.)  Let `$B$` be the batch size.  It turns out we can express the latency incurred by compute and memory bandwidth as follows:
 
 `$$
 \begin{aligned} \text { latency }_{\text {model }} & =\max \left(\text { latency }_{\text {compute }}, \text { latency }_{\text {memory }}\right) \\ \text { latency }_{\text {memory }} & =\frac{2 \cdot P \cdot n_{\text {bytes }}}{n_{\text {memory bandwidth }}}, \\ \text { latency }_{\text {compute }} & =\frac{2 \cdot P \cdot B}{n_{\text {flops }}}\end{aligned}
@@ -110,9 +115,9 @@ Inputs:
 
 Let's prove Theorem 1 from the paper, which states the following:
 
-**Theorem 1.**   Modified rejection sampling recovers the target distribution.
+**Theorem 1.**  Speculative decoding recovers the target model's probability distribution `$q(x)$`.
 
-As above, let `$q$` be the draft model, and `$p$` be the target model.  Let `$X$` be the final sample produced by the algorithm above.  We will show that `$P(X = x)$` is equal to `$p(x)$`.
+As above, let `$p$` be the draft model, and `$q$` be the target model.  Let `$X$` be the final sample produced by the algorithm above.  We will show that `$P(X = x)$` is equal to `$q(x)$`.
 
 The first step is to break `$P(X = x)$` into two cases.  Either `$\tilde{x} = x$` and we accept the draft sample, or we reject it and resample.
 
@@ -165,13 +170,4 @@ $$`
 
 This finishes the proof of Theorem 1.
 
-## Inference Latency Results
-
-![Speculative decoding latency](/img/speculative-latency.png)
-
-The referenced DeepMind paper tried this technique on Chinchilla 70B.  They find an approximate speedup of 2x, which is a great improvement.  Interestingly, the speedup differs by domain, which makes sense, because different domains may have different frequencies of "easy tokens."
-
-
-
-
-
+Thanks to [Kevin Chen](https://kevinchen.co/) for reading a draft of this post.

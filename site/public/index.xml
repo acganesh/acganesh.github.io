@@ -13,7 +13,7 @@
       <pubDate>Tue, 07 Nov 2023 00:00:00 +0000</pubDate>
       
       <guid>https://acganesh.github.io/posts/speculative_decoding/</guid>
-      <description>Speculative decoding is a neat trick that provides significant speedups to LLM inference. This post was originally inspired by this Karpathy tweet &amp;ndash; I will aim to discuss how the algorithm works in more detail and prove its correctness.
+      <description>Speculative decoding is a neat trick that provides significant speedups to LLM inference. This post was originally inspired by this Karpathy tweet &amp;ndash; I will discuss how the algorithm works in more detail and prove its correctness.
 The idea is based on the following facts:
 LLM inference for batch size $k$ takes approximately the same time as inference for batch size $1$, for surprisingly large values of $k$. In particular, for low batch sizes, LLMs are bound by memory-bandwidth.</description>
     </item>

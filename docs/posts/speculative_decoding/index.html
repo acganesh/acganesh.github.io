@@ -53,7 +53,7 @@
 
   
 
-  <section><p>Speculative decoding is a neat trick that provides significant speedups to LLM inference.  This post was originally inspired by this Karpathy <a href="https://twitter.com/karpathy/status/1697318534555336961">tweet</a> &ndash; I will aim to discuss how the algorithm works in more detail and prove its correctness.</p>
+  <section><p>Speculative decoding is a neat trick that provides significant speedups to LLM inference.  This post was originally inspired by this Karpathy <a href="https://twitter.com/karpathy/status/1697318534555336961">tweet</a> &ndash; I will discuss how the algorithm works in more detail and prove its correctness.</p>
 <p>The idea is based on the following facts:</p>
 <ul>
 <li>LLM inference for batch size <code>$k$</code> takes approximately the same time as inference for batch size <code>$1$</code>, for surprisingly large values of <code>$k$</code>.  In particular, for low batch sizes, LLMs are bound by memory-bandwidth.</li>
@@ -66,15 +66,26 @@
 <li>Skip forward through all tokens that agree with the draft model.  Once we hit a disagreement with the target model, throw the remaining draft tokens away and repeat.</li>
 </ul>
 <p>Here&rsquo;s an example of what this looks like in practice:</p>
-<p><img src="/img/spec-example.png" alt="Speculative decoding example"></p>
+<p><img src="/img/spec-example.png" alt="Speculative decoding example"> <label for="marginnote-1" class="margin-toggle marginnote-ind">💬</label>
+<input type="checkbox" id="marginnote-1" class="margin-toggle"/>
+<span class="marginnote">
+Image from <a href="https://arxiv.org/abs/2211.17192">Leviathan et al. 2023</a>.
+</span>
+</p>
+<h2 id="inference-speed-ups">
+Inference Speed Ups
+<a href="#inference-speed-ups" class="heading-anchor">#</a>
+</h2>
+<p><img src="/img/speculative-latency.png" alt="Speculative decoding latency"></p>
+<p><a href="https://arxiv.org/abs/2302.01318">Chen et al. 2023</a> tried this technique on Chinchilla 70B.  They find an approximate speedup of 2x, which is a massive improvement.  Interestingly, the speedup differs by domain, which makes sense, because different domains may have different frequencies of &ldquo;easy tokens.&rdquo;  The speedup on HumanEval (code generation) is greater than the speedup on XSum (text summarization), which suggests that code tends to have more easy tokens than text.</p>
 <h1 id="precursor-llms-are-bound-by-memory-bandwidth-at-inference-time">
 Precursor: LLMs are bound by memory-bandwidth at inference time
 <a href="#precursor-llms-are-bound-by-memory-bandwidth-at-inference-time" class="heading-anchor">#</a>
 </h1>
-<p>Below is the hierarchy of memory on a system with a CPU and A100 GPU.  <label for="marginnote-1" class="margin-toggle marginnote-ind">💬</label>
-<input type="checkbox" id="marginnote-1" class="margin-toggle"/>
+<p>Below is the hierarchy of memory on a system with a CPU and A100 GPU.  <label for="marginnote-2" class="margin-toggle marginnote-ind">💬</label>
+<input type="checkbox" id="marginnote-2" class="margin-toggle"/>
 <span class="marginnote">
-Source: The <a href="https://arxiv.org/pdf/2205.14135.pdf">FlashAttention paper</a>.
+Image from the <a href="https://arxiv.org/pdf/2205.14135.pdf">FlashAttention paper</a>, Dao et al. 2022.
 </span>
 </p>
 <img src="/img/a100-hierarchy.png" alt="A100 hierarchy" style="width:50%;">
@@ -85,7 +96,7 @@ Source: The <a href="https://arxiv.org/pdf/2205.14135.pdf">FlashAttention paper<
 <li>Memory bandwidth: 1935 GB/s</li>
 <li>Compute: 312 TFLOPS with FP16</li>
 </ul>
-<p>This <a href="https://finbarr.ca/how-is-llama-cpp-possible/#fn:3">post</a> does analysis that breaks down the latency incurred by memory-bandwith and by compute.  Let <code>$P$</code> be the number of parameters in a language model.  Let <code>$n_{\text{bytes}}$</code> denote the number of bytes in each number (16 for FP16, 8 for INT8, etc.).  Let <code>$B$</code> be the batch size.  It turns out we can express the latency incurred by compute and memory bandwidth as follows:</p>
+<p>This <a href="https://finbarr.ca/how-is-llama-cpp-possible/#fn:3">post</a> does analysis that breaks down the latency incurred by memory-bandwith and by compute.  Let <code>$P$</code> be the number of parameters in a language model.  Let <code>$n_{\text{bytes}}$</code> denote the number of bytes in each parameter (16 for FP16, 8 for INT8, etc.)  Let <code>$B$</code> be the batch size.  It turns out we can express the latency incurred by compute and memory bandwidth as follows:</p>
 <p><code>$$ \begin{aligned} \text { latency }_{\text {model }} &amp; =\max \left(\text { latency }_{\text {compute }}, \text { latency }_{\text {memory }}\right) \\ \text { latency }_{\text {memory }} &amp; =\frac{2 \cdot P \cdot n_{\text {bytes }}}{n_{\text {memory bandwidth }}}, \\ \text { latency }_{\text {compute }} &amp; =\frac{2 \cdot P \cdot B}{n_{\text {flops }}}\end{aligned} $$</code></p>
 <p>Plugging in the above values for memory bandwidth and FLOPs, Finbarr Timbers <a href="https://finbarr.ca/how-is-llama-cpp-possible/#fn:3">concludes</a> that memory bandwidth dominates compute latency for batch sizes smaller than 161.</p>
 <h1 id="going-through-the-algorithm-in-detail">
@@ -133,8 +144,8 @@ Proof of correctness
 <a href="#proof-of-correctness" class="heading-anchor">#</a>
 </h2>
 <p>Let&rsquo;s prove Theorem 1 from the paper, which states the following:</p>
-<p><strong>Theorem 1.</strong>   Modified rejection sampling recovers the target distribution.</p>
-<p>As above, let <code>$q$</code> be the draft model, and <code>$p$</code> be the target model.  Let <code>$X$</code> be the final sample produced by the algorithm above.  We will show that <code>$P(X = x)$</code> is equal to <code>$p(x)$</code>.</p>
+<p><strong>Theorem 1.</strong>  Speculative decoding recovers the target model&rsquo;s probability distribution <code>$q(x)$</code>.</p>
+<p>As above, let <code>$p$</code> be the draft model, and <code>$q$</code> be the target model.  Let <code>$X$</code> be the final sample produced by the algorithm above.  We will show that <code>$P(X = x)$</code> is equal to <code>$q(x)$</code>.</p>
 <p>The first step is to break <code>$P(X = x)$</code> into two cases.  Either <code>$\tilde{x} = x$</code> and we accept the draft sample, or we reject it and resample.</p>
 <p>So we can write:</p>
 <p><code>$$ \begin{aligned} P(X = x) &amp;= P(\tilde{x} = x) P(\tilde{x} \text{ accepted} | \tilde{x} = x) + P(\tilde{x} \text{ rejected}) P(X = x | \tilde{x} \text{ rejected}) \end{aligned} $$</code></p>
@@ -148,12 +159,7 @@ Proof of correctness
 <p>Multiplying through, we have:</p>
 <p><code>$$ \begin{align} &amp; P(\tilde{x} = x) P(\tilde{x} \text{ accepted} | \tilde{x} = x) + P(\tilde{x} \text{ rejected}) P(X = x | \tilde{x} \text{ rejected}) \\ &amp;= \min (p(x), q(x)) + \left ( \frac{\max(0, q(x) - p(x))}{\sum_{x'} \max \left( 0, q(x') - p(x') \right)} \right ) \sum_{x^{\prime}} \max \left(0, q\left(x^{\prime}\right)-p\left(x^{\prime}\right)\right) \\ &amp;= \min (p(x), q(x)) + \max (0, q(x) - p(x)) \\ &amp;= q(x). \end{align} $$</code></p>
 <p>This finishes the proof of Theorem 1.</p>
-<h2 id="inference-latency-results">
-Inference Latency Results
-<a href="#inference-latency-results" class="heading-anchor">#</a>
-</h2>
-<p><img src="/img/speculative-latency.png" alt="Speculative decoding latency"></p>
-<p>The referenced DeepMind paper tried this technique on Chinchilla 70B.  They find an approximate speedup of 2x, which is a great improvement.  Interestingly, the speedup differs by domain, which makes sense, because different domains may have different frequencies of &ldquo;easy tokens.&rdquo;</p>
+<p>Thanks to <a href="https://kevinchen.co/">Kevin Chen</a> for reading a draft of this post.</p>
 </section>
   <section><footer class="page-footer">
 <hr />
