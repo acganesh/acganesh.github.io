@@ -12,14 +12,14 @@ params:
   codeblocksdark: false
   # Customize the indicator for margin notes
   # Some suggestions: ⊕, 💬, 💭, 📑, 🏷 , ✍ , 💡, 🧐, 📎, 📌
-  marginNoteInd: "⊕"
+  marginNoteInd: "💬"
   # Your name or the name of you company
   # copyright: Copyright 2023
   # copyrightHolder: Copyright Holder
   # Show the "Powered by Hugo-Tufte and Hugo."
   showPoweredBy: false
   # Site wide kill switch for date in pages
-  hidedate: false
+  hidedate: true
   # Site wide kill switch for post summary on home page
   showSummary: true
   # Site wide kill switch for LaTeX support
