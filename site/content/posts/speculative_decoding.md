@@ -82,7 +82,7 @@ Inputs:
 
 `$ \quad q(x|\,x_1, \ldots, x_n), q(x|\,x_1, \ldots, x_n, \tilde{x}_1), \ldots, q(x|\,x_1, \ldots, x_n, \tilde{x}_1, \ldots, \tilde{x}_K) $`
 
-`$ \quad \textbf{for} \text{  } t = 1 : K \textbf{do} $`
+`$ \quad \textbf{for} \text{  } t = 1 : K \textbf{ do} $`
 
 `$ \quad \quad \text{Sample  } r \sim U[0, 1] \text{ from a uniform distribution.} $`
 

@@ -116,7 +116,7 @@ Going through the algorithm in detail
 <p><code>$ \quad \textbf{end for} $</code></p>
 <p><code>$ \quad \text{In parallel, compute  } K + 1 \text{ sets of logits from drafts  } \tilde{x}_1, \ldots, \tilde{x}_K : $</code></p>
 <p><code>$ \quad q(x|\,x_1, \ldots, x_n), q(x|\,x_1, \ldots, x_n, \tilde{x}_1), \ldots, q(x|\,x_1, \ldots, x_n, \tilde{x}_1, \ldots, \tilde{x}_K) $</code></p>
-<p><code>$ \quad \textbf{for} \text{  } t = 1 : K \textbf{do} $</code></p>
+<p><code>$ \quad \textbf{for} \text{  } t = 1 : K \textbf{ do} $</code></p>
 <p><code>$ \quad \quad \text{Sample  } r \sim U[0, 1] \text{ from a uniform distribution.} $</code></p>
 <p><code>$ \quad \quad \textbf{if} \text{  } r &lt; \min \left( 1, \frac{q(x|\,x_1, \ldots, x_{n+t-1})}{p(x|\,x_1, \ldots, x_{n+t-1})} \right), \textbf{then} $</code></p>
 <p><code>$ \quad \quad \quad \text{Set  } x_{n+t} \leftarrow \tilde{x}_t \text{ and  } n \leftarrow n + 1. $</code></p>
