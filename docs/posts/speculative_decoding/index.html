@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en-us"><head>
+<title>Speculative decoding for LLM inference - Adi Ganesh</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description"
+    content="When two language models are faster than one. ">
+<link rel="canonical" href="https://acganesh.github.io/posts/speculative_decoding/" />
+
+
+<link rel="icon" href="https://acganesh.github.io/favicon.ico" />
+
+
+<link rel="apple-touch-icon" href="https://acganesh.github.io/touch-icon.png" />
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/modern-normalize/1.1.0/modern-normalize.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+
+
+
+
+
+
+
+
+
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="preload" as="style"
+      href="https://fonts.googleapis.com/css?family=Noto+Serif+SC|Noto+Emoji&display=swap" />
+<link rel="stylesheet"
+      href="https://fonts.googleapis.com/css?family=Noto+Serif+SC|Noto+Emoji&display=swap"
+      media="print" onload="this.media='all'" />
+<noscript>
+<link rel="stylesheet"
+      href="https://fonts.googleapis.com/css?family=Noto+Serif+SC&display=swap" />
+</noscript>
+
+
+
+
+
+
+<link rel="stylesheet" href="/css/hugo-tufte.min.css">
+
+<link rel="stylesheet" href="/css/hugo-tufte-override.css">
+
+</head>
+<body >
+
+<article id="main">
+  <section>
+<h1 class="content-title">Speculative decoding for LLM inference</h1></section>
+
+  
+
+  <section><p>Speculative decoding is a neat trick that provides significant speedups to LLM inference.  This post was originally inspired by this Karpathy <a href="https://twitter.com/karpathy/status/1697318534555336961">tweet</a> &ndash; I will aim to discuss how the algorithm works in more detail and prove its correctness.</p>
+<p>The idea is based on the following facts:</p>
+<ul>
+<li>LLM inference for batch size <code>$k$</code> takes approximately the same time as inference for batch size <code>$1$</code>, for surprisingly large values of <code>$k$</code>.  In particular, for low batch sizes, LLMs are bound by memory-bandwidth.</li>
+<li>Many tokens at inference time are easy, and can be predicted by a cheap model.  For example, predicting <code>for i in range(N)</code> in Python code, or predicting articles like <code>the</code> or <code>a</code> required for grammatical correctness.</li>
+</ul>
+<p>The main algorithm does the following:</p>
+<ul>
+<li>Sample a candidate sequence of <code>$K$</code> tokens from a smaller cheap model.</li>
+<li>Run the cheap model&rsquo;s predictions through the main model with batch size <code>$K$</code> to obtain logits.</li>
+<li>Skip forward through all tokens that agree with the draft model.  Once we hit a disagreement with the target model, throw the remaining draft tokens away and repeat.</li>
+</ul>
+<p>Here&rsquo;s an example of what this looks like in practice:</p>
+<p><img src="/img/spec-example.png" alt="Speculative decoding example"></p>
+<h1 id="precursor-llms-are-bound-by-memory-bandwidth-at-inference-time">
+Precursor: LLMs are bound by memory-bandwidth at inference time
+<a href="#precursor-llms-are-bound-by-memory-bandwidth-at-inference-time" class="heading-anchor">#</a>
+</h1>
+<p>Below is the hierarchy of memory on a system with a CPU and A100 GPU.  <label for="marginnote-1" class="margin-toggle marginnote-ind">⊕</label>
+<input type="checkbox" id="marginnote-1" class="margin-toggle"/>
+<span class="marginnote">
+Source: The <a href="https://arxiv.org/pdf/2205.14135.pdf">FlashAttention paper</a>.
+</span>
+</p>
+<img src="/img/a100-hierarchy.png" alt="A100 hierarchy" style="width:50%;">
+<p>The key mental model for GPUs is that we need to move data from high-bandwidth memory (HBM) to static random-access memory (SRAM), where computation occurs.  Some relevant stats for an A100-40GB are below.  As can be seen, GPU compute has grown significantly faster than memory bandwidth.</p>
+<ul>
+<li>HBM: 40GB</li>
+<li>SRAM: 40MB</li>
+<li>Memory bandwidth: 1935 GB/s</li>
+<li>Compute: 312 TFLOPS with FP16</li>
+</ul>
+<p>This <a href="https://finbarr.ca/how-is-llama-cpp-possible/#fn:3">post</a> does analysis that breaks down the latency incurred by memory-bandwith and by compute.  Let <code>$P$</code> be the number of parameters in a language model.  Let <code>$n_{\text{bytes}}$</code> denote the number of bytes in each number (16 for FP16, 8 for INT8, etc.).  Let <code>$B$</code> be the batch size.  It turns out we can express the latency incurred by compute and memory bandwidth as follows:</p>
+<p><code>$$ \begin{aligned} \text { latency }_{\text {model }} &amp; =\max \left(\text { latency }_{\text {compute }}, \text { latency }_{\text {memory }}\right) \\ \text { latency }_{\text {memory }} &amp; =\frac{2 \cdot P \cdot n_{\text {bytes }}}{n_{\text {memory bandwidth }}}, \\ \text { latency }_{\text {compute }} &amp; =\frac{2 \cdot P \cdot B}{n_{\text {flops }}}\end{aligned} $$</code></p>
+<p>Plugging in the above values for memory bandwidth and FLOPs, Finbarr Timbers <a href="https://finbarr.ca/how-is-llama-cpp-possible/#fn:3">concludes</a> that memory bandwidth dominates compute latency for batch sizes smaller than 161.</p>
+<h1 id="going-through-the-algorithm-in-detail">
+Going through the algorithm in detail
+<a href="#going-through-the-algorithm-in-detail" class="heading-anchor">#</a>
+</h1>
+<p>The two main references that describe speculative decoding are <a href="https://arxiv.org/abs/2302.01318">Chen et al. 2023</a> and <a href="https://arxiv.org/abs/2211.17192">Leviathan et al. 2023</a>.  I will focus on the presentation in the first paper as I found it easier to read.</p>
+<p>The algorithm works as follows.</p>
+<style>
+.algorithm p {
+  line-height: .25;
+}
+</style>
+<p><strong>Algorithm &ndash; Speculative Decoding</strong></p>
+<p>Inputs:</p>
+<ul>
+<li>High latency target model <code>$q$</code>.</li>
+<li>Low latency draft model <code>$p$</code>.</li>
+<li>Initial prompt <code>$x_0, \dots, x_t$</code>.</li>
+<li>Lookahead <code>$K$</code>.</li>
+<li>Minimum target sequence length <code>$T$</code>.</li>
+</ul>
+<div class="algorithm">
+<p><code>$\text{Initialize } n \leftarrow t.$</code></p>
+<p><code>$\textbf{while } n &lt; T \textbf{ do}$</code></p>
+<p><code>$\quad \textbf{for } t = 1 : K \textbf{ do}$</code></p>
+<p><code>$ \quad \quad \text{Sample draft auto-regressively  } \tilde{x}_t \sim p(x|\,x_1, \ldots, x_n, \tilde{x}_1, \ldots, \tilde{x}_{t-1}) $</code></p>
+<p><code>$ \quad \textbf{end for} $</code></p>
+<p><code>$ \quad \text{In parallel, compute  } K + 1 \text{ sets of logits from drafts  } \tilde{x}_1, \ldots, \tilde{x}_K : $</code></p>
+<p><code>$ \quad q(x|\,x_1, \ldots, x_n), q(x|\,x_1, \ldots, x_n, \tilde{x}_1), \ldots, q(x|\,x_1, \ldots, x_n, \tilde{x}_1, \ldots, \tilde{x}_K) $</code></p>
+<p><code>$ \quad \textbf{for} \text{  } t = 1 : K \textbf{do} $</code></p>
+<p><code>$ \quad \quad \text{Sample  } r \sim U[0, 1] \text{ from a uniform distribution.} $</code></p>
+<p><code>$ \quad \quad \textbf{if} \text{  } r &lt; \min \left( 1, \frac{q(x|\,x_1, \ldots, x_{n+t-1})}{p(x|\,x_1, \ldots, x_{n+t-1})} \right), \textbf{then} $</code></p>
+<p><code>$ \quad \quad \quad \text{Set  } x_{n+t} \leftarrow \tilde{x}_t \text{ and  } n \leftarrow n + 1. $</code></p>
+<p><code>$ \quad \quad \textbf{else} $</code></p>
+<p><code>$ \quad \quad \quad \text{Sample  } x_{n+t} \sim (q(x|\,x_1, \ldots, x_{n+t-1}) - p(x|\,x_1, \ldots, x_{n+t-1})) \text{ and exit for loop.} $</code></p>
+<p><code>$ \quad \quad \textbf{end if} $</code></p>
+<p><code>$ \quad \textbf{end for} $</code></p>
+<p><code>$ \quad \textbf{if} \text{ all tokens  } x_{n+1}, \ldots, x_{n+K} \text{ are accepted, sample extra token  } x_{n+K+1} \sim q(x|\,x_1, \ldots, x_n, x_{n+K}) \text{ and} $</code></p>
+<p><code>$ \quad \text{set  } n \leftarrow n + 1. $</code></p>
+<p><code>$ \textbf{end while} $</code></p>
+</div>
+<h2 id="proof-of-correctness">
+Proof of correctness
+<a href="#proof-of-correctness" class="heading-anchor">#</a>
+</h2>
+<p>Let&rsquo;s prove Theorem 1 from the paper, which states the following:</p>
+<p><strong>Theorem 1.</strong>   Modified rejection sampling recovers the target distribution.</p>
+<p>As above, let <code>$q$</code> be the draft model, and <code>$p$</code> be the target model.  Let <code>$X$</code> be the final sample produced by the algorithm above.  We will show that <code>$P(X = x)$</code> is equal to <code>$p(x)$</code>.</p>
+<p>The first step is to break <code>$P(X = x)$</code> into two cases.  Either <code>$\tilde{x} = x$</code> and we accept the draft sample, or we reject it and resample.</p>
+<p>So we can write:</p>
+<p><code>$$ \begin{aligned} P(X = x) &amp;= P(\tilde{x} = x) P(\tilde{x} \text{ accepted} | \tilde{x} = x) + P(\tilde{x} \text{ rejected}) P(X = x | \tilde{x} \text{ rejected}) \end{aligned} $$</code></p>
+<p>Let&rsquo;s calculate each of the two terms.  We will start with the acceptance probability.</p>
+<p><code>$$ \begin{aligned} P(\tilde{x} = x) P(\tilde{x} \text{ accepted} | \tilde{x} = x) &amp;= p(x) \min \left ( \frac{q(x)}{p(x)}  \right ) \\ &amp;= \min ( p(x), q(x)), \end{aligned} $$</code></p>
+<p>where we have used the fact that we can multiply through the <code>$\min$</code> operator.</p>
+<p>For the next term, we can calculate as follows:
+<code>$$ \begin{align} P(\tilde{x} \text { rejected})&amp;=1-P(\tilde{x} \text { accepted}) \\ &amp;=1-\sum_{x^{\prime}} P\left(X=x^{\prime}, \tilde{x} \text { accepted}\right) \\ &amp;=1-\sum_{x^{\prime}} \min \left(p\left(x^{\prime}\right), q\left(x^{\prime}\right)\right) \\ &amp;=\sum_{x^{\prime}} q\left(x^{\prime}\right)-\min \left(p\left(x^{\prime}\right), q\left(x^{\prime}\right)\right) \\ &amp;=\sum_{x^{\prime}} \max \left(0, q\left(x^{\prime}\right)-p\left(x^{\prime}\right)\right) \end{align} $$</code></p>
+<p>Also, from the algorithm above, we have that:
+<code>$$ P(X = x | \tilde{x} \text{ rejected}) = \frac{\max(0, q(x) - p(x))}{\sum_{x'} \max \left( 0, q(x') - p(x') \right)} $$</code></p>
+<p>Multiplying through, we have:</p>
+<p><code>$$ \begin{align} &amp; P(\tilde{x} = x) P(\tilde{x} \text{ accepted} | \tilde{x} = x) + P(\tilde{x} \text{ rejected}) P(X = x | \tilde{x} \text{ rejected}) \\ &amp;= \min (p(x), q(x)) + \left ( \frac{\max(0, q(x) - p(x))}{\sum_{x'} \max \left( 0, q(x') - p(x') \right)} \right ) \sum_{x^{\prime}} \max \left(0, q\left(x^{\prime}\right)-p\left(x^{\prime}\right)\right) \\ &amp;= \min (p(x), q(x)) + \max (0, q(x) - p(x)) \\ &amp;= q(x). \end{align} $$</code></p>
+<p>This finishes the proof of Theorem 1.</p>
+<h2 id="inference-latency-results">
+Inference Latency Results
+<a href="#inference-latency-results" class="heading-anchor">#</a>
+</h2>
+<p><img src="/img/speculative-latency.png" alt="Speculative decoding latency"></p>
+<p>The referenced DeepMind paper tried this technique on Chinchilla 70B.  They find an approximate speedup of 2x, which is a great improvement.  Interestingly, the speedup differs by domain, which makes sense, because different domains may have different frequencies of &ldquo;easy tokens.&rdquo;</p>
+</section>
+  <section><footer class="page-footer">
+<hr />
+
+<div class="previous-post" style="display:inline-block;">
+  
+  <a class="link-reverse" href="https://acganesh.github.io/posts/2023-11-04-latex/?ref=footer">« My local LaTeX workflow</a>
+  
+</div>
+
+<div class="next-post", style="display:inline-block;float:right;">
+  
+</div>
+
+<ul class="page-footer-menu">
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+  
+</ul>
+
+
+
+
+
+</footer>
+</section>
+  <section><nav class="menu">
+    <ul>
+    
+        <li><a href="/">Home</a></li>
+    
+        <li><a href="/posts/">Blog</a></li>
+    
+        <li><a href="/about/">About</a></li>
+    
+    </ul>
+</nav>
+</section>
+</article>
+
+
+
+
+
+
+
+  <script>(function(){var e,t,n,s=document.getElementsByTagName("code");for(n=0;n<s.length;){if(t=s[n],t.parentNode.tagName!=="PRE"&&t.childElementCount===0&&!t.classList.contains("nolatex")&&(e=t.textContent,/^\$[^$]/.test(e)&&/[^$]\$$/.test(e)&&(e=e.replace(/^\$/,"\\(").replace(/\$$/,"\\)"),t.textContent=e),/^\\\((.|\s)+\\\)$/.test(e)||/^\\\[(.|\s)+\\\]$/.test(e)||/^\$(.|\s)+\$$/.test(e)||/^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(e))){t.outerHTML=t.innerHTML;continue}n++}})()</script>
+
+
+
+
+
+
+
+<script type="text/javascript" async
+	  src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement(document.body, {
+            trust: (context) => ['\\htmlId', '\\href'].includes(context.command),
+            macros: {
+              "\\eqref": "\\href{###1}{(\\text{#1})}",
+              "\\ref": "\\href{###1}{\\text{#1}}",
+              "\\label": "\\htmlId{#1}{}"
+            }
+        });
+    });
+</script>
+
+
+
+</body>
+
+</html>
