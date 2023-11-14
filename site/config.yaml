@@ -1,6 +1,6 @@
 baseURL: 'https://acganesh.github.io'
 languageCode: 'en-us'
-title: 'Adi Ganesh'
+title: "Adi Ganesh"
 theme: 'hugo-tufte'
 
 params:
