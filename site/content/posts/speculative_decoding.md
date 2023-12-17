@@ -26,7 +26,7 @@ Here's an example of what this looks like in practice:
 
 ![Speculative decoding latency](/img/speculative-latency.png)
 
-[Chen et al. 2023](https://arxiv.org/abs/2302.01318) tried this technique on Chinchilla 70B.  They find an approximate speedup of 2x, which is a massive improvement.  Interestingly, the speedup differs by domain, which makes sense, because different domains may have different frequencies of "easy tokens."  The speedup on HumanEval (code generation) is greater than the speedup on XSum (text summarization), which suggests that code tends to have more easy tokens than text.
+[Chen et al. 2023](https://arxiv.org/abs/2302.01318) tried this technique on Chinchilla 70B.  They find an approximate speedup of 2x, which is a massive improvement.  Interestingly, the speedup differs by domain, because different domains have different frequencies of "easy tokens."  The speedup on HumanEval (code generation) is greater than the speedup on XSum (text summarization), which suggests that code tends to have more easy tokens than text.
 
 # Precursor: LLMs are bound by memory-bandwidth at inference time
 
@@ -37,7 +37,7 @@ Below is the hierarchy of memory on a system with a CPU and A100 GPU.  {{< margi
 The key mental model for GPUs is that we need to move data from high-bandwidth memory (HBM) to static random-access memory (SRAM), where computation occurs.  Some relevant stats for an A100-40GB are below.  As can be seen, GPU compute has grown significantly faster than memory bandwidth.
 
 - HBM: 40GB
-- SRAM: 40MB
+- SRAM: 20MB
 - Memory bandwidth: 1935 GB/s
 - Compute: 312 TFLOPS with FP16
 
@@ -97,7 +97,7 @@ Inputs:
 
 `$ \quad \quad \textbf{else} $`
 
-`$ \quad \quad \quad \text{Sample  } x_{n+t} \sim (q(x|\,x_1, \ldots, x_{n+t-1}) - p(x|\,x_1, \ldots, x_{n+t-1})) \text{ and exit for loop.} $`
+`$ \quad \quad \quad \text{Sample  } x_{n+t} \sim (q(x|\,x_1, \ldots, x_{n+t-1}) - p(x|\,x_1, \ldots, x_{n+t-1}))_{+} \text{ and exit for loop.} $`
 
 `$ \quad \quad \textbf{end if} $`
 
@@ -111,9 +111,15 @@ Inputs:
 
 </div>
 
+In the above algorithm, the `$+$` subscript denotes the following operation:
+
+`$$ (f(x))_{+}=\frac{\max (0, f(x))}{\sum_x \max (0, f(x))} $$`
+
+
+
 ## Proof of correctness
 
-Let's prove Theorem 1 from the paper, which states the following:
+Let's prove Theorem 1 from the paper, which states the following.  This is important to demonstrate correctness of the algorithm.
 
 **Theorem 1.**  Speculative decoding recovers the target model's probability distribution `$q(x)$`.
 
@@ -134,7 +140,7 @@ Let's calculate each of the two terms.  We will start with the acceptance probab
 
 `$$
 \begin{aligned}
-P(\tilde{x} = x) P(\tilde{x} \text{ accepted} | \tilde{x} = x) &= p(x) \min \left ( \frac{q(x)}{p(x)}  \right ) \\
+P(\tilde{x} = x) P(\tilde{x} \text{ accepted} | \tilde{x} = x) &= p(x) \min \left ( \frac{q(x)}{p(x)}, 1 \right ) \\
 &= \min ( p(x), q(x)),
 \end{aligned}
 $$`
@@ -170,4 +176,4 @@ $$`
 
 This finishes the proof of Theorem 1.
 
-Thanks to [Kevin Chen](https://kevinchen.co/) for reading a draft of this post.
+Thanks to [Kevin Chen](https://kevinchen.co/) and [Andy Chen](https://asjchen.github.io/) for reading drafts of this post.
