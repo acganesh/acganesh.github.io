@@ -18,8 +18,16 @@ If you enjoy reading my writing, subscribe to get new ones emailed to you!
   onsubmit="window.open('https://buttondown.email/acganesh', 'popupwindow')"
   class="embeddable-buttondown-form"
 >
-  <label for="bd-email">Enter your email</label>
+  <label for="bd-email">Enter your email: </label>
   <input type="email" name="email" id="bd-email" />
   
-  <input type="submit" value="Subscribe" />
+  <!-- Styling for the moderately sized button -->
+  <input type="submit" value="Subscribe" style="background-color: #007bff; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-size: 15px;"/>
+
+  <!-- Optional: Add some hover effect -->
+  <style>
+    input[type=submit]:hover {
+      background-color: #0056b3;
+    }
+  </style>
 </form>
