@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en-us"><head>
+<title>An introduction to diffusion models - Adi Ganesh</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description"
+    content="(Work in progress)
+In this post, we&rsquo;ll explore how diffusion models work. This post will follow the presentation in &ldquo;Denoising Diffusion Probabilistic Models&rdquo;.
+How do diffusion models work? # Diffusion models are Markov chains trained to produce samples matching the data after finite time. We start with a diffusion process that destroys the data: we apply multiple Markov chain transitions until a datapoint $\mathbf{x}_0$ gets gradually converted to noise. Diffusion models learn transitions that reverse this process. ">
+<link rel="canonical" href="https://acganesh.github.io/posts/diffusion/" />
+
+
+<link rel="icon" href="https://acganesh.github.io/favicon.ico" />
+
+
+<link rel="apple-touch-icon" href="https://acganesh.github.io/touch-icon.png" />
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/modern-normalize/1.1.0/modern-normalize.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+
+
+
+
+
+
+
+
+
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="preload" as="style"
+      href="https://fonts.googleapis.com/css?family=Noto+Serif+SC|Noto+Emoji&display=swap" />
+<link rel="stylesheet"
+      href="https://fonts.googleapis.com/css?family=Noto+Serif+SC|Noto+Emoji&display=swap"
+      media="print" onload="this.media='all'" />
+<noscript>
+<link rel="stylesheet"
+      href="https://fonts.googleapis.com/css?family=Noto+Serif+SC&display=swap" />
+</noscript>
+
+
+
+
+
+
+<link rel="stylesheet" href="/css/hugo-tufte.min.css">
+
+<link rel="stylesheet" href="/css/hugo-tufte-override.css">
+
+</head>
+<body >
+
+<article id="main">
+  <section>
+<h1 class="content-title">An introduction to diffusion models</h1></section>
+
+  
+
+  <section><p>(Work in progress)</p>
+<p>In this post, we&rsquo;ll explore how diffusion models work.  This post will follow the presentation in <a href="https://arxiv.org/pdf/2006.11239">&ldquo;Denoising Diffusion Probabilistic Models&rdquo;</a>.</p>
+<h1 id="how-do-diffusion-models-work">
+How do diffusion models work?
+<a href="#how-do-diffusion-models-work" class="heading-anchor">#</a>
+</h1>
+<p>Diffusion models are Markov chains trained to produce samples matching the data after finite time.  We start with a diffusion process that destroys the data: we apply multiple Markov chain transitions until a datapoint <code>$\mathbf{x}_0$</code> gets gradually converted to noise.  Diffusion models learn transitions that reverse this process.</p>
+<p>Formally, diffusion models are latent variables of the form:
+<code>$$p_{\theta}(\mathbf{x}_0) = \int p_{\theta}(\mathbf{x}_{0:T}) d \mathbf{x_{1:T}}$$</code></p>
+<p>Here, <code>$\mathbf{x}_1, \dots, \mathbf{x}_T$</code> are latent variable models which are the same dimensionality as the data <code>$\mathbf{x}_0 \sim q(\mathbf{x}_0)$</code>.</p>
+<p>We call <code>$p_{\theta} (\mathbf{x}_{0:T})$</code> the reverse process, which is defined as follows:</p>
+<p><code>$$p_{\theta}(x_{0:T}) = p(\mathbf{x}_T) \prod_{t=1}^{T} p_{\theta} (\mathbf{x}_{t-1} | \mathbf{x}_t),$$</code>
+where the conditional probabilities are modeled as Gaussians:
+<code>$$ p_{\theta}(\mathbf{x}_{t-1} | \mathbf{x}_t) = \mathcal{N} (\mathbf{x}_{t-1}; \mathbf{u}_{\theta}(\mathbf{x}_t, t), \Sigma_{\theta}(\mathbf{x}_t, t)). $$</code></p>
+<p>The diffusion process is defined by a Markov chain that gradually adds Gaussian noise to the data according to a variance schedule <code>$\beta_1, \dots, \beta_T$</code>.</p>
+<p><code>$$ q(\mathbf{x}_{1:T} | \mathbf{x}_0) = \prod_{t=1}^{T} q(\mathbf{x}_t | \mathbf{x}_{t-1}), $$</code>
+where</p>
+<p><code>$$ q\left(\mathbf{x}_t \mid \mathbf{x}_{t-1}\right):=\mathcal{N}\left(\mathbf{x}_t ; \sqrt{1-\beta_t} \mathbf{x}_{t-1}, \beta_t \mathbf{I}\right). $$</code></p>
+<p>The usual approach would be to optimize this lower bound of the negative log likelihood:</p>
+<p><code>$$ \mathbb{E}\left[-\log p_\theta\left(\mathbf{x}_0\right)\right] \leq \mathbb{E}_q\left[-\log \frac{p_\theta\left(\mathbf{x}_{0: T}\right)}{q\left(\mathbf{x}_{1: T} \mid \mathbf{x}_0\right)}\right]=\mathbb{E}_q\left[-\log p\left(\mathbf{x}_T\right)-\sum_{t \geq 1} \log \frac{p_\theta\left(\mathbf{x}_{t-1} \mid \mathbf{x}_t\right)}{q\left(\mathbf{x}_t \mid \mathbf{x}_{t-1}\right)}\right]=: L $$</code></p>
+</section>
+  <section><footer class="page-footer">
+<hr />
+
+<div class="previous-post" style="display:inline-block;">
+  
+  <a class="link-reverse" href="https://acganesh.github.io/posts/information_theory_kelly/?ref=footer">« Information theory and the Kelly Criterion</a>
+  
+</div>
+
+<div class="next-post", style="display:inline-block;float:right;">
+  
+</div>
+
+<ul class="page-footer-menu">
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+  
+</ul>
+
+
+
+
+
+</footer>
+</section>
+  <section><nav class="menu">
+    <ul>
+    
+        <li><a href="/">Home</a></li>
+    
+        <li><a href="/posts/">Blog</a></li>
+    
+        <li><a href="/about/">About</a></li>
+    
+    </ul>
+</nav>
+</section>
+</article>
+
+
+
+
+
+
+
+  <script>(function(){var e,t,n,s=document.getElementsByTagName("code");for(n=0;n<s.length;){if(t=s[n],t.parentNode.tagName!=="PRE"&&t.childElementCount===0&&!t.classList.contains("nolatex")&&(e=t.textContent,/^\$[^$]/.test(e)&&/[^$]\$$/.test(e)&&(e=e.replace(/^\$/,"\\(").replace(/\$$/,"\\)"),t.textContent=e),/^\\\((.|\s)+\\\)$/.test(e)||/^\\\[(.|\s)+\\\]$/.test(e)||/^\$(.|\s)+\$$/.test(e)||/^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(e))){t.outerHTML=t.innerHTML;continue}n++}})()</script>
+
+
+
+
+
+
+
+<script type="text/javascript" async
+	  src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement(document.body, {
+            trust: (context) => ['\\htmlId', '\\href'].includes(context.command),
+            macros: {
+              "\\eqref": "\\href{###1}{(\\text{#1})}",
+              "\\ref": "\\href{###1}{\\text{#1}}",
+              "\\label": "\\htmlId{#1}{}"
+            }
+        });
+    });
+</script>
+
+
+
+</body>
+
+</html>

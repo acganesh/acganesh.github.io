@@ -3,10 +3,16 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://acganesh.github.io/</loc>
-    <lastmod>2023-11-07T00:00:00+00:00</lastmod>
+    <lastmod>2024-05-16T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://acganesh.github.io/posts/diffusion/</loc>
+    <lastmod>2024-05-16T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://acganesh.github.io/posts/</loc>
-    <lastmod>2023-11-07T00:00:00+00:00</lastmod>
+    <lastmod>2024-05-16T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://acganesh.github.io/posts/information_theory_kelly/</loc>
+    <lastmod>2024-05-06T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://acganesh.github.io/posts/speculative_decoding/</loc>
     <lastmod>2023-11-07T00:00:00+00:00</lastmod>
