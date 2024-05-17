@@ -19,15 +19,6 @@ How do diffusion models work? # Diffusion models are Markov chains trained to pr
     </item>
     
     <item>
-      <title>Information theory and the Kelly Criterion</title>
-      <link>https://acganesh.github.io/posts/information_theory_kelly/</link>
-      <pubDate>Mon, 06 May 2024 00:00:00 +0000</pubDate>
-      
-      <guid>https://acganesh.github.io/posts/information_theory_kelly/</guid>
-      <description>Eventually, build up to Martingales?</description>
-    </item>
-    
-    <item>
       <title>Speculative decoding for LLM inference</title>
       <link>https://acganesh.github.io/posts/speculative_decoding/</link>
       <pubDate>Tue, 07 Nov 2023 00:00:00 +0000</pubDate>
