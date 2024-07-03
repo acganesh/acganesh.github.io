@@ -6,18 +6,7 @@
     <description>Recent content in Posts on Adi Ganesh</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 16 May 2024 00:00:00 +0000</lastBuildDate><atom:link href="https://acganesh.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
-    <item>
-      <title>An introduction to diffusion models</title>
-      <link>https://acganesh.github.io/posts/diffusion/</link>
-      <pubDate>Thu, 16 May 2024 00:00:00 +0000</pubDate>
-      
-      <guid>https://acganesh.github.io/posts/diffusion/</guid>
-      <description>(Work in progress)
-In this post, we&amp;rsquo;ll explore how diffusion models work. This post will follow the presentation in &amp;ldquo;Denoising Diffusion Probabilistic Models&amp;rdquo;.
-How do diffusion models work? # Diffusion models are Markov chains trained to produce samples matching the data after finite time. We start with a diffusion process that destroys the data: we apply multiple Markov chain transitions until a datapoint $\mathbf{x}_0$ gets gradually converted to noise. Diffusion models learn transitions that reverse this process.</description>
-    </item>
-    
+    <lastBuildDate>Tue, 07 Nov 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://acganesh.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Speculative decoding for LLM inference</title>
       <link>https://acganesh.github.io/posts/speculative_decoding/</link>
