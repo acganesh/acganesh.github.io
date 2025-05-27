@@ -1,4 +1,4 @@
 cd site
-hugo -D
+hugo
 cd ..
 cp -r site/public/* docs/
