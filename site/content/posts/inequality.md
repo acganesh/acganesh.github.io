@@ -30,27 +30,44 @@ $$`
 
 By the triangle inequality, we have `$AD+DC\ge AC$`, from which the conclusion follows.
 
-### An alternate-proof from GPT-5
+### An algebraic proof from GPT-5
 
-I asked GPT-5 to prove this inequality, and it came up with a similar idea, expressed differently using complex numbers.  Here's the model's proof:
+I asked GPT-5 to prove this inequality algebraically with no geometric argument.  It came up with the following proof:
 
-Let `$\omega = e^{i\pi/3} = \cos(\pi/3) + i\sin(\pi/3)$`. Using `$|x - y e^{i\theta}|^2 = x^2 - 2xy\cos\theta + y^2$`, we get
+Set
 `$$
-a^{2}-ab+b^{2} = |\,a - b\omega\,|^{2},\qquad
-b^{2}-bc+c^{2} = |\,b\omega - c\omega^{2}\,|^{2},
+A=a^2-ab+b^2,\qquad B=b^2-bc+c^2,\qquad C=a^2+ac+c^2.
 $$`
-and since `$\cos(2\pi/3)=-\tfrac12$`,
+We want `$\sqrt A+\sqrt B\ge \sqrt C$`.
+Since both sides are nonnegative, it suffices to square once:
 `$$
-a^{2}+ac+c^{2} = |\,a - c\omega^{2}\,|^{2}.
+A+B+2\sqrt{AB}\ \ge\ C
+\iff
+2\sqrt{AB}\ \ge\ C-(A+B).
 $$`
-Hence the inequality is equivalent to
+A direct computation gives
 `$$
-|a-b\omega| + |b\omega - c\omega^{2}| \ge |a - c\omega^{2}|,
+C-(A+B)=ab+bc+ac-2b^2.
 $$`
-which is exactly the triangle inequality for the complex numbers
-`$A=a$`, `$B=b\omega$,` and `$C=c\omega^{2}$`.
+Therefore it remains to prove
+`$$
+2\sqrt{AB}\ \ge\ ab+bc+ac-2b^2.
+$$`
+Observe that
+`$$
+\begin{aligned}
+\bigl(2\sqrt{AB}\bigr)^2-\bigl(ab+bc+ac-2b^2\bigr)^2
+&=4AB-\bigl(ab+bc+ac-2b^2\bigr)^2\\[2mm]
+&=3\,(ab-ac+bc)^2\ \ge\ 0.
+\end{aligned}
+$$`
+Hence `$2\sqrt{AB}\ge \bigl|ab+bc+ac-2b^2\bigr|\ge ab+bc+ac-2b^2$`, which implies
+`$A+B+2\sqrt{AB}\ge C$`. Consequently,
+`$$
+\sqrt{a^2-ab+b^2}+\sqrt{b^2-bc+c^2}\ge \sqrt{a^2+ac+c^2}.
+$$`
+Equality holds iff `$ab-ac+bc=0$`, i.e. `$b=\dfrac{ac}{a+c}$`.
 
-Equality holds iff `$A,B,C$` are collinear and `$B$` lies on the segment `$AC$`.
 
 ### Interactive visualization
 
@@ -65,3 +82,5 @@ Finally, I asked GPT-5 to make an interactive app to visualize the inequality.  
 ></iframe>
 
 Click [here](/interactive/triangle-inequality.html) for a fullscreen version.
+
+Thanks to [Andy Chen](https://asjchen.github.io/) for reviewing a draft of this post.
