@@ -48,7 +48,7 @@ Hence the inequality is equivalent to
 |a-b\omega| + |b\omega - c\omega^{2}| \ge |a - c\omega^{2}|,
 $$`
 which is exactly the triangle inequality for the complex numbers
-`$A=a$`, `$B=b\omega$`, and `$C=c\omega^{2}$`.
+`$A=a$`, `$B=b\omega$,` and `$C=c\omega^{2}$`.
 
 Equality holds iff `$A,B,C$` are collinear and `$B$` lies on the segment `$AC$`.
 
