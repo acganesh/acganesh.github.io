@@ -52,7 +52,7 @@ which is exactly the triangle inequality for the complex numbers
 
 Equality holds iff `$A,B,C$` are collinear and `$B$` lies on the segment `$AC$`.
 
-### GPT-5's interactive visualization
+### Interactive visualization
 
 Finally, I asked GPT-5 to make an interactive app to visualize the inequality.  The model is able to create a pretty cool visualization!
 
