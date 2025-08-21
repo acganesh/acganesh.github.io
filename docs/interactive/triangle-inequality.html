@@ -1,0 +1,611 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>60° Triangle Inequality — Interactive Canvas</title>
+    <style>
+      html, body, #root { height: 100%; margin: 0; background: #020617; color: #e2e8f0; }
+      body { font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji"; }
+      /* Minimal utility styles to make the UI look reasonable without Tailwind */
+      .container { max-width: 1100px; margin: 0 auto; padding: 16px; }
+      .card { border: 1px solid rgba(255,255,255,0.08); border-radius: 18px; background: rgba(15,23,42,0.5); }
+      .pad { padding: 16px; }
+      .row { display: grid; grid-template-columns: 1fr; gap: 16px; }
+      @media (min-width: 1024px) { .row { grid-template-columns: 3fr 2fr; } }
+      button { cursor: pointer; border: 0; border-radius: 16px; padding: 8px 14px; background: rgba(30,41,59,0.8); color: #e2e8f0; }
+      button:hover { background: rgba(30,41,59,0.95); }
+      input[type="range"] { width: 100%; }
+      .muted { color: #94a3b8; }
+      .small { font-size: 12px; }
+    </style>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  </head>
+  <body>
+    <div id="root"></div>
+
+    <script type="text/babel" data-presets="react">
+      const { useEffect, useMemo, useRef, useState } = React;
+
+      // 60° Triangle Inequality Visualizer (Canvas)
+      // \sqrt{a^2 - ab + b^2} + \sqrt{b^2 - bc + c^2} \ge \sqrt{a^2 + ac + c^2}
+      // Points: A = a·u, B = b·v, C = c·w with angles 0°, 60°, 120°.
+      // Distances: AB + BC ≥ AC (triangle inequality).
+
+      function TriangleInequalityCanvasApp() {
+        const [a, setA] = useState(3.2);
+        const [b, setB] = useState(4.4);
+        const [c, setC] = useState(2.4);
+        const [dragging, setDragging] = useState(null); // 'A' | 'B' | 'C' | null
+        const [hover, setHover] = useState(null);
+        const [showGrid, setShowGrid] = useState(true);
+        const [showLabels, setShowLabels] = useState(true);
+
+        const canvasRef = useRef(null);
+        const wrapRef = useRef(null);
+
+        const [size, setSize] = useState({ width: 960, height: 600 });
+        useEffect(() => {
+          const el = wrapRef.current;
+          if (!el) return;
+          const ro = new ResizeObserver((entries) => {
+            for (const entry of entries) {
+              const { width, height } = entry.contentRect;
+              setSize({ width: Math.max(320, width), height: Math.max(420, height) });
+            }
+          });
+          ro.observe(el);
+          return () => ro.disconnect();
+        }, []);
+
+        const dpr = typeof window !== "undefined" ? window.devicePixelRatio || 1 : 1;
+
+        const RAD = Math.PI / 180;
+        const u = useMemo(() => [1, 0], []);
+        const v = useMemo(() => [Math.cos(60 * RAD), Math.sin(60 * RAD)], []);
+        const w = useMemo(() => [Math.cos(120 * RAD), Math.sin(120 * RAD)], []);
+
+        const MAX_LEN = 10;
+        const PAD = 36;
+
+        const world = {
+          minX: -MAX_LEN / 2,
+          maxX: MAX_LEN,
+          minY: 0,
+          maxY: (MAX_LEN * Math.sqrt(3)) / 2,
+        };
+
+        const scale = useMemo(() => {
+          const availW = Math.max(100, size.width - 2 * PAD);
+          const availH = Math.max(100, size.height - 2 * PAD);
+          const sX = availW / (world.maxX - world.minX);
+          const sY = availH / (world.maxY - world.minY);
+          return Math.max(10, Math.min(sX, sY));
+        }, [size.width, size.height]);
+
+        const originScreen = useMemo(() => {
+          const x0 = PAD - world.minX * scale;
+          const y0 = size.height - PAD + world.minY * scale;
+          return { x0, y0 };
+        }, [scale, size.width, size.height]);
+
+        const toScreen = (wp) => {
+          const [x, y] = wp;
+          return [originScreen.x0 + x * scale, originScreen.y0 - y * scale];
+        };
+        const fromScreen = (sp) => {
+          const [X, Y] = sp;
+          return [
+            (X - originScreen.x0) / scale,
+            (originScreen.y0 - Y) / scale,
+          ];
+        };
+        const add = (a, b) => [a[0] + b[0], a[1] + b[1]];
+        const sub = (a, b) => [a[0] - b[0], a[1] - b[1]];
+        const mul = (v, k) => [v[0] * k, v[1] * k];
+        const dot = (a, b) => a[0] * b[0] + a[1] * b[1];
+        const norm = (v) => Math.hypot(v[0], v[1]);
+
+        const A = mul(u, a);
+        const B = mul(v, b);
+        const C = mul(w, c);
+
+        const dAB = norm(sub(A, B));
+        const dBC = norm(sub(B, C));
+        const dAC = norm(sub(A, C));
+        const LHS = dAB + dBC;
+        const RHS = dAC;
+        const diff = LHS - RHS;
+
+        const HIT_R = 16;
+
+        useEffect(() => {
+          const canvas = canvasRef.current;
+          if (!canvas) return;
+          const ctx = canvas.getContext("2d");
+
+          const logicalW = size.width;
+          const logicalH = size.height;
+          canvas.width = Math.floor(logicalW * dpr);
+          canvas.height = Math.floor(logicalH * dpr);
+          canvas.style.width = logicalW + "px";
+          canvas.style.height = logicalH + "px";
+          ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+          const bgGradient = ctx.createLinearGradient(0, 0, 0, logicalH);
+          bgGradient.addColorStop(0, "#0f172a");
+          bgGradient.addColorStop(1, "#020617");
+          ctx.fillStyle = bgGradient;
+          ctx.fillRect(0, 0, logicalW, logicalH);
+
+          const rad = Math.max(logicalW, logicalH) * 0.75;
+          const rg = ctx.createRadialGradient(
+            logicalW * 0.6,
+            logicalH * 0.3,
+            0,
+            logicalW * 0.6,
+            logicalH * 0.3,
+            rad
+          );
+          rg.addColorStop(0, "rgba(255,255,255,0.06)");
+          rg.addColorStop(1, "rgba(255,255,255,0)");
+          ctx.fillStyle = rg;
+          ctx.fillRect(0, 0, logicalW, logicalH);
+
+          if (showGrid) {
+            ctx.save();
+            ctx.lineWidth = 1;
+            ctx.strokeStyle = "rgba(148,163,184,0.15)";
+            const drawFamily = (angleDeg, spacing = 1) => {
+              const angle = angleDeg * RAD;
+              const dir = [Math.cos(angle), Math.sin(angle)];
+              const n = [-dir[1], dir[0]];
+              const corners = [
+                [world.minX, world.minY],
+                [world.maxX, world.minY],
+                [world.minX, world.maxY],
+                [world.maxX, world.maxY],
+              ];
+              const proj = corners.map((c) => dot(c, n));
+              const min = Math.floor(Math.min(...proj)) - 1;
+              const max = Math.ceil(Math.max(...proj)) + 1;
+              for (let k = min; k <= max; k++) {
+                const p1 = add(mul(n, k), mul(dir, -100));
+                const p2 = add(mul(n, k), mul(dir, 100));
+                const [x1, y1] = toScreen(p1);
+                const [x2, y2] = toScreen(p2);
+                ctx.beginPath();
+                ctx.moveTo(x1, y1);
+                ctx.lineTo(x2, y2);
+                ctx.stroke();
+              }
+            };
+            drawFamily(0);
+            drawFamily(60);
+            drawFamily(120);
+            ctx.restore();
+          }
+
+          ctx.save();
+          const [OX, OY] = toScreen([0, 0]);
+          ctx.shadowColor = "rgba(14, 165, 233, 0.45)";
+          ctx.shadowBlur = 18;
+          ctx.fillStyle = "rgba(14, 165, 233, 0.85)";
+          ctx.beginPath();
+          ctx.arc(OX, OY, 3.5, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.restore();
+
+          const drawRay = (dir, color) => {
+            const tip = mul(dir, MAX_LEN * 1.02);
+            const [x1, y1] = toScreen([0, 0]);
+            const [x2, y2] = toScreen(tip);
+            ctx.save();
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(x1, y1);
+            ctx.lineTo(x2, y2);
+            ctx.stroke();
+            ctx.restore();
+          };
+
+          drawRay(u, "rgba(14,165,233,0.55)");
+          drawRay(v, "rgba(99,102,241,0.55)");
+          drawRay(w, "rgba(236,72,153,0.55)");
+
+          const sA = toScreen(A);
+          const sB = toScreen(B);
+          const sC = toScreen(C);
+
+          const strokePath = (fn, stroke, width = 4, dash = []) => {
+            ctx.save();
+            ctx.lineWidth = width;
+            ctx.strokeStyle = stroke;
+            ctx.setLineDash(dash);
+            ctx.lineCap = "round";
+            ctx.lineJoin = "round";
+            ctx.beginPath();
+            fn();
+            ctx.stroke();
+            ctx.restore();
+          };
+
+          strokePath(
+            () => {
+              ctx.moveTo(sA[0], sA[1]);
+              ctx.lineTo(sB[0], sB[1]);
+            },
+            "#22d3ee",
+            5.5
+          );
+          strokePath(
+            () => {
+              ctx.moveTo(sB[0], sB[1]);
+              ctx.lineTo(sC[0], sC[1]);
+            },
+            "#22d3ee",
+            5.5
+          );
+
+          strokePath(
+            () => {
+              ctx.moveTo(sA[0], sA[1]);
+              ctx.lineTo(sC[0], sC[1]);
+            },
+            "rgba(251,191,36,0.9)",
+            4,
+            [8, 8]
+          );
+
+          const drawArc = (startDeg, endDeg, color) => {
+            ctx.save();
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.arc(OX, OY, 28, -startDeg * RAD, -endDeg * RAD, true);
+            ctx.stroke();
+            ctx.restore();
+          };
+          drawArc(0, 60, "rgba(148,163,184,0.65)");
+          drawArc(60, 120, "rgba(148,163,184,0.4)");
+
+          const drawHandle = (pt, fill, label) => {
+            const [x, y] = pt;
+            ctx.save();
+            ctx.shadowColor = fill;
+            ctx.shadowBlur = 14;
+            ctx.fillStyle = fill;
+            ctx.beginPath();
+            ctx.arc(x, y, 7.5, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.shadowBlur = 0;
+            if (showLabels) {
+              ctx.font = "600 12px ui-sans-serif, system-ui, -apple-system";
+              ctx.fillStyle = "#e2e8f0";
+              ctx.textAlign = "center";
+              ctx.fillText(label, x, y - 14);
+            }
+            ctx.restore();
+          };
+
+          drawHandle(sA, "#38bdf8", `A=a=${a.toFixed(2)}`);
+          drawHandle(sB, "#818cf8", `B=b=${b.toFixed(2)}`);
+          drawHandle(sC, "#f472b6", `C=c=${c.toFixed(2)}`);
+
+          if (showLabels) {
+            const writeMid = (p, q, text, bg = "rgba(2,6,23,0.85)") => {
+              const mid = [(p[0] + q[0]) / 2, (p[1] + q[1]) / 2];
+              const r = 6;
+              ctx.save();
+              ctx.font = "600 12px ui-sans-serif, system-ui, -apple-system";
+              const tw = ctx.measureText(text).width + 12;
+              const th = 20;
+              ctx.fillStyle = bg;
+              ctx.strokeStyle = "rgba(148,163,184,0.35)";
+              ctx.lineWidth = 1;
+              const x = mid[0] - tw / 2;
+              const y = mid[1] - th / 2;
+              ctx.beginPath();
+              ctx.moveTo(x + r, y);
+              ctx.arcTo(x + tw, y, x + tw, y + th, r);
+              ctx.arcTo(x + tw, y + th, x, y + th, r);
+              ctx.arcTo(x, y + th, x, y, r);
+              ctx.arcTo(x, y, x + tw, y, r);
+              ctx.closePath();
+              ctx.fill();
+              ctx.stroke();
+              ctx.fillStyle = "#e2e8f0";
+              ctx.textAlign = "center";
+              ctx.textBaseline = "middle";
+              ctx.fillText(text, mid[0], mid[1]);
+              ctx.restore();
+            };
+            writeMid(sA, sB, `|AB|=${dAB.toFixed(3)}`);
+            writeMid(sB, sC, `|BC|=${dBC.toFixed(3)}`);
+            writeMid(sA, sC, `|AC|=${dAC.toFixed(3)}`, "rgba(30,41,59,0.75)");
+          }
+
+          const panelX = Math.min(size.width - 260, PAD);
+          const panelY = PAD;
+          const panelW = 240;
+          const panelH = 156;
+          ctx.save();
+          ctx.fillStyle = "rgba(2,6,23,0.8)";
+          ctx.strokeStyle = "rgba(148,163,184,0.25)";
+          ctx.lineWidth = 1.5;
+          roundRect(ctx, panelX, panelY, panelW, panelH, 14, true, true);
+
+          ctx.font = "700 14px ui-sans-serif, system-ui, -apple-system";
+          ctx.fillStyle = "#e2e8f0";
+          ctx.fillText("Inequality Dashboard", panelX + 16, panelY + 22);
+
+          ctx.font = "600 12px ui-sans-serif, system-ui, -apple-system";
+          const rows = [
+            ["|AB| + |BC|", LHS.toFixed(5)],
+            ["|AC|", RHS.toFixed(5)],
+            ["Δ = LHS − RHS", diff.toFixed(5)],
+          ];
+          const colors = ["#22d3ee", "#fbbf24", diff >= 0 ? "#34d399" : "#f43f5e"];
+          rows.forEach(([k, v], i) => {
+            const y = panelY + 48 + i * 28;
+            ctx.fillStyle = "#94a3b8";
+            ctx.fillText(k, panelX + 16, y);
+            ctx.fillStyle = colors[i];
+            ctx.textAlign = "right";
+            ctx.fillText(v, panelX + panelW - 16, y);
+            ctx.textAlign = "left";
+          });
+
+          ctx.font = "500 11px ui-sans-serif, system-ui, -apple-system";
+          ctx.fillStyle = "#94a3b8";
+          ctx.fillText(
+            "Always Δ ≥ 0 by triangle inequality.",
+            panelX + 16,
+            panelY + panelH - 14
+          );
+          ctx.restore();
+
+          const drawHover = (pt) => {
+            if (!pt) return;
+            const [x, y] = pt;
+            ctx.save();
+            ctx.strokeStyle = "rgba(255,255,255,0.5)";
+            ctx.lineWidth = 1.5;
+            ctx.setLineDash([4, 6]);
+            ctx.beginPath();
+            ctx.arc(x, y, 13, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.restore();
+          };
+          if (hover === "A") drawHover(sA);
+          if (hover === "B") drawHover(sB);
+          if (hover === "C") drawHover(sC);
+        }, [a, b, c, size.width, size.height, dpr, showGrid, showLabels]);
+
+        useEffect(() => {
+          const canvas = canvasRef.current;
+          if (!canvas) return;
+
+          const getClosest = (x, y) => {
+            const pts = [
+              { id: "A", p: toScreen(A) },
+              { id: "B", p: toScreen(B) },
+              { id: "C", p: toScreen(C) },
+            ];
+            let best = null;
+            let bestD = Infinity;
+            for (const it of pts) {
+              const d = Math.hypot(x - it.p[0], y - it.p[1]);
+              if (d < bestD) {
+                best = it.id;
+                bestD = d;
+              }
+            }
+            return bestD <= HIT_R ? best : null;
+          };
+
+          const projectToRayLen = (screenXY, dir) => {
+            const worldXY = fromScreen(screenXY);
+            const t = dot(worldXY, dir);
+            return Math.max(0.1, Math.min(MAX_LEN, t));
+          };
+
+          const onMove = (ev) => {
+            const rect = canvas.getBoundingClientRect();
+            const x = ev.clientX - rect.left;
+            const y = ev.clientY - rect.top;
+
+            if (dragging) {
+              if (dragging === "A") setA(projectToRayLen([x, y], u));
+              if (dragging === "B") setB(projectToRayLen([x, y], v));
+              if (dragging === "C") setC(projectToRayLen([x, y], w));
+            } else {
+              setHover(getClosest(x, y));
+            }
+          };
+
+          const onDown = (ev) => {
+            const rect = canvas.getBoundingClientRect();
+            const x = ev.clientX - rect.left;
+            const y = ev.clientY - rect.top;
+            const hit = getClosest(x, y);
+            if (hit) setDragging(hit);
+          };
+
+          const onUp = () => setDragging(null);
+
+          canvas.addEventListener("pointermove", onMove);
+          canvas.addEventListener("pointerdown", onDown);
+          window.addEventListener("pointerup", onUp);
+          return () => {
+            canvas.removeEventListener("pointermove", onMove);
+            canvas.removeEventListener("pointerdown", onDown);
+            window.removeEventListener("pointerup", onUp);
+          };
+        }, [dragging, a, b, c, u, v, w, scale]);
+
+        const randomize = () => {
+          const rand = () => +(0.3 + Math.random() * 9.4).toFixed(2);
+          setA(rand());
+          setB(rand());
+          setC(rand());
+        };
+        const reset = () => {
+          setA(3.2);
+          setB(4.4);
+          setC(2.4);
+        };
+
+        return (
+          <div style={{ minHeight: 640 }}>
+            <div className="container pad">
+              <header style={{ display: "flex", gap: 12, justifyContent: "space-between", alignItems: "flex-end", marginBottom: 12, flexWrap: "wrap" }}>
+                <div>
+                  <h1 style={{ margin: 0, fontSize: 22, fontWeight: 700, color: "#f8fafc" }}>
+                    60° Triangle Inequality — Interactive Canvas
+                  </h1>
+                  <p className="muted small" style={{ marginTop: 6 }}>
+                    Drag A, B, C along their rays or use sliders. The cyan path is |AB|+|BC|; the dotted amber chord is |AC|.
+                  </p>
+                </div>
+                <div style={{ display: "flex", gap: 8 }}>
+                  <button onClick={randomize} title="Randomize a, b, c">Randomize</button>
+                  <button onClick={reset} title="Reset">Reset</button>
+                </div>
+              </header>
+
+              <div className="row">
+                <div ref={wrapRef} className="card" style={{ position: "relative", minHeight: 420 }}>
+                  <canvas ref={canvasRef} style={{ position: "absolute", inset: 0, borderRadius: 18 }} />
+                </div>
+
+                <div className="card pad">
+                  <div style={{ marginBottom: 12 }}>
+                    <h2 style={{ margin: 0, fontSize: 18, fontWeight: 600, color: "#f1f5f9" }}>Parameters</h2>
+                    <p className="muted small">All values in arbitrary units. (a,b,c&gt;0)</p>
+                  </div>
+
+                  <Slider label={<span>a</span>} value={a} setValue={setA} min={0.1} max={MAX_LEN} />
+                  <Slider label={<span>b</span>} value={b} setValue={setB} min={0.1} max={MAX_LEN} />
+                  <Slider label={<span>c</span>} value={c} setValue={setC} min={0.1} max={MAX_LEN} />
+
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginTop: 16 }}>
+                    <Toggle checked={showGrid} onChange={setShowGrid} label="Triangular grid" />
+                    <Toggle checked={showLabels} onChange={setShowLabels} label="Show labels" />
+                  </div>
+
+                  <div className="card pad" style={{ marginTop: 16 }}>
+                    <h3 style={{ marginTop: 0, marginBottom: 8, fontSize: 14, fontWeight: 600, color: "#e2e8f0" }}>Live Values</h3>
+                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 12 }}>
+                      <Metric k="|AB|" v={dAB} />
+                      <Metric k="|BC|" v={dBC} />
+                      <Metric k="|AC|" v={dAC} />
+                    </div>
+                    <div style={{ marginTop: 10, fontSize: 14, fontWeight: 600 }}>
+                      <span style={{ color: "#67e8f9" }}>|AB|+|BC|</span>
+                      <span className="muted"> − </span>
+                      <span style={{ color: "#fbbf24" }}>|AC|</span>
+                      <span className="muted"> = </span>
+                      <span style={{ color: diff >= 0 ? "#34d399" : "#f43f5e" }}>{diff.toFixed(6)}</span>
+                    </div>
+                    <p className="muted small" style={{ marginTop: 8 }}>
+                      Always non‑negative by the triangle inequality; equality exactly when B lies on segment AC.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <footer style={{ marginTop: 16 }} className="muted small">
+                Built with plain Canvas + React. Angle(u,v)=60°, angle(v,w)=60°, so angle(u,w)=120°.
+              </footer>
+            </div>
+          </div>
+        );
+      }
+
+      function Slider({ label, value, setValue, min = 0.1, max = 10 }) {
+        return (
+          <div style={{ marginBottom: 12 }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
+              <div style={{ fontSize: 14, fontWeight: 500 }}>{label}</div>
+              <div className="muted small" style={{ fontVariantNumeric: "tabular-nums" }}>{value.toFixed(2)}</div>
+            </div>
+            <input
+              type="range"
+              min={min}
+              max={max}
+              step={0.01}
+              value={value}
+              onChange={(e) => setValue(parseFloat(e.target.value))}
+            />
+          </div>
+        );
+      }
+
+      function Toggle({ checked, onChange, label }) {
+        return (
+          <label className="card pad" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <span style={{ fontSize: 14 }}>{label}</span>
+            <span
+              onClick={() => onChange(!checked)}
+              style={{
+                position: "relative",
+                display: "inline-flex",
+                alignItems: "center",
+                height: 24,
+                width: 44,
+                background: checked ? "#10b981" : "#334155",
+                borderRadius: 9999,
+                transition: "background 150ms",
+                cursor: "pointer",
+              }}
+            >
+              <span
+                style={{
+                  position: "relative",
+                  height: 20,
+                  width: 20,
+                  borderRadius: 9999,
+                  background: "#fff",
+                  transform: checked ? "translateX(20px)" : "translateX(4px)",
+                  transition: "transform 150ms",
+                }}
+              />
+            </span>
+          </label>
+        );
+      }
+
+      function Metric({ k, v }) {
+        return (
+          <div className="card pad">
+            <div className="muted small" style={{ textTransform: "uppercase", letterSpacing: 0.6 }}>{k}</div>
+            <div style={{ marginTop: 6, fontSize: 18, fontWeight: 600, fontVariantNumeric: "tabular-nums" }}>{v.toFixed(5)}</div>
+          </div>
+        );
+      }
+
+      function roundRect(ctx, x, y, w, h, r = 12, fill = true, stroke = false) {
+        const min = Math.min(w, h) / 2;
+        r = Math.min(r, min);
+        ctx.beginPath();
+        ctx.moveTo(x + r, y);
+        ctx.arcTo(x + w, y, x + w, y + h, r);
+        ctx.arcTo(x + w, y + h, x, y + h, r);
+        ctx.arcTo(x, y + h, x, y, r);
+        ctx.arcTo(x, y, x + w, y, r);
+        ctx.closePath();
+        if (fill) ctx.fill();
+        if (stroke) ctx.stroke();
+      }
+
+      const root = ReactDOM.createRoot(document.getElementById('root'));
+      root.render(<TriangleInequalityCanvasApp />);
+    </script>
+  </body>
+  </html>
+
+

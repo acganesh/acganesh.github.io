@@ -6,7 +6,18 @@
     <description>Recent content in Posts on Adi Ganesh</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Tue, 07 Nov 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://acganesh.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Wed, 20 Aug 2025 00:00:00 +0000</lastBuildDate><atom:link href="https://acganesh.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Using geometry to prove an inequality</title>
+      <link>https://acganesh.github.io/posts/inequality/</link>
+      <pubDate>Wed, 20 Aug 2025 00:00:00 +0000</pubDate>
+      
+      <guid>https://acganesh.github.io/posts/inequality/</guid>
+      <description>The inequality # I really like this inequality, which I encountered in a past life when I used to do math competitions. The problem statement is as follows:
+Problem. Prove that for all $a,b,c&amp;gt;0$ we have $$ \sqrt{a^2 - ab + b^2} + \sqrt{b^2 - bc + c^2} \ge \sqrt{a^2 + ac + c^2}. $$
+Proof. Upon first glance this seems like a problem that requires a bunch of algebra to prove.</description>
+    </item>
+    
     <item>
       <title>Speculative decoding for LLM inference</title>
       <link>https://acganesh.github.io/posts/speculative_decoding/</link>
