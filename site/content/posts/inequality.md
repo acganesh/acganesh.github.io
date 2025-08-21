@@ -59,7 +59,7 @@ Finally, I asked GPT-5 to make an interactive app to visualize the inequality.  
 <iframe
   src="/interactive/triangle-inequality.html"
   width="100%"
-  height="1000"
+  height="700"
   style="border: 1px solid rgba(148,163,184,0.25); border-radius: 12px;"
   loading="lazy"
 ></iframe>
