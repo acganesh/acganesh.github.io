@@ -6,7 +6,7 @@ theme: 'hugo-tufte'
 params:
   # Subtitle of the website
   subtitle: ""
-  favicon: "./favicon.ico"
+  # favicon: "./favicon.ico"
   touchicon: "./touch-icon.png"
   # Dark code highlighting
   codeblocksdark: false
