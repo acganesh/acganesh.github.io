@@ -70,8 +70,6 @@ $$`
 
 By the triangle inequality, we have `$AD+DC\ge AC$`, from which the conclusion follows.
 
-
-
 ### Interactive visualization
 
 Finally, I asked GPT-5 to make an interactive app to visualize the inequality.  The model is able to create a pretty cool visualization!
