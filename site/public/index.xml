@@ -15,7 +15,7 @@
       <guid>https://acganesh.github.io/posts/inequality/</guid>
       <description>The inequality # I really like this inequality, which I encountered in a past life when I used to do math competitions. The problem statement is as follows:
 Problem. Prove that for all $a,b,c&amp;gt;0$ we have $$ \sqrt{a^2 - ab + b^2} + \sqrt{b^2 - bc + c^2} \ge \sqrt{a^2 + ac + c^2}. $$
-Proof. Upon first glance this seems like a problem that requires a bunch of algebra to prove.</description>
+An algebraic proof from GPT-5 # I asked GPT-5 to prove this inequality algebraically with no geometric argument.</description>
     </item>
     
     <item>

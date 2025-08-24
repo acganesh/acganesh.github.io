@@ -74,11 +74,6 @@ The inequality
 <p>I really like this inequality, which I encountered in a past life when I used to do math competitions.  The problem statement is as follows:</p>
 <p><em>Problem.</em> Prove that for all <code>$a,b,c&gt;0$</code> we have
 <code>$$ \sqrt{a^2 - ab + b^2} + \sqrt{b^2 - bc + c^2} \ge \sqrt{a^2 + ac + c^2}. $$</code></p>
-<p><em>Proof.</em> Upon first glance this seems like a problem that requires a bunch of algebra to prove.   But it turns out you can solve it by drawing a picture:</p>
-<p><img src="/img/inequality.png" alt="Draw a picture"></p>
-<p>In convex quadrilateral <code>$ABCD$</code> above, let <code>$BA=a$</code>, <code>$BD=b$</code>, and <code>$BC=c$</code> where <code>$\angle ABD=\angle CBD=60^\circ$</code>. By the Law of Cosines,
-<code>$$ \begin{aligned} AD &amp;= \sqrt{a^2-2ab\cos 60^\circ+b^2} = \sqrt{a^2-ab+b^2},\\ DC &amp;= \sqrt{b^2-2bc\cos 60^\circ+c^2} = \sqrt{b^2-bc+c^2},\\ AC &amp;= \sqrt{a^2-2ac\cos 120^\circ+c^2} = \sqrt{a^2+ac+c^2}. \end{aligned} $$</code></p>
-<p>By the triangle inequality, we have <code>$AD+DC\ge AC$</code>, from which the conclusion follows.</p>
 <h3 id="an-algebraic-proof-from-gpt-5">
 An algebraic proof from GPT-5
 <a href="#an-algebraic-proof-from-gpt-5" class="heading-anchor">#</a>
@@ -99,6 +94,15 @@ Hence <code>$2\sqrt{AB}\ge \bigl|ab+bc+ac-2b^2\bigr|\ge ab+bc+ac-2b^2$</code>, w
 <code>$A+B+2\sqrt{AB}\ge C$</code>. Consequently,
 <code>$$ \sqrt{a^2-ab+b^2}+\sqrt{b^2-bc+c^2}\ge \sqrt{a^2+ac+c^2}. $$</code>
 Equality holds iff <code>$ab-ac+bc=0$</code>, i.e. <code>$b=\dfrac{ac}{a+c}$</code>.</p>
+<h3 id="a-geometric-proof">
+A geometric proof
+<a href="#a-geometric-proof" class="heading-anchor">#</a>
+</h3>
+<p>It turns out you can also solve this inequality by drawing a picture!</p>
+<p><img src="/img/inequality.png" alt="Draw a picture"></p>
+<p>In convex quadrilateral <code>$ABCD$</code> above, let <code>$BA=a$</code>, <code>$BD=b$</code>, and <code>$BC=c$</code> where <code>$\angle ABD=\angle CBD=60^\circ$</code>. By the Law of Cosines,
+<code>$$ \begin{aligned} AD &amp;= \sqrt{a^2-2ab\cos 60^\circ+b^2} = \sqrt{a^2-ab+b^2},\\ DC &amp;= \sqrt{b^2-2bc\cos 60^\circ+c^2} = \sqrt{b^2-bc+c^2},\\ AC &amp;= \sqrt{a^2-2ac\cos 120^\circ+c^2} = \sqrt{a^2+ac+c^2}. \end{aligned} $$</code></p>
+<p>By the triangle inequality, we have <code>$AD+DC\ge AC$</code>, from which the conclusion follows.</p>
 <h3 id="interactive-visualization">
 Interactive visualization
 <a href="#interactive-visualization" class="heading-anchor">#</a>

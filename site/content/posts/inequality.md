@@ -15,21 +15,6 @@ I really like this inequality, which I encountered in a past life when I used to
 \sqrt{a^2 - ab + b^2} + \sqrt{b^2 - bc + c^2} \ge \sqrt{a^2 + ac + c^2}.
 $$`
 
-*Proof.* Upon first glance this seems like a problem that requires a bunch of algebra to prove.   But it turns out you can solve it by drawing a picture:
-
-![Draw a picture](/img/inequality.png)
-
-In convex quadrilateral `$ABCD$` above, let `$BA=a$`, `$BD=b$`, and `$BC=c$` where `$\angle ABD=\angle CBD=60^\circ$`. By the Law of Cosines,
-`$$
-\begin{aligned}
-AD &= \sqrt{a^2-2ab\cos 60^\circ+b^2} = \sqrt{a^2-ab+b^2},\\
-DC &= \sqrt{b^2-2bc\cos 60^\circ+c^2} = \sqrt{b^2-bc+c^2},\\
-AC &= \sqrt{a^2-2ac\cos 120^\circ+c^2} = \sqrt{a^2+ac+c^2}.
-\end{aligned}
-$$`
-
-By the triangle inequality, we have `$AD+DC\ge AC$`, from which the conclusion follows.
-
 ### An algebraic proof from GPT-5
 
 I asked GPT-5 to prove this inequality algebraically with no geometric argument.  It came up with the following proof:
@@ -67,6 +52,24 @@ Hence `$2\sqrt{AB}\ge \bigl|ab+bc+ac-2b^2\bigr|\ge ab+bc+ac-2b^2$`, which implie
 \sqrt{a^2-ab+b^2}+\sqrt{b^2-bc+c^2}\ge \sqrt{a^2+ac+c^2}.
 $$`
 Equality holds iff `$ab-ac+bc=0$`, i.e. `$b=\dfrac{ac}{a+c}$`.
+
+### A geometric proof
+
+It turns out you can also solve this inequality by drawing a picture!
+
+![Draw a picture](/img/inequality.png)
+
+In convex quadrilateral `$ABCD$` above, let `$BA=a$`, `$BD=b$`, and `$BC=c$` where `$\angle ABD=\angle CBD=60^\circ$`. By the Law of Cosines,
+`$$
+\begin{aligned}
+AD &= \sqrt{a^2-2ab\cos 60^\circ+b^2} = \sqrt{a^2-ab+b^2},\\
+DC &= \sqrt{b^2-2bc\cos 60^\circ+c^2} = \sqrt{b^2-bc+c^2},\\
+AC &= \sqrt{a^2-2ac\cos 120^\circ+c^2} = \sqrt{a^2+ac+c^2}.
+\end{aligned}
+$$`
+
+By the triangle inequality, we have `$AD+DC\ge AC$`, from which the conclusion follows.
+
 
 
 ### Interactive visualization
