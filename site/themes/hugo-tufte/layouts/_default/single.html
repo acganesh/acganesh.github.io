@@ -6,6 +6,9 @@
 
 {{ define "main" }}
 <article id="main">
+  {{ if eq .Section "posts" }}
+  <section>{{ partial "nav.html" . }}</section>
+  {{ end }}
   {{ partial "content.header.html" . }}
   {{ partial "toc.html" . }}
   <section>{{ .Content }}</section>

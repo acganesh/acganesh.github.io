@@ -1,0 +1,18 @@
+/* Reduce space between top nav and post title on single post pages */
+
+/* Less padding below the first section (nav) */
+article#main > section:first-child {
+  padding-bottom: 0.3rem;
+}
+
+/* Less padding above the header section that contains the title */
+article#main > section + section {
+  padding-top: 0.3rem;
+}
+
+/* Smaller top margin for the post title */
+article#main > section + section h1.content-title {
+  margin-top: 1.8rem;
+}
+
+
