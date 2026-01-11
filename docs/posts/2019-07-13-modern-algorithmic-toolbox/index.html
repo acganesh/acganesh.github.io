@@ -74,15 +74,11 @@
 </section>
   
   <section>
-<h1 class="content-title">The modern algorithmic toolbox</h1></section>
+<h1 class="content-title">The modern algorithmic toolbox</h1><p class="date">July 13, 2019</p></section>
 
   
 
   <section><p><code>$$ \newcommand{\mbf}{\mathbf} \newcommand{\RR}{\mathbb{R}} \newcommand{\CC}{\mathbb{C}} \newcommand{\la}{\langle} \newcommand{\ra}{\rangle} \DeclareMathOperator{\rank}{rank} \DeclareMathOperator{\argmax}{argmax} $$</code></p>
-<h1 id="the-modern-algorithmic-toolbox">
-The modern algorithmic toolbox
-<a href="#the-modern-algorithmic-toolbox" class="heading-anchor">#</a>
-</h1>
 <p>These notes are based on an influential course I took at Stanford, <a href="https://web.stanford.edu/class/cs168/index.html">CS168: The Modern Algorithmic Toolbox</a>, taught by <a href="https://theory.stanford.edu/~valiant/">Greg Valiant</a> in Spring 2018.</p>
 <p>I found it to be my favorite technical class at Stanford, as I think it&rsquo;s a versatile grab-bag of ideas that can be applied to many different domains.</p>
 <h2 id="modern-hashing">
@@ -295,7 +291,7 @@ Dwork, Cynthia, et al. &ldquo;Calibrating noise to sensitivity in private data a
 <p><code>$$ \frac{\text{Pr}[A(D_1) \in Y]}{\text{Pr}[A(D_2) \in Y]} \leq \exp(\epsilon), $$</code>
 where the probability is taken over the coin tosses of <code>$\mathcal{A}$</code>.</p>
 <p>(sidenote: by convention, if the numerator and denominator are both 0, we say that the ratio is 1).</p>
-<p>Intuitively, we can think of this definition as a game between two parties, Alice and Bob. (sidenote: add simplification: <code>$A$</code> is permutation invariant, and the space <code>$D$</code> is finite).  Alice picks an arbitrary <code>$D \in \mathcal{D}^n$</code>.  Let <code>$D_{-n} = (d_1, \dots, d_{n-1})$</code>, and let <code>$D_{n, m} = (d_1, \dots, d_{n-1}, d_n = m)$</code>, where <code>$d_n = m$</code> means <code>$d_n$</code> takes on the <code>$m$</code>-th value of <code>$\mathcal{D}$</code>.  Then Alice gives Bob the tuble <code>$D_{-n}, y = \mathcal{A}(D)$</code>.  Bob must then guess correctly the value of $d_n$.  If Alice draws $d_n$ uniformly at random, Bob&rsquo;s best guess for $d_n$ is</p>
+<p>Intuitively, we can think of this definition as a game between two parties, Alice and Bob. (sidenote: add simplification: <code>$A$</code> is permutation invariant, and the space <code>$D$</code> is finite).  Alice picks an arbitrary <code>$D \in \mathcal{D}^n$</code>.  Let <code>$D_{-n} = (d_1, \dots, d_{n-1})$</code>, and let <code>$D_{n, m} = (d_1, \dots, d_{n-1}, d_n = m)$</code>, where <code>$d_n = m$</code> means <code>$d_n$</code> takes on the <code>$m$</code>-th value of <code>$\mathcal{D}$</code>.  Then Alice gives Bob the tuple <code>$D_{-n}, y = \mathcal{A}(D)$</code>.  Bob must then guess correctly the value of $d_n$.  If Alice draws $d_n$ uniformly at random, Bob&rsquo;s best guess for $d_n$ is</p>
 <p><code>$$ \argmax_{j \in [m]} \text{Pr} [\mathcal{A} (D_{n, j}) = y ]. $$</code></p>
 <p>The key point is that if <code>$\mathcal{A}$</code> is <code>$\epsilon$</code>-differentially private, then Bob won&rsquo;t be able to win much better than random guessing.</p>
 </section>

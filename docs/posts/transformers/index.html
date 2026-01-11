@@ -74,7 +74,7 @@
 </section>
   
   <section>
-<h1 class="content-title">GPT in words and code</h1></section>
+<h1 class="content-title">GPT in words and code</h1><p class="date">August 20, 2023</p></section>
 
   
 
@@ -135,7 +135,7 @@ Model architecture
 <p>The transformer block can be expressed as the following operation:</p>
 <pre tabindex="0"><code>def transformer_block(x):
   x = x + MultiHeadAttention(LayerNorm(x))
-  x = x = FFN(LayerNorm(x))
+  x = x + FFN(LayerNorm(x))
   return x
 </code></pre><h3 id="31-attention">
 3.1) Attention

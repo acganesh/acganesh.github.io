@@ -1,18 +1,433 @@
-/* Reduce space between top nav and post title on single post pages */
+/* ============================================================================
+   Custom Styles for Adi Ganesh's Blog
+   Built on Tufte CSS - preserving elegance while adding modern polish
+   ============================================================================ */
 
-/* Less padding below the first section (nav) */
+/* ----------------------------------------------------------------------------
+   CSS Variables for consistent theming
+   ---------------------------------------------------------------------------- */
+:root {
+  --color-bg: #fffff8;
+  --color-text: #111;
+  --color-text-muted: #555;
+  --color-accent: #a00000;
+  --color-accent-hover: #c00000;
+  --color-link-underline: rgba(160, 0, 0, 0.3);
+  --color-border: #ddd;
+  --color-code-bg: rgba(0, 0, 0, 0.03);
+  --transition-fast: 0.15s ease;
+  --transition-normal: 0.25s ease;
+}
+
+/* ----------------------------------------------------------------------------
+   Spacing adjustments (original overrides)
+   ---------------------------------------------------------------------------- */
 article#main > section:first-child {
   padding-bottom: 0.3rem;
 }
 
-/* Less padding above the header section that contains the title */
 article#main > section + section {
   padding-top: 0.3rem;
 }
 
-/* Smaller top margin for the post title */
 article#main > section + section h1.content-title {
   margin-top: 1.8rem;
 }
 
+/* ----------------------------------------------------------------------------
+   Enhanced Link Styling
+   Elegant underlines that respect Tufte's aesthetic
+   ---------------------------------------------------------------------------- */
+a:link,
+a:visited {
+  color: var(--color-text);
+  text-decoration: none;
+  background-image: linear-gradient(var(--color-link-underline), var(--color-link-underline));
+  background-position: 0 1.12em;
+  background-repeat: repeat-x;
+  background-size: 1px 1px;
+  transition: color var(--transition-fast), background-image var(--transition-fast);
+}
 
+a:hover,
+a:focus {
+  color: var(--color-accent);
+  background-image: linear-gradient(var(--color-accent), var(--color-accent));
+}
+
+/* Remove underline from nav and specific elements */
+.menu a,
+.page-list .content-title a,
+h1 a, h2 a, h3 a,
+a.heading-anchor {
+  background-image: none;
+}
+
+/* ----------------------------------------------------------------------------
+   Navigation Enhancement
+   ---------------------------------------------------------------------------- */
+.menu {
+  padding-bottom: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.menu ul {
+  margin: 0;
+}
+
+.menu li a {
+  color: var(--color-text-muted);
+  padding: 0.3rem 0;
+  position: relative;
+  transition: color var(--transition-fast);
+}
+
+.menu li a::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background-color: var(--color-accent);
+  transition: width var(--transition-normal);
+}
+
+.menu li a:hover,
+.menu li a:focus {
+  color: var(--color-text);
+}
+
+.menu li a:hover::after,
+.menu li a:focus::after {
+  width: 100%;
+}
+
+/* ----------------------------------------------------------------------------
+   Homepage Post List
+   ---------------------------------------------------------------------------- */
+.page-list {
+  margin-top: 2rem;
+}
+
+.page-list .content-title {
+  margin-top: 2.5rem;
+  margin-bottom: 0.8rem;
+  font-size: 1.8rem;
+  font-style: normal;
+  font-weight: 400;
+}
+
+.page-list .content-title:first-child {
+  margin-top: 0;
+}
+
+.page-list .content-title a {
+  color: var(--color-text);
+  transition: color var(--transition-fast);
+}
+
+.page-list .content-title a:hover {
+  color: var(--color-accent);
+}
+
+.page-list > p {
+  color: var(--color-text-muted);
+  font-size: 1.2rem;
+  line-height: 1.7;
+  margin-top: 0.5rem;
+  margin-bottom: 2rem;
+}
+
+/* Post date on homepage */
+.page-list .post-date {
+  color: var(--color-text-muted);
+  font-size: 1rem;
+  margin-top: 0.3rem;
+  margin-bottom: 0.5rem;
+  letter-spacing: 0.01em;
+}
+
+/* Post summary on homepage */
+.page-list .post-summary {
+  color: var(--color-text-muted);
+  font-size: 1.2rem;
+  line-height: 1.7;
+  margin-top: 0.5rem;
+  margin-bottom: 2rem;
+}
+
+/* Subtle separator between posts */
+.page-list .content-title:not(:first-child)::before {
+  content: '';
+  display: block;
+  width: 3rem;
+  height: 1px;
+  background: var(--color-border);
+  margin-bottom: 2.5rem;
+}
+
+/* ----------------------------------------------------------------------------
+   Archive/List Page Styling
+   ---------------------------------------------------------------------------- */
+.list-page {
+  width: 65%;
+  margin-top: -2rem;
+}
+
+.list-page ul {
+  list-style: none;
+  padding-left: 0;
+  margin: 0;
+  width: 100%;
+}
+
+.list-page > ul > li.year {
+  font-size: 1.6rem;
+  font-weight: 400;
+  margin-top: 2.5rem;
+  margin-bottom: 0.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.list-page > ul > li.year:first-child {
+  margin-top: 0;
+}
+
+/* Month headers */
+.list-page ul ul > li {
+  font-size: 1.2rem;
+  color: var(--color-text-muted);
+  margin-top: 1.2rem;
+  margin-bottom: 0.3rem;
+}
+
+/* Post entries */
+.list-page ul ul ul {
+  padding-left: 0;
+}
+
+.list-page ul ul ul li {
+  font-size: 1.2rem;
+  padding: 0.4rem 0;
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+}
+
+.list-page .list-date {
+  color: var(--color-text-muted);
+  font-size: 1rem;
+  min-width: 5rem;
+  flex-shrink: 0;
+}
+
+.list-page ul ul ul li a {
+  background-image: none;
+}
+
+.list-page ul ul ul li a:hover {
+  background-image: none;
+  text-decoration: underline;
+  text-decoration-color: var(--color-link-underline);
+  text-underline-offset: 2px;
+}
+
+@media (max-width: 760px) {
+  .list-page {
+    width: 90%;
+  }
+
+  .list-page ul ul ul li {
+    flex-direction: column;
+  }
+
+  .list-page .list-date {
+    margin-bottom: 0.2rem;
+  }
+}
+
+/* ----------------------------------------------------------------------------
+   Subscribe Form Styling
+   ---------------------------------------------------------------------------- */
+.embeddable-buttondown-form {
+  margin-top: 1.5rem;
+  padding: 1.5rem;
+  background: linear-gradient(135deg, rgba(0,0,0,0.02) 0%, rgba(0,0,0,0.04) 100%);
+  border-radius: 4px;
+  width: 55%;
+}
+
+.embeddable-buttondown-form label {
+  font-size: 1.1rem;
+  color: var(--color-text-muted);
+  display: block;
+  margin-bottom: 0.8rem;
+}
+
+.embeddable-buttondown-form input[type="email"] {
+  font-family: inherit;
+  font-size: 1.1rem;
+  padding: 0.6rem 0.8rem;
+  border: 1px solid var(--color-border);
+  border-radius: 3px;
+  background: var(--color-bg);
+  width: 60%;
+  max-width: 280px;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.embeddable-buttondown-form input[type="email"]:focus {
+  outline: none;
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 2px rgba(160, 0, 0, 0.1);
+}
+
+.embeddable-buttondown-form input[type="submit"] {
+  font-family: inherit;
+  font-size: 1rem;
+  padding: 0.6rem 1.2rem;
+  background-color: var(--color-accent);
+  color: white;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  margin-left: 0.5rem;
+  transition: background-color var(--transition-fast), transform var(--transition-fast);
+}
+
+.embeddable-buttondown-form input[type="submit"]:hover {
+  background-color: var(--color-accent-hover);
+  transform: translateY(-1px);
+}
+
+.embeddable-buttondown-form input[type="submit"]:active {
+  transform: translateY(0);
+}
+
+/* ----------------------------------------------------------------------------
+   Code Blocks Enhancement
+   ---------------------------------------------------------------------------- */
+code:not(.highlight code):not(pre code) {
+  background-color: var(--color-code-bg);
+  padding: 0.15rem 0.4rem;
+  border-radius: 3px;
+  font-size: 0.95em;
+}
+
+pre {
+  background-color: var(--color-code-bg);
+  padding: 1rem 1.2rem;
+  border-radius: 4px;
+  border-left: 3px solid var(--color-border);
+}
+
+div.highlight {
+  background-color: var(--color-code-bg);
+  border-radius: 4px;
+  border-left: 3px solid var(--color-border);
+  margin: 1.4rem 0;
+}
+
+div.highlight pre {
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  padding: 1rem 1.2rem;
+}
+
+/* ----------------------------------------------------------------------------
+   Blockquote Enhancement
+   ---------------------------------------------------------------------------- */
+blockquote {
+  border-left: 3px solid var(--color-border);
+  padding-left: 1.5rem;
+  margin-left: 0;
+}
+
+blockquote p {
+  color: var(--color-text-muted);
+}
+
+/* ----------------------------------------------------------------------------
+   Typography Refinements
+   ---------------------------------------------------------------------------- */
+h1.content-title {
+  letter-spacing: -0.01em;
+}
+
+/* Date styling */
+.date {
+  color: var(--color-text-muted);
+  font-size: 1.1rem;
+  font-style: normal;
+  letter-spacing: 0.02em;
+}
+
+/* Improve heading anchors */
+a.heading-anchor {
+  color: var(--color-border);
+  margin-left: 0.3rem;
+  font-size: 0.8em;
+  transition: color var(--transition-fast);
+}
+
+a.heading-anchor:hover {
+  color: var(--color-accent);
+}
+
+/* Sidenote and marginnote refinements */
+.sidenote,
+.marginnote {
+  color: var(--color-text-muted);
+}
+
+/* ----------------------------------------------------------------------------
+   Selection styling
+   ---------------------------------------------------------------------------- */
+::selection {
+  background-color: rgba(160, 0, 0, 0.15);
+  color: var(--color-text);
+}
+
+/* ----------------------------------------------------------------------------
+   Responsive adjustments
+   ---------------------------------------------------------------------------- */
+@media (max-width: 760px) {
+  .embeddable-buttondown-form {
+    width: 90%;
+    padding: 1rem;
+  }
+
+  .embeddable-buttondown-form input[type="email"] {
+    width: 100%;
+    max-width: none;
+    margin-bottom: 0.8rem;
+  }
+
+  .embeddable-buttondown-form input[type="submit"] {
+    margin-left: 0;
+    width: 100%;
+  }
+
+  .page-list .content-title:not(:first-child)::before {
+    margin-bottom: 2rem;
+  }
+}
+
+/* ----------------------------------------------------------------------------
+   Print styles
+   ---------------------------------------------------------------------------- */
+@media print {
+  a:link,
+  a:visited {
+    background-image: none;
+    text-decoration: underline;
+  }
+
+  .menu {
+    border-bottom: none;
+  }
+}

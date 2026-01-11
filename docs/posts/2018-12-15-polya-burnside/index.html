@@ -74,15 +74,11 @@
 </section>
   
   <section>
-<h1 class="content-title">Pólya-Burnside enumeration in combinatorics</h1></section>
+<h1 class="content-title">Pólya-Burnside enumeration in combinatorics</h1><p class="date">December 15, 2018</p></section>
 
   
 
   <section><p><code>$$ \newcommand{\mat}[1]{\begin{pmatrix}#1\end{pmatrix}} \DeclareMathOperator{\Stab}{Stab} \DeclareMathOperator{\Fix}{Fix} \DeclareMathOperator{\Orb}{Orb} $$</code></p>
-<h1 id="pólya-burnside-enumeration-in-combinatorics">
-Pólya-Burnside enumeration in combinatorics
-<a href="#p%c3%b3lya-burnside-enumeration-in-combinatorics" class="heading-anchor">#</a>
-</h1>
 <h2 id="a-class-of-problems">
 A class of problems
 <a href="#a-class-of-problems" class="heading-anchor">#</a>
@@ -161,7 +157,7 @@ Counting necklaces: PuMAC 2009
 <p>In the cycle index polynomial, this corresponds to <code>$7 f_1 f_2^3$</code>, since we have one 1-cycle and three 2-cycle, and 7 such reflection, since we can take a reflection through any vertex.</p>
 <p><em>Permutation cycle structure: rotations.</em></p>
 <p>All the 6 nonidentity rotations are 7-cycles, since 7 in a prime number.  This contributes <code>$ 6 \cdot f_7$</code> to the cycle index polynomial.</p>
-<p>By contrast, consider the case where <code>$n = 6$</code> is composite.  Int his case, a rotation of <code>$(\frac{360}{3})^{\circ}$</code> yields <code>$(1 3 5)(2 4 6)$</code>, which would correspond to <code>$f_3^2$</code> in the cycle index polynomial.</p>
+<p>By contrast, consider the case where <code>$n = 6$</code> is composite.  In this case, a rotation of <code>$(\frac{360}{3})^{\circ}$</code> yields <code>$(1 3 5)(2 4 6)$</code>, which would correspond to <code>$f_3^2$</code> in the cycle index polynomial.</p>
 <p><em>The identity.</em> The identity is trivially a product of seven 1-cycles, so it contributes <code>$1 \cdot f_1^7$</code> to the polynomial.</p>
 <h2 id="cycle-index-polynomials">
 Cycle index polynomials
@@ -275,7 +271,7 @@ Burnside&rsquo;s Lemma
 </h2>
 <p>If <code>$G$</code> is a finite group that acts on the elements of a finite set <code>$X$</code>, and <code>$N$</code> is the number of orbits of <code>$X$</code> under <code>$G$</code>, then</p>
 <p><code>$$ N = \frac{1}{|G|} \sum_{g \in G} | \Fix g |. $$</code></p>
-<p>The orbit of an element <code>$x \in X$</code> refers to all possible colorings you can obtain by some rotation or reflection on some coloring.  If we count the <em>number of orbits,</em> <code>$N$</code>, we are counting the number of oclorings that are distinct under rotation or reflection, which solves our problem.</p>
+<p>The orbit of an element <code>$x \in X$</code> refers to all possible colorings you can obtain by some rotation or reflection on some coloring.  If we count the <em>number of orbits,</em> <code>$N$</code>, we are counting the number of colorings that are distinct under rotation or reflection, which solves our problem.</p>
 <p><em>Proof.</em> Consider the quantity <code>$\sum_{g \in G} | \Fix g |$</code>.  But this is also
 <code>$$ |S| = \sum_{g \in G} | \Fix g | = \sum_{x \in X} | \Stab x|. $$</code></p>
 <p>Let <code>$x_1, x_2, \dots, x_N$</code> be representive elements from each orbit of <code>$X$</code> under <code>$G$</code>.  If an element <code>$x$</code> is in the same orbit as <code>$x_i$</code>, then <code>$\Orb x = \Orb x_i$</code>, and by the orbit-stabilizer theorem, we have <code>$|\Stab x| = |\Stab x_i|$</code>.  Thus, we have</p>
