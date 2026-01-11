@@ -7,7 +7,7 @@
 {{- end -}}
 
 {{- if .IsPage -}}
-{{- if not .Site.Params.hidedate -}}
+{{- if not (or .Site.Params.hidedate .Params.hidedate) -}}
 <p class="date">{{ .Date.Format "January 2, 2006" }}</p>
 {{- end -}}
 {{- end -}}

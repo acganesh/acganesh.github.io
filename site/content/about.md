@@ -1,6 +1,7 @@
 ---
 title: "Adi Ganesh's Blog"
 hasMath: false
+hidedate: true
 _build:
   list: never
 ---
