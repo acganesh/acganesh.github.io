@@ -331,6 +331,12 @@ div.highlight {
   margin: 1.4rem 0;
 }
 
+/* Keep code blocks aligned to the main text column */
+pre,
+div.highlight {
+  width: 55%;
+}
+
 div.highlight pre {
   background: transparent;
   border: none;
@@ -414,6 +420,11 @@ a.heading-anchor:hover {
 
   .page-list .content-title:not(:first-child)::before {
     margin-bottom: 2rem;
+  }
+
+  pre,
+  div.highlight {
+    width: 90%;
   }
 }
 
