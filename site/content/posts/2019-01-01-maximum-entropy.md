@@ -17,7 +17,7 @@ $$`
 
 Intuitively, the notion of entropy defines a measure of "disorder" or
 "expected surprise" given a probability distribution. As described by
-Shannon in is 1948 article, the entropy can be defined as
+Shannon in his 1948 article, the entropy can be defined as
 follows<label class="margin-toggle sidenote-number"></label><span class="sidenote">
 Shannon, Claude Elwood. "A mathematical theory of communication." *Bell system technical journal* 27.3 (1948): 379-423.
 </span>.

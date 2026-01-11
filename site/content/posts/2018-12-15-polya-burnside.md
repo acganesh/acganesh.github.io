@@ -124,7 +124,7 @@ In the cycle index polynomial, this corresponds to `$7 f_1 f_2^3$`, since we hav
 
 All the 6 nonidentity rotations are 7-cycles, since 7 in a prime number.  This contributes `$ 6 \cdot f_7$` to the cycle index polynomial.
 
-By contrast, consider the case where `$n = 6$` is composite.  Int his case, a rotation of `$(\frac{360}{3})^{\circ}$` yields `$(1 3 5)(2 4 6)$`, which would correspond to `$f_3^2$` in the cycle index polynomial.
+By contrast, consider the case where `$n = 6$` is composite.  In this case, a rotation of `$(\frac{360}{3})^{\circ}$` yields `$(1 3 5)(2 4 6)$`, which would correspond to `$f_3^2$` in the cycle index polynomial.
 
 *The identity.* The identity is trivially a product of seven 1-cycles, so it contributes `$1 \cdot f_1^7$` to the polynomial.
 
@@ -274,7 +274,7 @@ If `$G$` is a finite group that acts on the elements of a finite set `$X$`, and 
 N = \frac{1}{|G|} \sum_{g \in G} | \Fix g |.
 $$`
 
-The orbit of an element `$x \in X$` refers to all possible colorings you can obtain by some rotation or reflection on some coloring.  If we count the *number of orbits,* `$N$`, we are counting the number of oclorings that are distinct under rotation or reflection, which solves our problem.
+The orbit of an element `$x \in X$` refers to all possible colorings you can obtain by some rotation or reflection on some coloring.  If we count the *number of orbits,* `$N$`, we are counting the number of colorings that are distinct under rotation or reflection, which solves our problem.
 
 *Proof.* Consider the quantity `$\sum_{g \in G} | \Fix g |$`.  But this is also 
 `$$

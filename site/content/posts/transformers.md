@@ -77,7 +77,7 @@ The transformer block can be expressed as the following operation:
 ```
 def transformer_block(x):
   x = x + MultiHeadAttention(LayerNorm(x))
-  x = x = FFN(LayerNorm(x))
+  x = x + FFN(LayerNorm(x))
   return x
 ```
 
