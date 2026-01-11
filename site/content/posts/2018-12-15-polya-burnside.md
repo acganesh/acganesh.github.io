@@ -14,8 +14,6 @@ description: Using group theory for combinatorics.
 \DeclareMathOperator{\Orb}{Orb}
 $$`
 
-# Pólya-Burnside enumeration in combinatorics
-
 ## A class of problems
 
 The following problem in chemistry is historically significant, as G. Pólya originally popularized his theory through applications in chemical enumeration.  How many different chemical compounds can be made by attaching `$H$`, `$CH_3$`, or `$OH$` radicals to each of the carbon atoms in the benzene ring pictured below?

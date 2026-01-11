@@ -19,7 +19,7 @@ params:
   # Show the "Powered by Hugo-Tufte and Hugo."
   showPoweredBy: false
   # Site wide kill switch for date in pages
-  hidedate: true
+  hidedate: false
   # Site wide kill switch for post summary on home page
   showSummary: true
   # Site wide kill switch for LaTeX support
