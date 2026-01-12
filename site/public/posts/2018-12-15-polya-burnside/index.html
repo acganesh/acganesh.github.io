@@ -101,14 +101,16 @@ An example: coloring a flag
 </h2>
 <p><em>Problem.</em> How many ways are there to color a flag with <code>$n$</code> stripes lined side by side with <code>$k$</code> colors?</p>
 <figure style="width:55%; margin:0.5rem 0;">
-  <img src="/img/polya/img2.png" alt="Flag with n stripes and k colors" style="max-width:520px; width:100%; display:block; margin:0 auto;" />
+  <img src="/img/polya/img2.png" alt="Flag with n stripes and k colors" style="max-width:350px; width:100%; display:block; margin:0 auto;" />
 </figure>
 <p>Do not count as different flags with colors &ldquo;flipped.&rdquo;  The following two flags would be considered the same.</p>
 <figure style="width:55%; margin:0.5rem 0;">
   <div style="display:flex; gap:16px; justify-content:center; align-items:center; flex-wrap:wrap;">
     <img src="/img/polya/img3.png" alt="Flag example" style="max-width:180px; width:100%; height:auto;" />
-    <img src="/img/polya/img4.png" alt="Flag example, flipped" style="max-width:180px; width:100%; height:auto;" />
   </div>
+</figure>
+<figure style="width:55%; margin:0.5rem 0;">
+  <img src="/img/polya/img4.png" alt="Flag example, flipped" style="max-width:180px; width:100%; height:auto; display:block; margin:0 auto;" />
 </figure>
 <h3 id="solving-it-with-standard-methods">
 Solving it with standard methods.
@@ -117,16 +119,16 @@ Solving it with standard methods.
 <p>Let&rsquo;s take the simple case when <code>$n = 4$</code> and <code>$k = 2$</code>.</p>
 <p>Assume we count the number of patterns normally, without accounting for reflection.  Then <code>$N = 2^4$</code>.  Let <code>$N_r$</code> denote the number of distinct colorings under reflection.  <code>$N_r \neq \frac{2^4}{2}$</code>, as one might think!  We need to separately handle symmetric patterns and asymmetric patterns.</p>
 <p>An asymmetric pattern like
-<span style="display:inline-block; width:320px; max-width:100%; vertical-align:middle; margin:0 6px;">
+<span style="display:inline-block; width:100px; max-width:100%; vertical-align:middle; margin:0 6px;">
 <img src="/img/polya/img5.png" alt="Asymmetric flag pattern" style="width:100%; height:auto;" />
 </span>
 yields a new pattern that we don&rsquo;t want to double count,
-<span style="display:inline-block; width:320px; max-width:100%; vertical-align:middle; margin:0 6px;">
+<span style="display:inline-block; width:100px; max-width:100%; vertical-align:middle; margin:0 6px;">
 <img src="/img/polya/img6.png" alt="Reflected asymmetric flag pattern" style="width:100%; height:auto;" />
 </span>
 when it is reflected.  To count these, we must divide by 2.</p>
 <p>A symmetric pattern like
-<span style="display:inline-block; width:420px; max-width:100%; vertical-align:middle; margin:0 6px;">
+<span style="display:inline-block; width:100px; max-width:100%; vertical-align:middle; margin:0 6px;">
 <img src="/img/polya/img7.png" alt="Symmetric flag pattern" style="width:100%; height:auto;" />
 </span>
 when reflected does not create a new pattern.  We don&rsquo;t need to divide by 2 here.</p>

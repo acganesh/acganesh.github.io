@@ -37,7 +37,7 @@ These problems share a common theme of enumerating the number of objects with so
 *Problem.* How many ways are there to color a flag with `$n$` stripes lined side by side with `$k$` colors? 
 
 <figure style="width:55%; margin:0.5rem 0;">
-  <img src="/img/polya/img2.png" alt="Flag with n stripes and k colors" style="max-width:520px; width:100%; display:block; margin:0 auto;" />
+  <img src="/img/polya/img2.png" alt="Flag with n stripes and k colors" style="max-width:350px; width:100%; display:block; margin:0 auto;" />
 </figure>
 
 Do not count as different flags with colors "flipped."  The following two flags would be considered the same.
@@ -45,8 +45,11 @@ Do not count as different flags with colors "flipped."  The following two flags 
 <figure style="width:55%; margin:0.5rem 0;">
   <div style="display:flex; gap:16px; justify-content:center; align-items:center; flex-wrap:wrap;">
     <img src="/img/polya/img3.png" alt="Flag example" style="max-width:180px; width:100%; height:auto;" />
-    <img src="/img/polya/img4.png" alt="Flag example, flipped" style="max-width:180px; width:100%; height:auto;" />
   </div>
+</figure>
+
+<figure style="width:55%; margin:0.5rem 0;">
+  <img src="/img/polya/img4.png" alt="Flag example, flipped" style="max-width:180px; width:100%; height:auto; display:block; margin:0 auto;" />
 </figure>
 
 ### Solving it with standard methods.
@@ -56,17 +59,17 @@ Let's take the simple case when `$n = 4$` and `$k = 2$`.
 Assume we count the number of patterns normally, without accounting for reflection.  Then `$N = 2^4$`.  Let `$N_r$` denote the number of distinct colorings under reflection.  `$N_r \neq \frac{2^4}{2}$`, as one might think!  We need to separately handle symmetric patterns and asymmetric patterns.
 
 An asymmetric pattern like
-<span style="display:inline-block; width:320px; max-width:100%; vertical-align:middle; margin:0 6px;">
+<span style="display:inline-block; width:100px; max-width:100%; vertical-align:middle; margin:0 6px;">
   <img src="/img/polya/img5.png" alt="Asymmetric flag pattern" style="width:100%; height:auto;" />
 </span>
 yields a new pattern that we don't want to double count,
-<span style="display:inline-block; width:320px; max-width:100%; vertical-align:middle; margin:0 6px;">
+<span style="display:inline-block; width:100px; max-width:100%; vertical-align:middle; margin:0 6px;">
   <img src="/img/polya/img6.png" alt="Reflected asymmetric flag pattern" style="width:100%; height:auto;" />
 </span>
 when it is reflected.  To count these, we must divide by 2.
 
 A symmetric pattern like
-<span style="display:inline-block; width:420px; max-width:100%; vertical-align:middle; margin:0 6px;">
+<span style="display:inline-block; width:100px; max-width:100%; vertical-align:middle; margin:0 6px;">
   <img src="/img/polya/img7.png" alt="Symmetric flag pattern" style="width:100%; height:auto;" />
 </span>
 when reflected does not create a new pattern.  We don't need to divide by 2 here.
