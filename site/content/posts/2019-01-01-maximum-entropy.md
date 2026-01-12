@@ -243,7 +243,9 @@ Under the Karush-Kuhn-Tucker (KKT) conditions, we can show that the
 optimization problem above has a unique solution, since the objective
 function is concave in the `$\lambda_i$`. The full argument is out of the
 scope of this article, but we refer the interested reader to
-[@boyd2004convex].
+<label class="margin-toggle sidenote-number"></label><span class="sidenote">
+Boyd, Stephen, and Lieven Vandenberghe. <em>Convex Optimization</em>. Cambridge University Press, 2004.
+</span>.
 
 Now, let `$g$` satisfy the constraints in (\*). Then `$$\begin{aligned}
     h(g) &= - \int_{S} g \ln g \\

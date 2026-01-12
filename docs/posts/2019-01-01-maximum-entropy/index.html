@@ -233,7 +233,9 @@ below: <code>$$\begin{aligned} \max_{\lambda_i} \left\{ \sum_{i=0}^{n} \lambda_i
 optimization problem above has a unique solution, since the objective
 function is concave in the <code>$\lambda_i$</code>. The full argument is out of the
 scope of this article, but we refer the interested reader to
-[@boyd2004convex].</p>
+<label class="margin-toggle sidenote-number"></label><span class="sidenote">
+Boyd, Stephen, and Lieven Vandenberghe. <em>Convex Optimization</em>. Cambridge University Press, 2004.
+</span>.</p>
 <p>Now, let <code>$g$</code> satisfy the constraints in (*). Then <code>$$\begin{aligned} h(g) &amp;= - \int_{S} g \ln g \\ &amp;= - \int_{S} g \ln \frac{g}{f^{*}} f^{*} \\ &amp;= - \text{D} (g || f^{*}) - \int_{S} g \ln f^{*} \\ &amp;\leq - \int_{S} g \ln f^{*} \\ &amp;= - \int_{S} g \left( \lambda_0 + \sum_{i} \lambda_i r_i \right) \\ &amp;= - \int_{S} f^{*} \left( \lambda_0 + \sum_{i} \lambda_i r_i \right) \\ &amp;= - \int_{S} f^{*} \ln f^{*} \\ &amp;= h(f^{*}) \end{aligned}$$</code></p>
 <p>Note that equality holds in (a) if and only if <code>$g(x) = f^{*}(x)$</code> for all
 <code>$x$</code>, which demonstrates uniqueness.</p>
