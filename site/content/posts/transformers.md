@@ -33,7 +33,7 @@ def gpt(input_string):
 
 In the following sections we will break down each piece.
 
-### 1) Byte-Pair Embedding Tokenizer
+### 1) Byte-Pair Encoding Tokenizer
 
 `$\text{String} -> \text{List[Integer]}$`
 
@@ -47,7 +47,7 @@ OpenAI's [Tokenizer](https://platform.openai.com/tokenizer) tool shows how diffe
 
 We start by embedding each token which is done with a lookup
 ```
-wte[input_tokens].
+wte[input_tokens]
 ```
 
 This gives us a tensor of shape `$n_{tokens} \times n_{embed}$`.  For GPT-2, `$n_{embed} = 1600$`.
@@ -65,7 +65,7 @@ This gives us another tensor of shape `$n_{tokens} \times n_{embed}$`.
 
 ### 2.3) Sum
 
-Now we simply sum of the two tensors from before to get a single tensor of shape `$n_{tokens} \times n_{embed}$`.
+Now we simply sum the two tensors from before to get a single tensor of shape `$n_{tokens} \times n_{embed}$`.
 
 ```
 x = wte[inputs] + wpe[range(len(inputs))]
@@ -99,7 +99,7 @@ def attention(q, k, v, mask):
     return softmax(q @ k.T / np.sqrt(q.shape[-1]) + mask) @ v
 ```
 
-Here, the causal mask prevents a tokens from attending to future tokens - in the context of language modeling, this is necessary since we will see each word stream in one by one.
+Here, the causal mask prevents tokens from attending to future tokens - in the context of language modeling, this is necessary since we will see each word stream in one by one.
 
 Intuitively, `$\mathbf{Q} \mathbf{K}^T$` will result in an "importance" matrix that returns the importance of each token to each other token.  We then divide this by `$\sqrt{d_k}$` and then pass this through a softmax.  Finally, we multiply this by the `$\mathbf{V}$` matrix, which represents the importance of each token.
 

@@ -80,7 +80,7 @@ If `$p = 1$` we obtain the "Manhattan" distance, and for large `$p$`, `$||x - y|
 
 *Johnson-Lindenstrauss transform.* Suppose now, that we want to reduce the dimensionality of a large dataset, where we want to approximately preserve the distances between object pairs (for example, the `$\ell_2$` distance between points in `$\RR^k$`).
 
-Suppose that our `$n$` points of interest are `$\mbf{x}_1, \dots, \mbf{x}_k \in \mathbb{R}^k$`, where `$k$` might be large.  Suppose we choose a random vector `$\mbf{r} \in \RR^k$`, and define a real-valued function `$f_{\mbf{r}} : \mathbb{R}^k \to \mathbb{R}$` by taking an inner product for the datapoint with the random vector: 
+Suppose that our `$n$` points of interest are `$\mbf{x}_1, \dots, \mbf{x}_k \in \mathbb{R}^k$`, where `$k$` might be large.  Suppose we choose a random vector `$\mbf{r} \in \RR^k$`, and define a real-valued function `$f_{\mbf{r}} : \mathbb{R}^k \to \mathbb{R}$` by taking an inner product of the datapoint with the random vector: 
 
 `$$
 f_{\mbf{r}} (\mbf{x}) = \langle \mbf{x}, \mbf{r} \rangle = \sum_{j=1}^{k} x_j r_j.
@@ -132,7 +132,7 @@ $$
 
 where `$c$` is a sufficiently large constant.  Then with probability at least `$1 - \delta$` over the samples `$\mbf{x}_1, \dots, \mbf{x}_n \sim D$`, for every linear classifier `$\hat{f}$`, we have
 \begin{align*}
-  \text{generalization error of } \hat{f} \in \text{training error of } \hat{f} \pm \varepsilon.
+  \text{generalization error of } \hat{f} \text{ is within training error of } \hat{f} \pm \varepsilon.
 \end{align*}
 
 This implies a useful rule of thumb.  To ensure generalization, make sure that the training set size `$n$` is at least linear in the number `$d$` of free parameters in the function that you're trying to learn.
@@ -183,7 +183,7 @@ M = \sum_{i=1}^{r} u_i v_i^T.
 $$
 That is, `$M$` is the sum of `$r$` rank one matrices, where the `$i$`th matrix is the *outer product* `$u_i v_i^T$`.  We can define an outer product for tensors:
 
-*Definition.* Given vectors `$u, v, w$` or lengths `$n, m,$` and `$l$`, respectively, their *tensor product* (or *outer product*) is the `$n \times m \times l$` rank one 3-tensor dented `$A = u \otimes v \otimes w$` with entries `$A_{i, j, k} = u_i v_j w_k$`.
+*Definition.* Given vectors `$u, v, w$` or lengths `$n, m,$` and `$l$`, respectively, their *tensor product* (or *outer product*) is the `$n \times m \times l$` rank one 3-tensor denoted `$A = u \otimes v \otimes w$` with entries `$A_{i, j, k} = u_i v_j w_k$`.
 
 We can extend this definition to higher dimensions:
 
@@ -219,7 +219,7 @@ Then this rank `$k$` decomposition is unique (up to scalar multiplication of the
 ## Spectral graph theory
 
 Given a graph `$G = (V, E)$` with `$|V| = n$` vertices, we can define the Laplacian matrix as an `$n \times n$` matrix `$L_G =D - A$`, where `$D$` is the degree matrix and `$A$` is the adjacency matrix.  The eigenvalues of `$L_G$` inform the structure of the graph.  We can show the following important result:<label class="margin-toggle sidenote-number"></label><span class="sidenote">
-For more on machine learning on graphs, see Masthew Das Sarma's [article in *The Gradient*](https://thegradient.pub/structure-learning/).
+For more on machine learning on graphs, see Matthew Das Sarma's [article in *The Gradient*](https://thegradient.pub/structure-learning/).
 </span>
 
 **Theorem.** The number of zero eigenvalues of the Laplacian `$L_G$` equals the number of connected components of the graph `$G$`.
@@ -248,12 +248,12 @@ We discuss *reservoir sampling,* originally due to Vitter in 1985.<label class="
 Vitter, Jeffrey S. "Random sampling with a reservoir." *ACM Transactions on Mathematical Software (TOMS)* 11.1 (1985): 37-57.
 </span>
 
-Given a number `$k$`, and a datastream `$x_1, x_2, \dots, $` of length greater than `$k$`:
+Given a number `$k$`, and a data stream `$x_1, x_2, \dots, x_t$` of length greater than `$k$`:
 
 - Put the first `$k$` elements of the stream into a "reservoir" `$R = (x_1, \dots, x_k)$`.
 - For `$i \geq k+1$`:
   - With probability `$\frac{k}{i}$` replace a random entry of `$R$` with `$x_i$`.
-- At the end of the stream, return the resource `$R$`.
+- At the end of the stream, return the reservoir `$R$`.
 
 Importantly, the reservoir `$R$` consists of a uniformly random subset of `$k$` of the entries of `$x_1, x_2, \dots, x_t$`.
 

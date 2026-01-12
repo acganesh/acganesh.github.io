@@ -27,7 +27,7 @@ Here are other problems that can be approached using Pólya-Burnside.
 
 - In how many ways can an `$n \times n$` tablecloth be colored with `$k$` colors?
 - How many different necklaces can be made with `$n$` beads and `$k$` colors?
-- How many ways can the faces of a polyhedrons be colored using at most `$n$` colors?
+- How many ways can the faces of a polyhedra be colored using at most `$n$` colors?
 - Find the number of simple graphs with `$n$` vertices, up to isomorphism.
 
 These problems share a common theme of enumerating the number of objects with some equivalence under *symmetry.*
@@ -88,7 +88,7 @@ Now, `$S = 2^2$`, since picking the first two squares uniquely defines the last 
 
 # Applying Pólya's theory
 
-We will first apply 's method without explaining how it works.  We first discuss *cycle notation.*
+We will first apply Pólya's method without explaining how it works.  We first discuss *cycle notation.*
 
 Any permutation can be expressed as the product of cycles.  For instance,
 
@@ -119,7 +119,7 @@ We make the substitution `$f_n = x^n + y^n$`, and use two terms since we are con
 P(x, y) = \frac{(x+y)^4 + (x^2 + y^2)^2}{2}.
 $$`
 
-To find the answer from before, we add the coefficients of this polynomial.  This is equivalent to taking `$P(1, 1)$`, which gives `$\frac{2^4 + 2^2}{2} = 10$`, as from before.  Importantly, not only is the sumal equal, but the constituents of the sum are similar as well: this is a hint at some sort of combinatorial equivalence between the two processes. 
+To find the answer from before, we add the coefficients of this polynomial.  This is equivalent to taking `$P(1, 1)$`, which gives `$\frac{2^4 + 2^2}{2} = 10$`, as from before.  Importantly, not only is the sum total equal, but the constituents of the sum are similar as well: this is a hint at some sort of combinatorial equivalence between the two processes. 
 
 ## `$P$` is a generating function for colorings
 
@@ -136,7 +136,7 @@ Let color 1 be red and color 2 be blue.
   <img src="/img/polya/img8.png" alt="Flag colorings table" style="max-width:720px; width:100%; display:block; margin:0 auto;" />
 </figure>
 
-## Counting necklaces: PuMAC 2009
+## Counting necklaces: PUMaC 2009
 
 *2009 PUMaC Combinatorics A10.*  Taotao wants to buy a bracelet.  The bracelets have 7 different beads on them arranged in a circle.  Two bracelets are the same if one can be rotated or flipped to get the other.  If she can choose the colors and placements of the beads, and the beads come in orange, white, and black, how many possible bracelets can she buy?
 
@@ -146,11 +146,11 @@ Let color 1 be red and color 2 be blue.
   <img src="/img/polya/img9.png" alt="Figure 1: Symmetries of a 7-gon" style="max-width:360px; width:100%; display:block; margin:0 auto;" />
 </figure>
 
-We will analyze the symmetries of the 7-gon.  We have 7 reflections through a vertex and a midpoint of the opposite side, and 7 rotations of `$n (\frac{360}{7})^{\circ}$`, with `$n \in \{ 1, 2, \dots, 7 \}$`.
+We will analyze the symmetries of the 7-gon.  We have 7 reflections through a vertex and a midpoint of the opposite side, and 7 rotations of `$n \cdot (\frac{360}{7})^{\circ}$`, with `$n \in \{ 1, 2, \dots, 7 \}$`.
 
 *Permutation cycle structure: reflections.*
 
-All the 7 reflections have the same cycle structure, by symmetry.  This corresponds to the permutation structure `$(1)(7 2)(6 3)(5 4)$`; see Figure 2.
+All 7 reflections have the same cycle structure, by symmetry.  This corresponds to the permutation structure `$(1)(7 2)(6 3)(5 4)$`; see Figure 2.
 
 <figure style="width:55%; margin:0.5rem 0;">
   <div style="display:flex; gap:16px; justify-content:center; align-items:center; flex-wrap:wrap;">
@@ -159,11 +159,11 @@ All the 7 reflections have the same cycle structure, by symmetry.  This correspo
   </div>
 </figure>
 
-In the cycle index polynomial, this corresponds to `$7 f_1 f_2^3$`, since we have one 1-cycle and three 2-cycle, and 7 such reflection, since we can take a reflection through any vertex.
+In the cycle index polynomial, this corresponds to `$7 f_1 f_2^3$`, since we have one 1-cycle and three 2-cycles, and 7 such reflections, since we can take a reflection through any vertex.
 
 *Permutation cycle structure: rotations.*
 
-All the 6 nonidentity rotations are 7-cycles, since 7 in a prime number.  This contributes `$ 6 \cdot f_7$` to the cycle index polynomial.
+All 6 nonidentity rotations are 7-cycles, since 7 is a prime number.  This contributes `$ 6 \cdot f_7$` to the cycle index polynomial.
 
 By contrast, consider the case where `$n = 6$` is composite.  In this case, a rotation of `$(\frac{360}{3})^{\circ}$` yields `$(1 3 5)(2 4 6)$`, which would correspond to `$f_3^2$` in the cycle index polynomial.
 
@@ -239,7 +239,7 @@ so that
 P(1,1,1,1) = 5054421344.
 $$`
 
-Similarly, we can use the multinomial theorem as before to find specific coefficients.  The key point here is that the number of cases to consider increase quickly, but there are only 3 different permutation structures that exist, making 's theory easy to apply.
+Similarly, we can use the multinomial theorem as before to find specific coefficients.  The key point here is that the number of cases to consider increases quickly, but there are only 3 different permutation structures that exist, making Pólya's theory easy to apply.
 
 ## Introduction to group theory
 
@@ -280,10 +280,10 @@ There are two main cases to consider.  If `$n$` is odd, reflections are through 
 
 A group `$(G, *)$` acts on the set `$X$` if there is a function that takes pairs of elements in `$G$` and elements in `$X$`, `$(g, x)$` to new elements in `$X$`.  In our case, `$X$` will be the set of objects *without accounting for symmetry.*
 
-More formally, we say that a group `$G(, *)$` acts on a set `$X$` if there is a function `$f: G \times X \to X$` such that when we denote `$f(g, x)$` as `$g(x)$`, we have
+More formally, we say that a group `$(G, *)$` acts on a set `$X$` if there is a function `$f: G \times X \to X$` such that when we denote `$f(g, x)$` as `$g(x)$`, we have
 
 - `$(g_1 g_2)(x) = g_1(g_2(x))$` for all `$g_1, g_2 \in G, x\in X$`.
-- `$e(x) = x$` if `$e$` is the identify of the group and `$x \in X$`.
+- `$e(x) = x$` if `$e$` is the identity of the group and `$x \in X$`.
 
 ## The orbit and stabilizer
 
@@ -333,7 +333,7 @@ The orbit of an element `$x \in X$` refers to all possible colorings you can obt
 |S| = \sum_{g \in G} | \Fix g | = \sum_{x \in X} | \Stab x|.
 $$`
 
-Let `$x_1, x_2, \dots, x_N$` be representive elements from each orbit of `$X$` under `$G$`.  If an element `$x$` is in the same orbit as `$x_i$`, then `$\Orb x = \Orb x_i$`, and by the orbit-stabilizer theorem, we have `$|\Stab x| = |\Stab x_i|$`.  Thus, we have
+Let `$x_1, x_2, \dots, x_N$` be representative elements from each orbit of `$X$` under `$G$`.  If an element `$x$` is in the same orbit as `$x_i$`, then `$\Orb x = \Orb x_i$`, and by the orbit-stabilizer theorem, we have `$|\Stab x| = |\Stab x_i|$`.  Thus, we have
 
 `$$
 \sum_{g \in G} |\Fix g| = \sum_{i=1}^{N} \sum_{x \in \Orb x_i} |\Stab x| = \sum_{i = 1}^{N} |\Orb x_i| |\Stab x_i|,

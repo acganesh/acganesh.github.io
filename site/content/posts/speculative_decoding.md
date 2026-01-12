@@ -41,7 +41,7 @@ The key mental model for GPUs is that we need to move data from high-bandwidth m
 - Memory bandwidth: 1935 GB/s
 - Compute: 312 TFLOPS with FP16
 
-This [post](https://finbarr.ca/how-is-llama-cpp-possible/#fn:3) does analysis that breaks down the latency incurred by memory-bandwith and by compute.  Let `$P$` be the number of parameters in a language model.  Let `$n_{\text{bytes}}$` denote the number of bytes in each parameter (16 for FP16, 8 for INT8, etc.)  Let `$B$` be the batch size.  It turns out we can express the latency incurred by compute and memory bandwidth as follows:
+This [post](https://finbarr.ca/how-is-llama-cpp-possible/#fn:3) does analysis that breaks down the latency incurred by memory-bandwidth and by compute.  Let `$P$` be the number of parameters in a language model.  Let `$n_{\text{bytes}}$` denote the number of bytes in each parameter (16 for FP16, 8 for INT8, etc.)  Let `$B$` be the batch size.  It turns out we can express the latency incurred by compute and memory bandwidth as follows:
 
 `$$
 \begin{aligned} \text { latency }_{\text {model }} & =\max \left(\text { latency }_{\text {compute }}, \text { latency }_{\text {memory }}\right) \\ \text { latency }_{\text {memory }} & =\frac{2 \cdot P \cdot n_{\text {bytes }}}{n_{\text {memory bandwidth }}}, \\ \text { latency }_{\text {compute }} & =\frac{2 \cdot P \cdot B}{n_{\text {flops }}}\end{aligned}

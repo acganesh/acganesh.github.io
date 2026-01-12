@@ -97,7 +97,7 @@ probability mass function <code>$\mathbf{p}(x)$</code>. We define the discrete
 <ol>
 <li><code>$H(X) \geq 0$</code>.</li>
 <li><code>$H(X) \leq \log |\mathcal{X}|$</code>, with equality if and only if <code>$X$</code> is
-distributed uniformly over <code>$\mathcal{X.}$</code></li>
+distributed uniformly over <code>$\mathcal{X}$.</code></li>
 </ol>
 <p>Part (a) follows from the fact that
 <code>$\log \frac{1}{\mathbf{p}(x)} \geq 0$</code> for any <code>$x \in \mathcal{X}$</code>. Hence
@@ -128,7 +128,7 @@ Since <code>$\mathbf{p}$</code> and <code>$\mathbf{q}$</code> are probability di
 must in fact be equal.</p>
 <p>We can define a version of the entropy for continuous random variables
 <code>$X$</code>.</p>
-<p><code>$$\begin{aligned} h(x) = \mathbb{E}\left[ \log \frac{1}{\mathbf{p}(X)} \right] = \int_{-\infty}^{\infty} \mathbf{p}(x) \log \frac{1}{\mathbf{p}(x)}.\end{aligned}$$</code></p>
+<p><code>$$\begin{aligned} h(X) = \mathbb{E}\left[ \log \frac{1}{\mathbf{p}(X)} \right] = \int_{-\infty}^{\infty} \mathbf{p}(x) \log \frac{1}{\mathbf{p}(x)}.\end{aligned}$$</code></p>
 <p>While these objects look similar, in fact the discrete and continuous
 definitions of entropy are rather different. For instance, while
 <code>$H(X) \geq 0$</code>, in fact the differential entropy does not satisfy this
@@ -194,7 +194,7 @@ average potential energy of the molecules is fixed (mean <code>$\lambda$</code>)
 the atmosphere tends to the distribution that has the maximum entropy.</p>
 <p>We will prove this result using Lagrange multipliers. Let <code>$\mathbf{p}$</code>
 be a probability distribution on <code>$(0, \infty)$</code> with mean <code>$\mu$</code>. Define
-<code>$$\begin{aligned} F(\mathbf{p}, \lambda_1, \lambda_2) &amp;= - \int_{0}^{\infty} \mathbf{p}(x) \log \mathbf{p}(x) \, dx + \lambda_1 \left( \int_{0}^{\infty} \mathbf{p}(x) \, dx - 1 \right) + \lambda_2 \left( \int_{0}^{\infty} x \mathbf{p}(x) \, dx - \mu \right)  \\ &amp;= \int_{0}^{infty} \mathcal{L}(x, \mathbf{p}(x), \lambda_1, \lambda_2) \, dx - \lambda_1 - \lambda_2 \mu, \end{aligned}$$</code> where
+<code>$$\begin{aligned} F(\mathbf{p}, \lambda_1, \lambda_2) &amp;= - \int_{0}^{\infty} \mathbf{p}(x) \log \mathbf{p}(x) \, dx + \lambda_1 \left( \int_{0}^{\infty} \mathbf{p}(x) \, dx - 1 \right) + \lambda_2 \left( \int_{0}^{\infty} x \mathbf{p}(x) \, dx - \mu \right)  \\ &amp;= \int_{0}^{\infty} \mathcal{L}(x, \mathbf{p}(x), \lambda_1, \lambda_2) \, dx - \lambda_1 - \lambda_2 \mu, \end{aligned}$$</code> where
 <code>$\mathcal{L}(x, \mathbf{p}, \lambda_1, \lambda_2) = - \mathbf{p}\log \mathbf{p}+ \lambda_1 \mathbf{p}+ \lambda_2 x \mathbf{p}$</code>.
 Taking partials, <code>$$\begin{aligned} \frac{\partial \mathcal{L}}{\partial \mathbf{p}} = - 1 - \log p + \lambda_1 + \lambda_2 x, \end{aligned}$$</code> and at a maximum entropy distribution we have
 <code>$\frac{\partial \mathcal{L}}{\partial \mathbf{p}} = 0$</code>, so that

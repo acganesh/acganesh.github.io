@@ -16,9 +16,9 @@ In this post, we'll explore how diffusion models work.  This post will follow th
 Diffusion models are Markov chains trained to produce samples matching the data after finite time.  We start with a diffusion process that destroys the data: we apply multiple Markov chain transitions until a datapoint `$\mathbf{x}_0$` gets gradually converted to noise.  Diffusion models learn transitions that reverse this process. 
 
 Formally, diffusion models are latent variables of the form:
-`$$p_{\theta}(\mathbf{x}_0) = \int p_{\theta}(\mathbf{x}_{0:T}) d \mathbf{x_{1:T}}$$`
+`$$p_{\theta}(\mathbf{x}_0) = \int p_{\theta}(\mathbf{x}_{0:T}) d \mathbf{x}_{1:T}$$`
 
-Here, `$\mathbf{x}_1, \dots, \mathbf{x}_T$` are latent variable models which are the same dimensionality as the data `$\mathbf{x}_0 \sim q(\mathbf{x}_0)$`.
+Here, `$\mathbf{x}_1, \dots, \mathbf{x}_T$` are latent variables which are the same dimensionality as the data `$\mathbf{x}_0 \sim q(\mathbf{x}_0)$`.
 
 We call `$p_{\theta} (\mathbf{x}_{0:T})$` the reverse process, which is defined as follows:
 
@@ -44,5 +44,4 @@ The usual approach would be to optimize this lower bound of the negative log lik
 `$$
 \mathbb{E}\left[-\log p_\theta\left(\mathbf{x}_0\right)\right] \leq \mathbb{E}_q\left[-\log \frac{p_\theta\left(\mathbf{x}_{0: T}\right)}{q\left(\mathbf{x}_{1: T} \mid \mathbf{x}_0\right)}\right]=\mathbb{E}_q\left[-\log p\left(\mathbf{x}_T\right)-\sum_{t \geq 1} \log \frac{p_\theta\left(\mathbf{x}_{t-1} \mid \mathbf{x}_t\right)}{q\left(\mathbf{x}_t \mid \mathbf{x}_{t-1}\right)}\right]=: L
 $$`
-
 

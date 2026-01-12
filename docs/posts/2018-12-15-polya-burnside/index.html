@@ -91,7 +91,7 @@ A class of problems
 <ul>
 <li>In how many ways can an <code>$n \times n$</code> tablecloth be colored with <code>$k$</code> colors?</li>
 <li>How many different necklaces can be made with <code>$n$</code> beads and <code>$k$</code> colors?</li>
-<li>How many ways can the faces of a polyhedrons be colored using at most <code>$n$</code> colors?</li>
+<li>How many ways can the faces of a polyhedra be colored using at most <code>$n$</code> colors?</li>
 <li>Find the number of simple graphs with <code>$n$</code> vertices, up to isomorphism.</li>
 </ul>
 <p>These problems share a common theme of enumerating the number of objects with some equivalence under <em>symmetry.</em></p>
@@ -143,7 +143,7 @@ $$</p>
 Applying Pólya&rsquo;s theory
 <a href="#applying-p%c3%b3lyas-theory" class="heading-anchor">#</a>
 </h1>
-<p>We will first apply &rsquo;s method without explaining how it works.  We first discuss <em>cycle notation.</em></p>
+<p>We will first apply Pólya&rsquo;s method without explaining how it works.  We first discuss <em>cycle notation.</em></p>
 <p>Any permutation can be expressed as the product of cycles.  For instance,</p>
 <p><code>$$ \mat{1 &amp; 2 &amp; 3 &amp; 4 &amp; 5 \\ 5 &amp; 1 &amp; 4 &amp; 3 &amp; 2} = \mat{1 &amp; 5 &amp; 2}\mat{3 &amp; 4}. $$</code></p>
 <p>Denote the flag patterning as a 4-letter string of colors <em>abcd.</em></p>
@@ -161,7 +161,7 @@ Cycle index polynomial
 <p><code>$$ P = \frac{1 \cdot f_1^4 + 1 \cdot f_2^2}{2}. $$</code></p>
 <p>We make the substitution <code>$f_n = x^n + y^n$</code>, and use two terms since we are considering two colors.  Then <code>$P$</code> becomes</p>
 <p><code>$$ P(x, y) = \frac{(x+y)^4 + (x^2 + y^2)^2}{2}. $$</code></p>
-<p>To find the answer from before, we add the coefficients of this polynomial.  This is equivalent to taking <code>$P(1, 1)$</code>, which gives <code>$\frac{2^4 + 2^2}{2} = 10$</code>, as from before.  Importantly, not only is the sumal equal, but the constituents of the sum are similar as well: this is a hint at some sort of combinatorial equivalence between the two processes.</p>
+<p>To find the answer from before, we add the coefficients of this polynomial.  This is equivalent to taking <code>$P(1, 1)$</code>, which gives <code>$\frac{2^4 + 2^2}{2} = 10$</code>, as from before.  Importantly, not only is the sum total equal, but the constituents of the sum are similar as well: this is a hint at some sort of combinatorial equivalence between the two processes.</p>
 <h2 id="p-is-a-generating-function-for-colorings">
 <code>$P$</code> is a generating function for colorings
 <a href="#p-is-a-generating-function-for-colorings" class="heading-anchor">#</a>
@@ -174,7 +174,7 @@ Cycle index polynomial
   <img src="/img/polya/img8.png" alt="Flag colorings table" style="max-width:720px; width:100%; display:block; margin:0 auto;" />
 </figure>
 <h2 id="counting-necklaces-pumac-2009">
-Counting necklaces: PuMAC 2009
+Counting necklaces: PUMaC 2009
 <a href="#counting-necklaces-pumac-2009" class="heading-anchor">#</a>
 </h2>
 <p><em>2009 PUMaC Combinatorics A10.</em>  Taotao wants to buy a bracelet.  The bracelets have 7 different beads on them arranged in a circle.  Two bracelets are the same if one can be rotated or flipped to get the other.  If she can choose the colors and placements of the beads, and the beads come in orange, white, and black, how many possible bracelets can she buy?</p>
@@ -182,18 +182,18 @@ Counting necklaces: PuMAC 2009
 <figure style="width:55%; margin:0.5rem 0;">
   <img src="/img/polya/img9.png" alt="Figure 1: Symmetries of a 7-gon" style="max-width:360px; width:100%; display:block; margin:0 auto;" />
 </figure>
-<p>We will analyze the symmetries of the 7-gon.  We have 7 reflections through a vertex and a midpoint of the opposite side, and 7 rotations of <code>$n (\frac{360}{7})^{\circ}$</code>, with <code>$n \in \{ 1, 2, \dots, 7 \}$</code>.</p>
+<p>We will analyze the symmetries of the 7-gon.  We have 7 reflections through a vertex and a midpoint of the opposite side, and 7 rotations of <code>$n \cdot (\frac{360}{7})^{\circ}$</code>, with <code>$n \in \{ 1, 2, \dots, 7 \}$</code>.</p>
 <p><em>Permutation cycle structure: reflections.</em></p>
-<p>All the 7 reflections have the same cycle structure, by symmetry.  This corresponds to the permutation structure <code>$(1)(7 2)(6 3)(5 4)$</code>; see Figure 2.</p>
+<p>All 7 reflections have the same cycle structure, by symmetry.  This corresponds to the permutation structure <code>$(1)(7 2)(6 3)(5 4)$</code>; see Figure 2.</p>
 <figure style="width:55%; margin:0.5rem 0;">
   <div style="display:flex; gap:16px; justify-content:center; align-items:center; flex-wrap:wrap;">
     <img src="/img/polya/img10.png" alt="Figure 2: Reflection symmetry of a 7-gon" style="max-width:340px; width:100%; height:auto;" />
     <img src="/img/polya/img14.png" alt="Figure 2: Reflection symmetry of a 7-gon, alternate rendering" style="max-width:340px; width:100%; height:auto;" />
   </div>
 </figure>
-<p>In the cycle index polynomial, this corresponds to <code>$7 f_1 f_2^3$</code>, since we have one 1-cycle and three 2-cycle, and 7 such reflection, since we can take a reflection through any vertex.</p>
+<p>In the cycle index polynomial, this corresponds to <code>$7 f_1 f_2^3$</code>, since we have one 1-cycle and three 2-cycles, and 7 such reflections, since we can take a reflection through any vertex.</p>
 <p><em>Permutation cycle structure: rotations.</em></p>
-<p>All the 6 nonidentity rotations are 7-cycles, since 7 in a prime number.  This contributes <code>$ 6 \cdot f_7$</code> to the cycle index polynomial.</p>
+<p>All 6 nonidentity rotations are 7-cycles, since 7 is a prime number.  This contributes <code>$ 6 \cdot f_7$</code> to the cycle index polynomial.</p>
 <p>By contrast, consider the case where <code>$n = 6$</code> is composite.  In this case, a rotation of <code>$(\frac{360}{3})^{\circ}$</code> yields <code>$(1 3 5)(2 4 6)$</code>, which would correspond to <code>$f_3^2$</code> in the cycle index polynomial.</p>
 <figure style="width:55%; margin:0.5rem 0;">
   <div style="display:flex; gap:16px; justify-content:center; align-items:center; flex-wrap:wrap;">
@@ -238,7 +238,7 @@ Computational utility
 <code>$$ P = \frac{(w+x+y+z)^{17} + 16 (w^{17} + x^{17} + y^{17} + z^{17}) + 17(w+x+y+z)(w^2 + x^2 + y^2 + z^2)^8}{34}, $$</code></p>
 <p>so that
 <code>$$ P(1,1,1,1) = 5054421344. $$</code></p>
-<p>Similarly, we can use the multinomial theorem as before to find specific coefficients.  The key point here is that the number of cases to consider increase quickly, but there are only 3 different permutation structures that exist, making &rsquo;s theory easy to apply.</p>
+<p>Similarly, we can use the multinomial theorem as before to find specific coefficients.  The key point here is that the number of cases to consider increases quickly, but there are only 3 different permutation structures that exist, making Pólya&rsquo;s theory easy to apply.</p>
 <h2 id="introduction-to-group-theory">
 Introduction to group theory
 <a href="#introduction-to-group-theory" class="heading-anchor">#</a>
@@ -283,10 +283,10 @@ Group action on sets
 <a href="#group-action-on-sets" class="heading-anchor">#</a>
 </h3>
 <p>A group <code>$(G, *)$</code> acts on the set <code>$X$</code> if there is a function that takes pairs of elements in <code>$G$</code> and elements in <code>$X$</code>, <code>$(g, x)$</code> to new elements in <code>$X$</code>.  In our case, <code>$X$</code> will be the set of objects <em>without accounting for symmetry.</em></p>
-<p>More formally, we say that a group <code>$G(, *)$</code> acts on a set <code>$X$</code> if there is a function <code>$f: G \times X \to X$</code> such that when we denote <code>$f(g, x)$</code> as <code>$g(x)$</code>, we have</p>
+<p>More formally, we say that a group <code>$(G, *)$</code> acts on a set <code>$X$</code> if there is a function <code>$f: G \times X \to X$</code> such that when we denote <code>$f(g, x)$</code> as <code>$g(x)$</code>, we have</p>
 <ul>
 <li><code>$(g_1 g_2)(x) = g_1(g_2(x))$</code> for all <code>$g_1, g_2 \in G, x\in X$</code>.</li>
-<li><code>$e(x) = x$</code> if <code>$e$</code> is the identify of the group and <code>$x \in X$</code>.</li>
+<li><code>$e(x) = x$</code> if <code>$e$</code> is the identity of the group and <code>$x \in X$</code>.</li>
 </ul>
 <h2 id="the-orbit-and-stabilizer">
 The orbit and stabilizer
@@ -320,7 +320,7 @@ Burnside&rsquo;s Lemma
 <p>The orbit of an element <code>$x \in X$</code> refers to all possible colorings you can obtain by some rotation or reflection on some coloring.  If we count the <em>number of orbits,</em> <code>$N$</code>, we are counting the number of colorings that are distinct under rotation or reflection, which solves our problem.</p>
 <p><em>Proof.</em> Consider the quantity <code>$\sum_{g \in G} | \Fix g |$</code>.  But this is also
 <code>$$ |S| = \sum_{g \in G} | \Fix g | = \sum_{x \in X} | \Stab x|. $$</code></p>
-<p>Let <code>$x_1, x_2, \dots, x_N$</code> be representive elements from each orbit of <code>$X$</code> under <code>$G$</code>.  If an element <code>$x$</code> is in the same orbit as <code>$x_i$</code>, then <code>$\Orb x = \Orb x_i$</code>, and by the orbit-stabilizer theorem, we have <code>$|\Stab x| = |\Stab x_i|$</code>.  Thus, we have</p>
+<p>Let <code>$x_1, x_2, \dots, x_N$</code> be representative elements from each orbit of <code>$X$</code> under <code>$G$</code>.  If an element <code>$x$</code> is in the same orbit as <code>$x_i$</code>, then <code>$\Orb x = \Orb x_i$</code>, and by the orbit-stabilizer theorem, we have <code>$|\Stab x| = |\Stab x_i|$</code>.  Thus, we have</p>
 <p><code>$$ \sum_{g \in G} |\Fix g| = \sum_{i=1}^{N} \sum_{x \in \Orb x_i} |\Stab x| = \sum_{i = 1}^{N} |\Orb x_i| |\Stab x_i|, $$</code>
 which implies
 <code>$$ \sum_{g \in G} |\Fix g| = \sum_{i=1}^{N} |\Orb x_i| |\Stab x_i|. $$</code>

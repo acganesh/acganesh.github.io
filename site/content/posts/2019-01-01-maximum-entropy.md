@@ -33,7 +33,7 @@ The discrete entropy satisfies the following basic properties:
 
 1.  `$H(X) \geq 0$`.
 2.  `$H(X) \leq \log |\mathcal{X}|$`, with equality if and only if `$X$` is
-    distributed uniformly over `$\mathcal{X.}$`
+    distributed uniformly over `$\mathcal{X}$.`
 
 Part (a) follows from the fact that
 `$\log \frac{1}{\mathbf{p}(x)} \geq 0$` for any `$x \in \mathcal{X}$`. Hence
@@ -87,7 +87,7 @@ We can define a version of the entropy for continuous random variables
 `$X$`.
 
 `$$\begin{aligned}
-  h(x) = \mathbb{E}\left[ \log \frac{1}{\mathbf{p}(X)} \right] = \int_{-\infty}^{\infty} \mathbf{p}(x) \log \frac{1}{\mathbf{p}(x)}.\end{aligned}$$`
+  h(X) = \mathbb{E}\left[ \log \frac{1}{\mathbf{p}(X)} \right] = \int_{-\infty}^{\infty} \mathbf{p}(x) \log \frac{1}{\mathbf{p}(x)}.\end{aligned}$$`
 
 While these objects look similar, in fact the discrete and continuous
 definitions of entropy are rather different. For instance, while
@@ -184,7 +184,7 @@ We will prove this result using Lagrange multipliers. Let `$\mathbf{p}$`
 be a probability distribution on `$(0, \infty)$` with mean `$\mu$`. Define
 `$$\begin{aligned}
     F(\mathbf{p}, \lambda_1, \lambda_2) &= - \int_{0}^{\infty} \mathbf{p}(x) \log \mathbf{p}(x) \, dx + \lambda_1 \left( \int_{0}^{\infty} \mathbf{p}(x) \, dx - 1 \right) + \lambda_2 \left( \int_{0}^{\infty} x \mathbf{p}(x) \, dx - \mu \right)  \\
-    &= \int_{0}^{infty} \mathcal{L}(x, \mathbf{p}(x), \lambda_1, \lambda_2) \, dx - \lambda_1 - \lambda_2 \mu,
+    &= \int_{0}^{\infty} \mathcal{L}(x, \mathbf{p}(x), \lambda_1, \lambda_2) \, dx - \lambda_1 - \lambda_2 \mu,
   \end{aligned}$$` where
 `$\mathcal{L}(x, \mathbf{p}, \lambda_1, \lambda_2) = - \mathbf{p}\log \mathbf{p}+ \lambda_1 \mathbf{p}+ \lambda_2 x \mathbf{p}$`.
 Taking partials, `$$\begin{aligned}

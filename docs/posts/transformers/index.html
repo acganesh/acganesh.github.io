@@ -100,9 +100,9 @@ Model architecture
   x = layer_norm(x)
   return x @ wte.T
 </code></pre><p>In the following sections we will break down each piece.</p>
-<h3 id="1-byte-pair-embedding-tokenizer">
-1) Byte-Pair Embedding Tokenizer
-<a href="#1-byte-pair-embedding-tokenizer" class="heading-anchor">#</a>
+<h3 id="1-byte-pair-encoding-tokenizer">
+1) Byte-Pair Encoding Tokenizer
+<a href="#1-byte-pair-encoding-tokenizer" class="heading-anchor">#</a>
 </h3>
 <p><code>$\text{String} -&gt; \text{List[Integer]}$</code></p>
 <p>The first step is to convert words to numbers using a tokenizer.  GPT uses <a href="https://huggingface.co/docs/transformers/tokenizer_summary#bytepair-encoding-bpe">byte-pair encoding</a> (BPE).  In BPE, the most common words are mapped to single tokens while less common words will be broken down into chunks and mapped to multiple tokens.</p>
@@ -113,7 +113,7 @@ Model architecture
 <a href="#21-word-embeddings" class="heading-anchor">#</a>
 </h3>
 <p>We start by embedding each token which is done with a lookup</p>
-<pre tabindex="0"><code>wte[input_tokens].
+<pre tabindex="0"><code>wte[input_tokens]
 </code></pre><p>This gives us a tensor of shape <code>$n_{tokens} \times n_{embed}$</code>.  For GPT-2, <code>$n_{embed} = 1600$</code>.</p>
 <h3 id="22-positional-encodings">
 2.2) Positional Encodings
@@ -126,7 +126,7 @@ Model architecture
 2.3) Sum
 <a href="#23-sum" class="heading-anchor">#</a>
 </h3>
-<p>Now we simply sum of the two tensors from before to get a single tensor of shape <code>$n_{tokens} \times n_{embed}$</code>.</p>
+<p>Now we simply sum the two tensors from before to get a single tensor of shape <code>$n_{tokens} \times n_{embed}$</code>.</p>
 <pre tabindex="0"><code>x = wte[inputs] + wpe[range(len(inputs))]
 </code></pre><h3 id="3-transformer-block">
 3) Transformer Block
@@ -150,7 +150,7 @@ Model architecture
 def attention(q, k, v, mask):
     # [n_q, d_k], [n_k, d_k], [n_k, d_v], [n_q, n_k] -&gt; [n_q, d_v]
     return softmax(q @ k.T / np.sqrt(q.shape[-1]) + mask) @ v
-</code></pre><p>Here, the causal mask prevents a tokens from attending to future tokens - in the context of language modeling, this is necessary since we will see each word stream in one by one.</p>
+</code></pre><p>Here, the causal mask prevents tokens from attending to future tokens - in the context of language modeling, this is necessary since we will see each word stream in one by one.</p>
 <p>Intuitively, <code>$\mathbf{Q} \mathbf{K}^T$</code> will result in an &ldquo;importance&rdquo; matrix that returns the importance of each token to each other token.  We then divide this by <code>$\sqrt{d_k}$</code> and then pass this through a softmax.  Finally, we multiply this by the <code>$\mathbf{V}$</code> matrix, which represents the importance of each token.</p>
 <h3 id="32-multiheadattention">
 3.2) MultiHeadAttention

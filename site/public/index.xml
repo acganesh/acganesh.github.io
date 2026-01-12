@@ -93,7 +93,7 @@ In how many ways can an $n \times n$ tablecloth be colored with $k$ colors?</des
       <guid>https://acganesh.github.io/posts/2016-12-23-prime-counting/</guid>
       <description>Introduction # Computing $\pi(x)$, the number of primes $p \leq x$ is a classic problem in algorithmic number theory. The prime number theorem describes the asymptotic growth of this function, and states that
 $$ \lim_{x \to \infty} \left. \pi(x) \middle/ \frac{x}{\ln x} \right. = 1. $$
-The theorem was independently conjectured by Legendre and Gauss, and proved by Hadamard and de la Vallée Poussin&amp;rsquo;s around 100 years later in 1896.</description>
+The theorem was independently conjectured by Legendre and Gauss, and proved by Hadamard and de la Vallée Poussin around 100 years later in 1896.</description>
     </item>
     
   </channel>

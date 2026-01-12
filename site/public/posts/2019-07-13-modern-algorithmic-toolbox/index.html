@@ -119,7 +119,7 @@ Data and distance
 <p><code>$$ ||x - y||_{p} = \left ( \sum_{i=1}^{d} | x(i) - y(i) |^{p} \right )^{1/p}. $$</code></p>
 <p>If <code>$p = 1$</code> we obtain the &ldquo;Manhattan&rdquo; distance, and for large <code>$p$</code>, <code>$||x - y||_p$</code> grows more dependent on the coordinate with maximal difference.  The <code>$l_{\infty}$</code> distance is defined as <code>$\max_i | x(i) - y(i) |$</code>.</p>
 <p><em>Johnson-Lindenstrauss transform.</em> Suppose now, that we want to reduce the dimensionality of a large dataset, where we want to approximately preserve the distances between object pairs (for example, the <code>$\ell_2$</code> distance between points in <code>$\RR^k$</code>).</p>
-<p>Suppose that our <code>$n$</code> points of interest are <code>$\mbf{x}_1, \dots, \mbf{x}_k \in \mathbb{R}^k$</code>, where <code>$k$</code> might be large.  Suppose we choose a random vector <code>$\mbf{r} \in \RR^k$</code>, and define a real-valued function <code>$f_{\mbf{r}} : \mathbb{R}^k \to \mathbb{R}$</code> by taking an inner product for the datapoint with the random vector:</p>
+<p>Suppose that our <code>$n$</code> points of interest are <code>$\mbf{x}_1, \dots, \mbf{x}_k \in \mathbb{R}^k$</code>, where <code>$k$</code> might be large.  Suppose we choose a random vector <code>$\mbf{r} \in \RR^k$</code>, and define a real-valued function <code>$f_{\mbf{r}} : \mathbb{R}^k \to \mathbb{R}$</code> by taking an inner product of the datapoint with the random vector:</p>
 <p><code>$$ f_{\mbf{r}} (\mbf{x}) = \langle \mbf{x}, \mbf{r} \rangle = \sum_{j=1}^{k} x_j r_j. $$</code></p>
 <p>If we want to use this idea to approximately preserve Euclidean distances between points, the key question is how we pick the <code>$r_j$</code>&rsquo;s.</p>
 <p>One idea is to pick <code>$d$</code> vectors <code>$\mbf{r}_1, \dots, \mbf{r}_d$</code>, where each component of each vector is drawn i.i.d. from a standard Gaussian.</p>
@@ -150,7 +150,7 @@ n \geq \frac{c}{\varepsilon^2} \left( d + \ln \frac{1}{\delta} \right),
 $$</p>
 <p>where <code>$c$</code> is a sufficiently large constant.  Then with probability at least <code>$1 - \delta$</code> over the samples <code>$\mbf{x}_1, \dots, \mbf{x}_n \sim D$</code>, for every linear classifier <code>$\hat{f}$</code>, we have
 \begin{align*}
-\text{generalization error of } \hat{f} \in \text{training error of } \hat{f} \pm \varepsilon.
+\text{generalization error of } \hat{f} \text{ is within training error of } \hat{f} \pm \varepsilon.
 \end{align*}</p>
 <p>This implies a useful rule of thumb.  To ensure generalization, make sure that the training set size <code>$n$</code> is at least linear in the number <code>$d$</code> of free parameters in the function that you&rsquo;re trying to learn.</p>
 <p><em>Proposition.</em> Given <code>$n$</code> independent Gaussian vectors <code>$x_1, \dots, x_n \in \mathbb{R}^d$</code>, and consider labels <code>$y_i = \la a, x_i \ra$</code> for some vector <code>$a$</code> with <code>$||a||_0 = s$</code>.  Then the minimizer of the <code>$\ell_1$</code> regularized objective function will be the vector <code>$a$</code>, with high probability, provided that <code>$n &gt; c \cdot s \log d$</code>, for some absolute constant <code>$c$</code>.<label class="margin-toggle sidenote-number"></label><span class="sidenote">
@@ -195,7 +195,7 @@ $$
 M = \sum_{i=1}^{r} u_i v_i^T.
 $$
 That is, <code>$M$</code> is the sum of <code>$r$</code> rank one matrices, where the <code>$i$</code>th matrix is the <em>outer product</em> <code>$u_i v_i^T$</code>.  We can define an outer product for tensors:</p>
-<p><em>Definition.</em> Given vectors <code>$u, v, w$</code> or lengths <code>$n, m,$</code> and <code>$l$</code>, respectively, their <em>tensor product</em> (or <em>outer product</em>) is the <code>$n \times m \times l$</code> rank one 3-tensor dented <code>$A = u \otimes v \otimes w$</code> with entries <code>$A_{i, j, k} = u_i v_j w_k$</code>.</p>
+<p><em>Definition.</em> Given vectors <code>$u, v, w$</code> or lengths <code>$n, m,$</code> and <code>$l$</code>, respectively, their <em>tensor product</em> (or <em>outer product</em>) is the <code>$n \times m \times l$</code> rank one 3-tensor denoted <code>$A = u \otimes v \otimes w$</code> with entries <code>$A_{i, j, k} = u_i v_j w_k$</code>.</p>
 <p>We can extend this definition to higher dimensions:</p>
 <p><em>Definition.</em> Given vectors <code>$v_1, \dots, v_k$</code> of lengths <code>$n_1, n_2, \dots, n_k$</code>, the <em>tensor product</em> denoted <code>$v_1 \otimes v_2 \dots \otimes v_k$</code> is the <code>$n_1 \times n_2 \times \dots \times n_k$</code> <code>$k$</code>-tensor <code>$A$</code> with entry <code>$A_{i_1, i_2, \dots, i_k} = v_1(i_1) \cdot v_2(i_2) \cdots v_k(i_k)$</code>.</p>
 <p>This allows us to define the rank of a tensor, which we state for 3-tensors.</p>
@@ -223,7 +223,7 @@ Spectral graph theory
 <a href="#spectral-graph-theory" class="heading-anchor">#</a>
 </h2>
 <p>Given a graph <code>$G = (V, E)$</code> with <code>$|V| = n$</code> vertices, we can define the Laplacian matrix as an <code>$n \times n$</code> matrix <code>$L_G =D - A$</code>, where <code>$D$</code> is the degree matrix and <code>$A$</code> is the adjacency matrix.  The eigenvalues of <code>$L_G$</code> inform the structure of the graph.  We can show the following important result:<label class="margin-toggle sidenote-number"></label><span class="sidenote">
-For more on machine learning on graphs, see Masthew Das Sarma&rsquo;s <a href="https://thegradient.pub/structure-learning/">article in <em>The Gradient</em></a>.
+For more on machine learning on graphs, see Matthew Das Sarma&rsquo;s <a href="https://thegradient.pub/structure-learning/">article in <em>The Gradient</em></a>.
 </span></p>
 <p><strong>Theorem.</strong> The number of zero eigenvalues of the Laplacian <code>$L_G$</code> equals the number of connected components of the graph <code>$G$</code>.</p>
 <p>Small eigenvalues correspond to unit vectors <code>$v$</code> that try to minimize the quantity <code>$v^T L v = \frac{1}{2} \sum_{(i, j) \in E} (v(i) - v(j))^2$</code>. A natural way to visualize a graph is to embed a graph onto the eigenvectors corresponding to small eigenvalues.</p>
@@ -243,7 +243,7 @@ Sampling and estimation
 <p>We discuss <em>reservoir sampling,</em> originally due to Vitter in 1985.<label class="margin-toggle sidenote-number"></label><span class="sidenote">
 Vitter, Jeffrey S. &ldquo;Random sampling with a reservoir.&rdquo; <em>ACM Transactions on Mathematical Software (TOMS)</em> 11.1 (1985): 37-57.
 </span></p>
-<p>Given a number <code>$k$</code>, and a datastream <code>$x_1, x_2, \dots, $</code> of length greater than <code>$k$</code>:</p>
+<p>Given a number <code>$k$</code>, and a data stream <code>$x_1, x_2, \dots, x_t$</code> of length greater than <code>$k$</code>:</p>
 <ul>
 <li>Put the first <code>$k$</code> elements of the stream into a &ldquo;reservoir&rdquo; <code>$R = (x_1, \dots, x_k)$</code>.</li>
 <li>For <code>$i \geq k+1$</code>:
@@ -251,7 +251,7 @@ Vitter, Jeffrey S. &ldquo;Random sampling with a reservoir.&rdquo; <em>ACM Trans
 <li>With probability <code>$\frac{k}{i}$</code> replace a random entry of <code>$R$</code> with <code>$x_i$</code>.</li>
 </ul>
 </li>
-<li>At the end of the stream, return the resource <code>$R$</code>.</li>
+<li>At the end of the stream, return the reservoir <code>$R$</code>.</li>
 </ul>
 <p>Importantly, the reservoir <code>$R$</code> consists of a uniformly random subset of <code>$k$</code> of the entries of <code>$x_1, x_2, \dots, x_t$</code>.</p>
 <h2 id="the-fourier-perspective">

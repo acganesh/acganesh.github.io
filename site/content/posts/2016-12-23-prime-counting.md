@@ -14,7 +14,7 @@ Computing `$\pi(x)$`, the number of primes `$p \leq x$` is a classic problem in 
 \lim_{x \to \infty} \left. \pi(x) \middle/ \frac{x}{\ln x} \right. = 1.
 $$`
 
-The theorem was independently conjectured by Legendre and Gauss, and proved by Hadamard and de la Vallée Poussin's around 100 years later in 1896.  The theorem can also be written as follows, which provides a refined numerical approximation:
+The theorem was independently conjectured by Legendre and Gauss, and proved by Hadamard and de la Vallée Poussin around 100 years later in 1896.  The theorem can also be written as follows, which provides a refined numerical approximation:
 
 `$$
 \pi(x) \approx \text{Li}(x) = \int_{2}^{x} \frac{dy}{\ln y},
@@ -92,13 +92,13 @@ Lagarias, J. C., V. S. Miller, and A. M. Odlyzko. ["Computing `$\pi(x)$`: The Me
 
 This formula is a direct consequence of the [inclusion-exclusion principle](https://en.wikipedia.org/wiki/Inclusion%E2%80%93exclusion_principle).  It uses the observation that the number of primes in `$[1, x]$` plus 1 (the quantity on the left of the equation) is equal to the number of integers minus the number of composite numbers in the interval.
 
-Let's take a closer look.  Over the interval `$[1, x]$`, the quantity `$\left \lfloor \frac{x}{p} \right \rfloor$` counts the integers divisible by `$p.$`  Noting that every composite number in the interval must have some prime factor `$\leq \sqrt{x}$`, we start by subtracting `$\sum_{p_i \leq \sqrt{x}} \left \lfloor \frac{x}{p_i} \right \rfloor$` multipes of primes `$\leq \sqrt{x}$` in the interval.  But this will subtract the multiples `$1 \cdot p_i$`, which are actually prime, so we must compensate by adding the term `$\pi(\sqrt{x})$`.
+Let's take a closer look.  Over the interval `$[1, x]$`, the quantity `$\left \lfloor \frac{x}{p} \right \rfloor$` counts the integers divisible by `$p.$`  Noting that every composite number in the interval must have some prime factor `$\leq \sqrt{x}$`, we start by subtracting `$\sum_{p_i \leq \sqrt{x}} \left \lfloor \frac{x}{p_i} \right \rfloor$` multiples of primes `$\leq \sqrt{x}$` in the interval.  But this will subtract the multiples `$1 \cdot p_i$`, which are actually prime, so we must compensate by adding the term `$\pi(\sqrt{x})$`.
 
 To account for the rest of the terms, observe that some of the composite numbers are divisible by two primes `$\leq \sqrt{x}$`, call them `$p_i$` and `$p_j$`.  These numbers will be double counted as multiples of both `$p_i$` and `$p_j$`.  Hence, we must adjust the total by adding the number of integers of this type, which is `$\sum \left \lfloor \frac{x}{p_i p_j} \right \rfloor$`.  But adding this term will now remove the count of integers that are divisible by three different primes, which explains the next term.  Continuing this reasoning, Legendre's result follows. 
 
 ## Meissel-Lehmer Algorithm
 
-We will now turn to the main subject of the article, the Meissel-Lehmer algorithm.  For convenience, we will first introduce some notation.  Let `$\phi(x, a)$` denote the *partial sieve function*, defined as the number of integers `$\leq x$`, with no prime factor less than or equal to `$p_a$`.  In set notation, we can expression this as
+We will now turn to the main subject of the article, the Meissel-Lehmer algorithm.  For convenience, we will first introduce some notation.  Let `$\phi(x, a)$` denote the *partial sieve function*, defined as the number of integers `$\leq x$`, with no prime factor less than or equal to `$p_a$`.  In set notation, we can express this as
 
 `$$ 
 \phi(x, a) =  \left \vert{\{ n \leq x: p \mid n \Rightarrow p > p_a \}} \right \vert.
@@ -116,10 +116,10 @@ where `$a = \pi(\sqrt{x})$`.
 Now, let `$P_k(x, a)$` denote the *`$k$`th partial sieve function*, which is defined as the number of integers `$\leq x$` with exactly `$k$` prime factors, with none less than or equal to `$p_a$`.  For convenience, we define `$P_0(x, a) = 1$`.  It then follows that
 
 `$$
-\phi(x, a) = P_0(a, x) + P_1(x, a) + P_2(x, a) + \dots
+\phi(x, a) = P_0(x, a) + P_1(x, a) + P_2(x, a) + \dots
 $$`
 
-Note that the right hand side's sum will contain a finite number of nonzero terms.  Observing that
+Note that the right-hand side's sum will contain a finite number of nonzero terms.  Observing that
 
 `$$
 P_1(x, a) = \pi(x) - a,
@@ -166,7 +166,7 @@ The key to computing `$\phi$` is the observation that
 \phi(x, a) = \phi(x, a-1) - \phi \left ( \frac{x}{p_a}, a-1 \right ),
 $$`
 
-which follows from the definition of `$\phi$`: the integers not divisible by any of the primes `$p_1, \dots, p_a$` are exactly those integers which are not divisible by any of `$p_1, p_2, \dots, p_{a-1}$`, excluding those that are not divisible by `$p_a$`.  Repeatedly applying this identity will eventually lead to `$\phi(x, 1)$`, which is just the number of odd numbers `$\leq x$`. 
+which follows from the definition of `$\phi$`: the integers not divisible by any of the primes `$p_1, \dots, p_a$` are exactly those integers which are not divisible by any of `$p_1, p_2, \dots, p_{a-1}$`, excluding those that are divisible by `$p_a$`.  Repeatedly applying this identity will eventually lead to `$\phi(x, 1)$`, which is just the number of odd numbers `$\leq x$`. 
 
 In the implementation below, `$\phi$` is computed using a memoized recursive procedure.  It turns out that one can make this computation more efficient by applying a truncation rule during the recursive chain.  The details of how to do this are somewhat involved; the interested reader can refer to Hans Riesel's book *Prime Numbers and Computer Methods for Factorization*<label class="margin-toggle sidenote-number"></label><span class="sidenote">Riesel, Hans. <em>Prime Numbers and Computer Methods for Factorization.</em> 2nd ed. Birkh&#xE4;user, 1994.</span>.
 

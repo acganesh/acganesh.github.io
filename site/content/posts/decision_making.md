@@ -27,7 +27,7 @@ Much of the time, decisions need to be made under uncertainty.  Suppose we have 
 
 <img src="/img/decision1.png" width="50%" height="50%"/>
 
-A more interesting case is when you have two choices like the following.  Here, the expected reward from picking `$A$` is higher than picking `$B$`, but the variance of `$B$` is higher.  A real-life example that parallels this is joining a startup vs. joining a big company.  Reward here can either represent compensation or some more abstract notion that combines compensation, life satisfiction, learning, among other factors.  On average, in this diagram, joining a bigger company has higher reward, but it can still make sense to join a startup because of the possibility of tail outcomes.
+A more interesting case is when you have two choices like the following.  Here, the expected reward from picking `$A$` is higher than picking `$B$`, but the variance of `$B$` is higher.  A real-life example that parallels this is joining a startup vs. joining a big company.  Reward here can either represent compensation or some more abstract notion that combines compensation, life satisfaction, learning, among other factors.  On average, in this diagram, joining a bigger company has higher reward, but it can still make sense to join a startup because of the possibility of tail outcomes.
 
 <img src="/img/decision2.png" width="50%" height="50%"/>
 
@@ -39,4 +39,4 @@ Knowing which kind of uncertainty you are dealing with is very helpful, because 
 
 <img src="/img/epistemic_vs_aleatoric.png" width="50%" height="50%"/>
 
-Great decision makers, individuals who can make difficult choices with limited information in high-stakes situations, are hard to replicate.  And the way to make better decisions is to pick a reward function, and learn to make really good predictions.  If you can do that, then decision-making becomes an easy as taking the argmax.
+Great decision makers, individuals who can make difficult choices with limited information in high-stakes situations, are hard to replicate.  And the way to make better decisions is to pick a reward function, and learn to make really good predictions.  If you can do that, then decision-making becomes as easy as taking the argmax.
