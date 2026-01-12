@@ -217,7 +217,7 @@ $$`
 
 implying that there are 18 necklaces with 2 red beads, 2 orange beads, and 3 yellow beads.
 
-Now, notably, if we expand the generating function, we obtain a symmetric polynomial.  This is because the mapping of the colors to the variables $x,y,z$ doesn't matter.
+Now, notably, if we expand the generating function, we obtain a symmetric polynomial.  This is because the mapping of the colors to the variables `$x, y, z$` doesn't matter.
 
 ## Computational utility
 
