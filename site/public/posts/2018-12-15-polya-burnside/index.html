@@ -84,6 +84,9 @@ A class of problems
 <a href="#a-class-of-problems" class="heading-anchor">#</a>
 </h2>
 <p>The following problem in chemistry is historically significant, as G. Pólya originally popularized his theory through applications in chemical enumeration.  How many different chemical compounds can be made by attaching <code>$H$</code>, <code>$CH_3$</code>, or <code>$OH$</code> radicals to each of the carbon atoms in the benzene ring pictured below?</p>
+<figure style="width:55%; margin:0.5rem 0;">
+  <img src="/img/polya/img1.png" alt="Benzene ring" style="max-width:300px; width:100%; display:block; margin:0 auto;" />
+</figure>
 <p>Here are other problems that can be approached using Pólya-Burnside.</p>
 <ul>
 <li>In how many ways can an <code>$n \times n$</code> tablecloth be colored with <code>$k$</code> colors?</li>
@@ -97,16 +100,36 @@ An example: coloring a flag
 <a href="#an-example-coloring-a-flag" class="heading-anchor">#</a>
 </h2>
 <p><em>Problem.</em> How many ways are there to color a flag with <code>$n$</code> stripes lined side by side with <code>$k$</code> colors?</p>
-<p>(IMAGE)</p>
+<figure style="width:55%; margin:0.5rem 0;">
+  <img src="/img/polya/img2.png" alt="Flag with n stripes and k colors" style="max-width:520px; width:100%; display:block; margin:0 auto;" />
+</figure>
 <p>Do not count as different flags with colors &ldquo;flipped.&rdquo;  The following two flags would be considered the same.</p>
+<figure style="width:55%; margin:0.5rem 0;">
+  <div style="display:flex; gap:16px; justify-content:center; align-items:center; flex-wrap:wrap;">
+    <img src="/img/polya/img3.png" alt="Flag example" style="max-width:180px; width:100%; height:auto;" />
+    <img src="/img/polya/img4.png" alt="Flag example, flipped" style="max-width:180px; width:100%; height:auto;" />
+  </div>
+</figure>
 <h3 id="solving-it-with-standard-methods">
 Solving it with standard methods.
 <a href="#solving-it-with-standard-methods" class="heading-anchor">#</a>
 </h3>
 <p>Let&rsquo;s take the simple case when <code>$n = 4$</code> and <code>$k = 2$</code>.</p>
 <p>Assume we count the number of patterns normally, without accounting for reflection.  Then <code>$N = 2^4$</code>.  Let <code>$N_r$</code> denote the number of distinct colorings under reflection.  <code>$N_r \neq \frac{2^4}{2}$</code>, as one might think!  We need to separately handle symmetric patterns and asymmetric patterns.</p>
-<p>An asymmetric pattern like (&hellip;) yields a new pattern that we don&rsquo;t want to double count, (&hellip;), when it is reflected.  To count these, we must divide by 2.</p>
-<p>A symmetric pattern like (&hellip;) when reflected does not create a new pattern.  We don&rsquo;t need to divide by 2 here.</p>
+<p>An asymmetric pattern like
+<span style="display:inline-block; width:320px; max-width:100%; vertical-align:middle; margin:0 6px;">
+<img src="/img/polya/img5.png" alt="Asymmetric flag pattern" style="width:100%; height:auto;" />
+</span>
+yields a new pattern that we don&rsquo;t want to double count,
+<span style="display:inline-block; width:320px; max-width:100%; vertical-align:middle; margin:0 6px;">
+<img src="/img/polya/img6.png" alt="Reflected asymmetric flag pattern" style="width:100%; height:auto;" />
+</span>
+when it is reflected.  To count these, we must divide by 2.</p>
+<p>A symmetric pattern like
+<span style="display:inline-block; width:420px; max-width:100%; vertical-align:middle; margin:0 6px;">
+<img src="/img/polya/img7.png" alt="Symmetric flag pattern" style="width:100%; height:auto;" />
+</span>
+when reflected does not create a new pattern.  We don&rsquo;t need to divide by 2 here.</p>
 <p>Let <code>$A$</code> denote the number of asymmetric patterns not accounting for reflection, and <code>$S$</code> be the number of symmetric patterns.  First, note that <code>$A + S = 2^4$</code>.</p>
 <p>Now, the number of patterns accounting for reflection, <code>$N_r$</code> is given by</p>
 <p>$$
@@ -144,20 +167,38 @@ Cycle index polynomial
 <p>Remarkably, <code>$P$</code> is a generating function for each coloring.  Expanding, we obtain</p>
 <p><code>$$ P = x^4 + 2x^3 y + 4x^2 y^2 + 2x y^3 + y^4. $$</code></p>
 <p>Here, the coefficient of <code>$x^j y^k$</code> gives the number of patterns with <code>$j$</code> squares of color 1 and <code>$k$</code> squares of color 2.</p>
-<p>(table)</p>
+<p>Let color 1 be red and color 2 be blue.</p>
+<figure style="width:55%; margin:0.5rem 0;">
+  <img src="/img/polya/img8.png" alt="Flag colorings table" style="max-width:720px; width:100%; display:block; margin:0 auto;" />
+</figure>
 <h2 id="counting-necklaces-pumac-2009">
 Counting necklaces: PuMAC 2009
 <a href="#counting-necklaces-pumac-2009" class="heading-anchor">#</a>
 </h2>
 <p><em>2009 PUMaC Combinatorics A10.</em>  Taotao wants to buy a bracelet.  The bracelets have 7 different beads on them arranged in a circle.  Two bracelets are the same if one can be rotated or flipped to get the other.  If she can choose the colors and placements of the beads, and the beads come in orange, white, and black, how many possible bracelets can she buy?</p>
 <p><em>Solution.</em> Imagine the 7 beads at the vertices of a regular hexagon.  See Figure 1.</p>
+<figure style="width:55%; margin:0.5rem 0;">
+  <img src="/img/polya/img9.png" alt="Figure 1: Symmetries of a 7-gon" style="max-width:360px; width:100%; display:block; margin:0 auto;" />
+</figure>
 <p>We will analyze the symmetries of the 7-gon.  We have 7 reflections through a vertex and a midpoint of the opposite side, and 7 rotations of <code>$n (\frac{360}{7})^{\circ}$</code>, with <code>$n \in \{ 1, 2, \dots, 7 \}$</code>.</p>
 <p><em>Permutation cycle structure: reflections.</em></p>
 <p>All the 7 reflections have the same cycle structure, by symmetry.  This corresponds to the permutation structure <code>$(1)(7 2)(6 3)(5 4)$</code>; see Figure 2.</p>
+<figure style="width:55%; margin:0.5rem 0;">
+  <div style="display:flex; gap:16px; justify-content:center; align-items:center; flex-wrap:wrap;">
+    <img src="/img/polya/img10.png" alt="Figure 2: Reflection symmetry of a 7-gon" style="max-width:340px; width:100%; height:auto;" />
+    <img src="/img/polya/img14.png" alt="Figure 2: Reflection symmetry of a 7-gon, alternate rendering" style="max-width:340px; width:100%; height:auto;" />
+  </div>
+</figure>
 <p>In the cycle index polynomial, this corresponds to <code>$7 f_1 f_2^3$</code>, since we have one 1-cycle and three 2-cycle, and 7 such reflection, since we can take a reflection through any vertex.</p>
 <p><em>Permutation cycle structure: rotations.</em></p>
 <p>All the 6 nonidentity rotations are 7-cycles, since 7 in a prime number.  This contributes <code>$ 6 \cdot f_7$</code> to the cycle index polynomial.</p>
 <p>By contrast, consider the case where <code>$n = 6$</code> is composite.  In this case, a rotation of <code>$(\frac{360}{3})^{\circ}$</code> yields <code>$(1 3 5)(2 4 6)$</code>, which would correspond to <code>$f_3^2$</code> in the cycle index polynomial.</p>
+<figure style="width:55%; margin:0.5rem 0;">
+  <div style="display:flex; gap:16px; justify-content:center; align-items:center; flex-wrap:wrap;">
+    <img src="/img/polya/img11.png" alt="Figure 3: Disjoint cycles in a 6-gon" style="max-width:320px; width:100%; height:auto;" />
+    <img src="/img/polya/img13.png" alt="Figure 3: Disjoint cycles in a 6-gon, alternate rendering" style="max-width:320px; width:100%; height:auto;" />
+  </div>
+</figure>
 <p><em>The identity.</em> The identity is trivially a product of seven 1-cycles, so it contributes <code>$1 \cdot f_1^7$</code> to the polynomial.</p>
 <h2 id="cycle-index-polynomials">
 Cycle index polynomials
@@ -205,6 +246,9 @@ Introduction to group theory
 <li>Matrix groups to study the symmetries of 3-D solids, various problems in physics, and crystallographic groups.</li>
 <li>Extension fields for geometric constructions, including showing that duplicating the cube, trisecting an angle, and squaring a circle is impossible.</li>
 </ul>
+<figure style="width:55%; margin:0.5rem 0;">
+  <img src="/img/polya/img11p5.png" alt="Figure 4: Dihedral group in odd and even cases" style="max-width:520px; width:100%; display:block; margin:0 auto;" />
+</figure>
 <p>(In fact, we can show that if <code>$n$</code> is a positive integer such that the regular <code>$n$</code>-gon is constructible with rule and compass, then <code>$n = 2^k \prod_{i=1}^{k} p_i$</code>, where <code>$k \geq 0$</code> and the <code>$p_i$</code> are distinct Fermat primes, that is, primes of the form <code>$2^{2^m} +1$</code>.</p>
 <ul>
 <li>Combinatorial enumeration via group action on sets and Burnside&rsquo;s lemma (the subject of this post).</li>

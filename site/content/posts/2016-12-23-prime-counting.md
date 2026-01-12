@@ -168,7 +168,7 @@ $$`
 
 which follows from the definition of `$\phi$`: the integers not divisible by any of the primes `$p_1, \dots, p_a$` are exactly those integers which are not divisible by any of `$p_1, p_2, \dots, p_{a-1}$`, excluding those that are not divisible by `$p_a$`.  Repeatedly applying this identity will eventually lead to `$\phi(x, 1)$`, which is just the number of odd numbers `$\leq x$`. 
 
-In the implementation below, `$\phi$` is computed using a memoized recursive procedure.  It turns out that one can make this computation more efficient by applying a truncation rule during the recursive chain.  The details of how to do this are somewhat involved; the interested reader can refer to Hans Riesel's book *Prime Numbers and Computer Methods for Factorization*.
+In the implementation below, `$\phi$` is computed using a memoized recursive procedure.  It turns out that one can make this computation more efficient by applying a truncation rule during the recursive chain.  The details of how to do this are somewhat involved; the interested reader can refer to Hans Riesel's book *Prime Numbers and Computer Methods for Factorization*<label class="margin-toggle sidenote-number"></label><span class="sidenote">Riesel, Hans. <em>Prime Numbers and Computer Methods for Factorization.</em> 2nd ed. Birkh&#xE4;user, 1994.</span>.
 
 ```python
 from bisect import bisect
