@@ -218,15 +218,15 @@ Then this rank `$k$` decomposition is unique (up to scalar multiplication of the
 
 ## Spectral graph theory
 
-Given a graph `$G = (V, E)$` with `$|V| = n$` vertices, we can define the Laplacian matrix as an `$n \times n$` matrix `$L_G =D - A$`, where `$D$` is the degree matrix and $A$ is the adjacency matrix.  The eigenvalues of $L_G$ inform the structure of the graph.  We can show the following important result:<label class="margin-toggle sidenote-number"></label><span class="sidenote">
+Given a graph `$G = (V, E)$` with `$|V| = n$` vertices, we can define the Laplacian matrix as an `$n \times n$` matrix `$L_G =D - A$`, where `$D$` is the degree matrix and `$A$` is the adjacency matrix.  The eigenvalues of `$L_G$` inform the structure of the graph.  We can show the following important result:<label class="margin-toggle sidenote-number"></label><span class="sidenote">
 For more on machine learning on graphs, see Masthew Das Sarma's [article in *The Gradient*](https://thegradient.pub/structure-learning/).
 </span>
 
 **Theorem.** The number of zero eigenvalues of the Laplacian `$L_G$` equals the number of connected components of the graph `$G$`.
 
-Small eigenvalues correspond to unit vectors `$v$` that try to minimize the quantity `$v^T L v = \frac{1}{2} \sum_{(i, j) \in E} (v(i) - v(j)$`. A natural way to visualize a graph is to embed a graph onto the eigenvectors corresponding to small eigenvalues.
+Small eigenvalues correspond to unit vectors `$v$` that try to minimize the quantity `$v^T L v = \frac{1}{2} \sum_{(i, j) \in E} (v(i) - v(j))^2$`. A natural way to visualize a graph is to embed a graph onto the eigenvectors corresponding to small eigenvalues.
 
-**Definition.** The *isoperimetric ratio* of a set `$S$`, denoted $\theta(S)$, is defined as
+**Definition.** The *isoperimetric ratio* of a set `$S$`, denoted `$\theta(S)$`, is defined as
 
 $$
 \theta(S) = \frac{|\delta(S)|}{\min(|S|, |V \setminus S|)}.
@@ -273,7 +273,7 @@ $$
 \mathcal{F} \{ f * g \} = \mathcal{F} \{ f \} \cdot \mathcal{F} \{ g \}.
 $$
 
-In fact, convolutions used in deep learning today use FFT-based implementations, which tend to be faster (add source).
+In fact, convolutions used in deep learning today use FFT-based implementations, which tend to be faster.
 
 ## Sparse vector / matrix recovery
 
@@ -304,9 +304,11 @@ Let `$\mathcal{A}: \mathcal{D}^n \to \mathcal{Y}$` be a randomized algorithm.  L
 $$`
 where the probability is taken over the coin tosses of `$\mathcal{A}$`.
 
-(sidenote: by convention, if the numerator and denominator are both 0, we say that the ratio is 1).
+<label class="margin-toggle sidenote-number"></label><span class="sidenote">
+By convention, if the numerator and denominator are both 0, we say that the ratio is 1.
+</span>
 
-Intuitively, we can think of this definition as a game between two parties, Alice and Bob. (sidenote: add simplification: `$A$` is permutation invariant, and the space `$D$` is finite).  Alice picks an arbitrary `$D \in \mathcal{D}^n$`.  Let `$D_{-n} = (d_1, \dots, d_{n-1})$`, and let `$D_{n, m} = (d_1, \dots, d_{n-1}, d_n = m)$`, where `$d_n = m$` means `$d_n$` takes on the `$m$`-th value of `$\mathcal{D}$`.  Then Alice gives Bob the tuple `$D_{-n}, y = \mathcal{A}(D)$`.  Bob must then guess correctly the value of $d_n$.  If Alice draws $d_n$ uniformly at random, Bob's best guess for $d_n$ is
+Intuitively, we can think of this definition as a game between two parties, Alice and Bob. (sidenote: add simplification: `$A$` is permutation invariant, and the space `$D$` is finite).  Alice picks an arbitrary `$D \in \mathcal{D}^n$`.  Let `$D_{-n} = (d_1, \dots, d_{n-1})$`, and let `$D_{n, m} = (d_1, \dots, d_{n-1}, d_n = m)$`, where `$d_n = m$` means `$d_n$` takes on the `$m$`-th value of `$\mathcal{D}$`.  Then Alice gives Bob the tuple `$D_{-n}, y = \mathcal{A}(D)$`.  Bob must then guess correctly the value of `$d_n$`.  If Alice draws `$d_n$` uniformly at random, Bob's best guess for `$d_n$` is
 
 `$$
 \argmax_{j \in [m]} \text{Pr} [\mathcal{A} (D_{n, j}) = y ].
